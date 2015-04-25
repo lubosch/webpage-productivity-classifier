@@ -25,6 +25,8 @@ gem 'omniauth-facebook'
 gem 'omniauth-linkedin'
 gem 'cancan'
 
+gem 'rename'
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 gem 'jquery-ui-rails', '~> 5'
