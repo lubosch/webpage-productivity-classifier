@@ -65,6 +65,8 @@ gem 'fast-stemmer'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+gem 'rails_12factor', group: :production
+
 group :development do
   gem 'rails_layout'
   gem 'capistrano-rails'
@@ -108,3 +110,5 @@ group :development, :production, :test do
   gem 'faker', '~> 1.2'
   gem 'factory_girl', '~> 4.5.0'
 end
+
+ruby "2.2.2"
