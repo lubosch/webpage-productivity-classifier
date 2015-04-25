@@ -73,6 +73,12 @@ end
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
+  gem 'pry'
+  gem 'pry-byebug'
+  gem 'pry-stack_explorer'
+
+  gem 'rspec-rails', '~> 3'
+  gem 'fakeweb', '~> 1.3'
 
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
@@ -81,3 +87,24 @@ group :development, :test do
   gem 'spring'
 end
 
+
+group :test do
+  gem 'capybara', '~> 2.4.4'
+  gem 'capybara-webkit'
+  gem 'capybara-screenshot'
+  gem 'debase'
+  gem 'selenium-webdriver', '~> 2.45'
+  gem 'chromedriver-helper'
+  gem 'database_cleaner', '~> 1.0.1'
+  gem 'launchy', '~> 2.3.0'
+  gem 'cucumber-rails', :require => false
+  gem 'simplecov', :require => false
+  gem 'vcr', '~> 2.9.2'
+  gem 'webmock', '~> 1.18.0', :require => false
+end
+
+
+group :development, :production, :test do
+  gem 'faker', '~> 1.2'
+  gem 'factory_girl', '~> 4.5.0'
+end

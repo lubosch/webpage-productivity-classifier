@@ -15,6 +15,9 @@
 #  last_sign_in_ip        :string
 #  created_at             :datetime
 #  updated_at             :datetime
+#  lname                  :string
+#  fname                  :string
+#  username               :string
 #
 
 class User < ActiveRecord::Base

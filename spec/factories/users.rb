@@ -20,14 +20,22 @@
 #  username               :string
 #
 
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# Read about factories at https://github.com/thoughtbot/factory_girl
 
-# This model initially had no columns defined.  If you add columns to the
-# model remove the '{}' from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
-one: {}
-# column: value
-#
-two: {}
-#  column: value
+FactoryGirl.define do
+  factory :user do
+    email { Faker::Internet.email }
+    password {Faker::Internet.password(8)}
+
+    factory :admin do
+      email 'admin@admin.com'
+      password "adminadmin"
+    end
+
+    factory :default do
+      email 'default@default.com'
+      password "defaultdefault"
+    end
+
+  end
+end
