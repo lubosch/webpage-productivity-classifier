@@ -10,6 +10,6 @@ Raill bootstrap3 application initialized with authentification and basic lame la
 * puma
 * postgress DB
 * .env files for privacy
-* 
+
 ## Instructions
 Just create .env file based on .env.example and resolve some basic errors (if) it will throw 
