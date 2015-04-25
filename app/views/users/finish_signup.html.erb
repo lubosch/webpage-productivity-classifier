@@ -1,0 +1,32 @@
+<div class="col-sm-3">
+</div>
+<div class="col-sm-6">
+  <%= form_for(current_user, :as => 'user', :url => finish_signup_path(current_user), :html => {role: 'form'}) do |f| %>
+      <% if @show_errors && current_user.errors.any? %>
+          <div id="error_explanation" class="alert alert-danger">
+            <% current_user.errors.full_messages.each do |msg| %>
+                <%= msg %><br>
+            <% end %>
+          </div>
+      <% end %>
+
+      <div class="form-group">
+        <p><%= f.label :email %><br>
+          <%= f.text_field :email, :autofocus => true, :value => '', class: 'form-control', placeholder: 'email@me.com' %>
+        </p>
+
+        <p class="help-block">Please confirm your email address. No spam.</p>
+
+        <p><%= f.label :password %><br>
+          <%= f.password_field :password, class: 'form-control' %></p>
+
+        <p><%= f.label :password_confirmation %><br>
+          <%= f.password_field :password_confirmation, class: 'form-control' %></p>
+      </div>
+      <div class="actions">
+        <%= f.submit 'Continue', :class => 'btn btn-primary' %>
+      </div>
+  <% end %>
+</div>
+<div class="col-sm-3">
+</div>
