@@ -30,6 +30,15 @@ config/secrets.yml
 /vendor/assets/bower_components
 *.bowerrc
 bower.json
+/.env
+config/settings.local.yml
+config/settings/*.local.yml
+config/environments/*.local.yml
+
+# Ignore RubyMine config files
+.idea/*
+/spec/vcr_cassettes
+/spec/vcr_cassettes/**/*.yml
 
 # Ignore pow environment settings
 .powenv
