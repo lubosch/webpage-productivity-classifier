@@ -1,15 +1,12 @@
-# Rails Start With Authentication
-Raill bootstrap3 application initialized with authentification and basic lame layout .. feel free to fork and not waste time with settings as I had many times. There is used gem for renaming so it is no problem to rename to whatever you  want ( `rails g rename:app_to name_of_app`)
-## Used things
-* devise
-* cancan
-* omniauth for FB auth
-* basic layout
-* progressbar for AJAX and turbolinks things
-* jquery, bootstrap 3, modals
-* puma
-* postgress DB
-* .env files for privacy
+# Webpage Productivity Classifier
+Evaluating the productivity of the visited webpages based on the webpage class (News/Editorial;Commercial;Educational/Research, ..) and your own actual activity context
 
-## Instructions
-Just create .env file based on .env.example and resolve some basic errors (if) it will throw 
+## The meaning of this
+I want to know which pages are productive for you and which are not. Knowing this I may encourage you to work more systematically and rest more relaxive. In other words, fighting against procrastination in a good motivating way.
+
+## Datasets for training
+* Huge dataset containing tf, useful features and categories of millions web-pages annotated by experts
+* 27k webpages classified on 2 levels
+ 
+## Techniques
+Many nice machine-learning techniques. I have just started this project and will let you know as I progress
