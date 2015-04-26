@@ -11,10 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150426010353) do
+ActiveRecord::Schema.define(version: 20150426224414) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "domain_terms", force: :cascade do |t|
+    t.integer "domain_id"
+    t.integer "term_id"
+    t.integer "tf"
+    t.integer "df"
+  end
 
   create_table "domains", force: :cascade do |t|
     t.string   "name"
@@ -37,6 +44,30 @@ ActiveRecord::Schema.define(version: 20150426010353) do
   end
 
   add_index "identities", ["user_id"], name: "index_identities_on_user_id", using: :btree
+
+  create_table "labels", force: :cascade do |t|
+    t.integer  "eval_id"
+    t.integer  "www_id"
+    t.integer  "nowww_id"
+    t.integer  "assessor_id"
+    t.integer  "adult"
+    t.integer  "spam"
+    t.integer  "news_editorial"
+    t.integer  "commercial"
+    t.integer  "educational_research"
+    t.integer  "discussion"
+    t.integer  "personal_leisure"
+    t.integer  "media"
+    t.integer  "database"
+    t.integer  "readability_vis"
+    t.integer  "readability_lang"
+    t.integer  "neutrality"
+    t.integer  "bias"
+    t.integer  "trustiness"
+    t.integer  "confidence"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
 
   create_table "terms", force: :cascade do |t|
     t.integer  "eval_id"

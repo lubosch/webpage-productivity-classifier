@@ -3,6 +3,7 @@ class CreateDomains < ActiveRecord::Migration
     create_table :domains do |t|
       t.string :name
       t.string :eval_type
+      t.string :lang
       t.references :domain, index: true, foreign_key: true
       t.integer :alter_id
       t.integer :eval_id
