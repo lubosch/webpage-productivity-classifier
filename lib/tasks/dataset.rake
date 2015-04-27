@@ -9,7 +9,7 @@ namespace :dataset do
     langs = {}
     test_docs = {}
 
-    CSV.domaforeach(test_path, :headers => true, col_sep: ';') do |row|
+    CSV.foreach(test_path, :headers => true, col_sep: ';') do |row|
       row = row.to_hash
       test_docs[row['ID']] = row['nowww-ID'].to_i if row['ID']
       test_docs[row['nowww-ID']] = row['ID'].to_i if row['nowww-ID']
@@ -27,7 +27,7 @@ namespace :dataset do
         alter_id = test_docs[row[1]] if test_docs[row[1]]
         eval_type = 'test' if test_docs[row[1]].present?
         lang = langs[row[1]] if langs[row[1]].present?
-        Domain.create(name: row[0], eval_type: eval_type, alter_id: alter_id, eval_id: row[1].to_i)
+        Domain.create(name: row[0], eval_type: eval_type, alter_id: alter_id, eval_id: row[1].to_i, lang: lang)
       end
 
     end
@@ -83,51 +83,54 @@ namespace :dataset do
   desc 'Migrate labels'
   task :labels, [:path] => :environment do
     path = File.expand_path('vendor/datasets/v2-en.labels.csv', Rails.root)
-    CSV.foreach(path, :headers => true, col_sep: ';') do |row|
-      data = row.to_hash
-      adult = 1 if data['Adult Content'] == 'Adult'
-      adult = 0 if data['Adult Content'] == 'NonAdult'
+    Label.transaction do
 
-      spam = 1 if data['Web Spam'] == 'Spam'
-      spam = 0 if data['Web Spam'] == 'NonSpam'
+      CSV.foreach(path, :headers => true, col_sep: ';') do |row|
+        data = row.to_hash
+        adult = 1 if data['Adult Content'] == 'Adult'
+        adult = 0 if data['Adult Content'] == 'NonAdult'
 
-      news_editorial = 1 if data['News/Editorial'] == 'News-Edit'
-      news_editorial = 0 if data['News/Editorial'] == 'NonNews-Edit'
+        spam = 1 if data['Web Spam'] == 'Spam'
+        spam = 0 if data['Web Spam'] == 'NonSpam'
 
-      commercial = 1 if data['Commercial'] == 'Commercial'
-      commercial = 0 if data['Commercial'] == 'NonCommercial'
+        news_editorial = 1 if data['News/Editorial'] == 'News-Edit'
+        news_editorial = 0 if data['News/Editorial'] == 'NonNews-Edit'
 
-      educational_research = 1 if data['Educational/Research'] == 'Educational'
-      educational_research = 0 if data['Educational/Research'] == 'NonEducational'
+        commercial = 1 if data['Commercial'] == 'Commercial'
+        commercial = 0 if data['Commercial'] == 'NonCommercial'
 
-      discussion = 1 if data['Discussion'] == 'Discussion'
-      discussion = 0 if data['Discussion'] == 'NonDiscussion'
+        educational_research = 1 if data['Educational/Research'] == 'Educational'
+        educational_research = 0 if data['Educational/Research'] == 'NonEducational'
 
-      personal_leisure = 1 if data['Personal/Leisure'] == 'Personal-Leisure'
-      personal_leisure = 0 if data['Personal/Leisure'] == 'NonPersonal-Leisure'
+        discussion = 1 if data['Discussion'] == 'Discussion'
+        discussion = 0 if data['Discussion'] == 'NonDiscussion'
 
-      media = 1 if data['Media'] == 'Media'
-      media = 0 if data['Media'] == 'NonMedia'
+        personal_leisure = 1 if data['Personal/Leisure'] == 'Personal-Leisure'
+        personal_leisure = 0 if data['Personal/Leisure'] == 'NonPersonal-Leisure'
 
-      database = 1 if data['Database'] == 'Database'
-      database = 0 if data['Database'] == 'NonDatabase'
+        media = 1 if data['Media'] == 'Media'
+        media = 0 if data['Media'] == 'NonMedia'
 
-      readability_vis = data['Readability-Vis'].to_i if data['Readability-Vis'].present?
-      readability_lang = data['Readability-Lang'].to_i if data['Readability-Lang'].present?
-      neutrality = data['Neutrality'].to_i if data['Neutrality'].present?
-      bias = data['Bias'].to_i if data['Bias'].present?
-      trustiness = data['Trustiness'].to_i if data['Trustiness'].present?
+        database = 1 if data['Database'] == 'Database'
+        database = 0 if data['Database'] == 'NonDatabase'
 
-      confidence = 1 if data['Confidence'] == 'Sure'
-      confidence = 0 if data['Confidence'] == 'Unsure'
+        readability_vis = data['Readability-Vis'].to_i if data['Readability-Vis'].present?
+        readability_lang = data['Readability-Lang'].to_i if data['Readability-Lang'].present?
+        neutrality = data['Neutrality'].to_i if data['Neutrality'].present?
+        bias = data['Bias'].to_i if data['Bias'].present?
+        trustiness = data['Trustiness'].to_i if data['Trustiness'].present?
 
-      Label.create(
-          eval_id: data['ID'], www_id: data['wwwID'], www_id: data['nowwwID'], assessor_id: data['UserID'], adult: adult, spam: spam,
-          news_editorial: news_editorial, commercial: commercial, educational_research: educational_research, discussion: discussion,
-          personal_leisure: personal_leisure, media: media, database: database, readability_vis: readability_vis,
-          readability_lang: readability_lang, neutrality: neutrality, bias: bias, trustiness: trustiness, confidence: confidence
-      )
+        confidence = 1 if data['Confidence'] == 'Sure'
+        confidence = 0 if data['Confidence'] == 'Unsure'
 
+        Label.create(
+            eval_id: data['ID'], www_id: data['wwwID'], nowww_id: data['nowwwID'], assessor_id: data['UserID'], adult: adult, spam: spam,
+            news_editorial: news_editorial, commercial: commercial, educational_research: educational_research, discussion: discussion,
+            personal_leisure: personal_leisure, media: media, database: database, readability_vis: readability_vis,
+            readability_lang: readability_lang, neutrality: neutrality, bias: bias, trustiness: trustiness, confidence: confidence
+        )
+
+      end
     end
   end
 

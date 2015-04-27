@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 20150426224414) do
   create_table "domains", force: :cascade do |t|
     t.string   "name"
     t.string   "eval_type"
+    t.string   "lang"
     t.integer  "domain_id"
     t.integer  "alter_id"
     t.integer  "eval_id"

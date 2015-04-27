@@ -27,4 +27,6 @@
 #
 
 class Label < ActiveRecord::Base
+  belongs_to :domain, :foreign_key => :www_id, primary_key: :eval_id
+  belongs_to :nowww_domain, :foreign_key => :nowww_id, primary_key: :eval_id
 end

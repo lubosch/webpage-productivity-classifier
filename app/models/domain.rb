@@ -14,4 +14,5 @@
 
 class Domain < ActiveRecord::Base
   belongs_to :domain
+  belongs_to :alter_domain, class_name: 'Domain', foreign_key: :alter_id, primary_key: :eval_id
 end
