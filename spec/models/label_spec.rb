@@ -4,8 +4,7 @@
 #
 #  id                   :integer          not null, primary key
 #  eval_id              :integer
-#  www_id               :integer
-#  nowww_id             :integer
+#  domain_id            :integer
 #  assessor_id          :integer
 #  adult                :integer
 #  spam                 :integer

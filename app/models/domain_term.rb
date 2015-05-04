@@ -10,6 +10,6 @@
 #
 
 class DomainTerm < ActiveRecord::Base
-  belongs_to :domain, primary_key: eval_id
-  belongs_to :term, primary_key: eval_iddom
+  belongs_to :domain, primary_key: :eval_id
+  belongs_to :term, primary_key: :eval_id
 end

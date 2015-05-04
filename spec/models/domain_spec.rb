@@ -5,8 +5,8 @@
 #  id         :integer          not null, primary key
 #  name       :string
 #  eval_type  :string
+#  lang       :string
 #  domain_id  :integer
-#  alter_id   :integer
 #  eval_id    :integer
 #  created_at :datetime         not null
 #  updated_at :datetime         not null

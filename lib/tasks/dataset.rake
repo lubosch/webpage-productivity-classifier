@@ -11,8 +11,8 @@ namespace :dataset do
 
     CSV.foreach(test_path, :headers => true, col_sep: ';') do |row|
       row = row.to_hash
-      test_docs[row['ID']] = row['nowww-ID'].to_i if row['ID']
-      test_docs[row['nowww-ID']] = row['ID'].to_i if row['nowww-ID']
+      test_docs[row['ID']] = row['nowww-ID'] if row['ID'].present?
+      test_docs[row['nowww-ID']] = row['ID'] if row['nowww-ID'].present?
     end
 
     CSV.foreach(lang_path, :headers => true, col_sep: ';') do |row|
@@ -24,8 +24,8 @@ namespace :dataset do
     Domain.transaction do
 
       CSV.foreach(path, :headers => false, col_sep: ' ') do |row|
-        alter_id = test_docs[row[1]] if test_docs[row[1]]
-        eval_type = 'test' if test_docs[row[1]].present?
+        alter_id = test_docs[row[1]].to_i if test_docs[row[1]]
+        eval_type = 'test' if test_docs.has_key?(row[1])
         lang = langs[row[1]] if langs[row[1]].present?
         Domain.create(name: row[0], eval_type: eval_type, alter_id: alter_id, eval_id: row[1].to_i, lang: lang)
       end
