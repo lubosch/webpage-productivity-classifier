@@ -11,10 +11,40 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150504133754) do
+ActiveRecord::Schema.define(version: 20150505113522) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "categories", force: :cascade do |t|
+    t.text     "name"
+    t.integer  "count"
+    t.float    "probability"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "category_domains", force: :cascade do |t|
+    t.integer  "category_id"
+    t.integer  "domain_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "category_domains", ["category_id"], name: "index_category_domains_on_category_id", using: :btree
+  add_index "category_domains", ["domain_id"], name: "index_category_domains_on_domain_id", using: :btree
+
+  create_table "category_terms", force: :cascade do |t|
+    t.integer  "category_id"
+    t.integer  "term_id"
+    t.integer  "count"
+    t.float    "probability"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "category_terms", ["category_id"], name: "index_category_terms_on_category_id", using: :btree
+  add_index "category_terms", ["term_id"], name: "index_category_terms_on_term_id", using: :btree
 
   create_table "domain_terms", force: :cascade do |t|
     t.integer "domain_id"
@@ -22,6 +52,8 @@ ActiveRecord::Schema.define(version: 20150504133754) do
     t.integer "tf"
     t.integer "df"
   end
+
+  add_index "domain_terms", ["domain_id"], name: "index_domain_terms_on_domain_id", using: :btree
 
   create_table "domains", force: :cascade do |t|
     t.string   "name"
@@ -34,6 +66,7 @@ ActiveRecord::Schema.define(version: 20150504133754) do
   end
 
   add_index "domains", ["domain_id"], name: "index_domains_on_domain_id", using: :btree
+  add_index "domains", ["eval_id"], name: "index_domains_on_eval_id", using: :btree
 
   create_table "identities", force: :cascade do |t|
     t.integer  "user_id"
@@ -67,6 +100,8 @@ ActiveRecord::Schema.define(version: 20150504133754) do
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
+
+  add_index "labels", ["domain_id"], name: "index_labels_on_domain_id", using: :btree
 
   create_table "terms", force: :cascade do |t|
     t.integer  "eval_id"
@@ -103,6 +138,10 @@ ActiveRecord::Schema.define(version: 20150504133754) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
+  add_foreign_key "category_domains", "categories"
+  add_foreign_key "category_domains", "domains"
+  add_foreign_key "category_terms", "categories"
+  add_foreign_key "category_terms", "terms"
   add_foreign_key "domains", "domains"
   add_foreign_key "identities", "users"
 end

@@ -27,4 +27,5 @@
 
 class Label < ActiveRecord::Base
   belongs_to :domain, primary_key: :eval_id
+
 end

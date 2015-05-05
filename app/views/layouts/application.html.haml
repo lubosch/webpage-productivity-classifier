@@ -12,7 +12,9 @@
       = render 'layouts/navigation'
     %main{:role => "main"}
       = render 'layouts/messages'
-      .unobtrusive-flash-container
-      = yield
+      .col-md-1
+      .col-md-10
+        .unobtrusive-flash-container
+        = yield
   =render 'pages/login_modal'
   =render 'pages/sign_up_modal'
