@@ -134,4 +134,24 @@ namespace :dataset do
     end
   end
 
+  desc 'convert to category_terms'
+  task :category_terms, [:path] => :environment do
+    Category.destroy_all
+    categories = {}
+    categories_all = [:adult, :spam, :news_editorial, :commercial, :educational_research, :discussion, :personal_leisure, :media, :database]
+    categories_all.map { |category| categories[category]= Category.create(:name => category, :count => 0) }
+
+    CategoryTerm.transaction do
+      Label.includes(:domain).all.each_with_index do |label, index|
+        categories_all.each do |category|
+          categories[category].add_terms(label.domain) if label[category] == 1
+        end
+        puts index if index%10 == 0
+      end
+      categories.each_value(&:save_terms)
+      categories.each_value(&:update_probabilities)
+    end
+
+  end
+
 end

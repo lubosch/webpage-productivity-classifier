@@ -14,4 +14,10 @@
 class CategoryTerm < ActiveRecord::Base
   belongs_to :category
   belongs_to :term
+
+
+  def recalculate_probability(sum)
+    update_attribute(:probability, self.count / sum.to_f)
+  end
+
 end
