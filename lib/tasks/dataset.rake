@@ -156,4 +156,100 @@ namespace :dataset do
     Term.update_probabilities
   end
 
+  desc 'copy to neo4j'
+  task :clone_to_neo4j, [:path] => :environment do
+    domains = {}
+    categories = {}
+    terms = {}
+    terms_ids = {}
+
+    Neo::Category.destroy_all
+    Neo4j::Transaction.run do
+      Category.all.each do |cat|
+        categories[cat.id] = Neo::Category.create(name: cat.name, count: cat.count, probability: cat.probability, vocabulary_size: cat.vocabulary_size, terms_count: cat.terms_count, default_multinomial: cat.default_multinomial)
+      end
+    end
+
+    Neo::Term.destroy_all
+    Neo4j::Transaction.run do
+      Term.all.each do |term|
+        terms_ids[term.id] = terms[term.eval_id] = Neo::Term.create(text: term.text, eval_id: term.eval_id, tf: term.tf, df: term.df, probability: term.probability)
+      end
+    end
+
+    # binding.pry
+
+    Neo::HasTerm.all.each(&:destroy)
+    Neo4j::Transaction.run do
+      CategoryTerm.first(10).each do |cat_term|
+        Neo::HasTerm.create(from_node: categories[cat_term.category_id], to_node: terms_ids[cat_term.term_id], count: cat_term.count, probability: cat_term.probability, multinomial_probability: cat_term.multinomial_probability)
+      end
+    end
+
+    categories.clear
+    # terms_ids.clear
+
+    Neo::Domain.destroy_all
+    Neo4j::Transaction.run do
+      Domain.all.each do |domain|
+        domains[domain.eval_id] = Neo::Domain.create(:name => domain.name, :eval_id => domain.eval_id, :eval_type => domain.eval_type, :lang => domain.lang)
+      end
+    end
+
+
+    Neo4j::Transaction.run do
+      DomainTerm.first(10).each do |dt|
+        Neo::HasTerm.create(from_node: domains[dt.domain_id], to_node: terms[dt.term_id], count: dt.tf)
+      end
+    end
+    terms.clear
+
+
+    Neo::Label.destroy_all
+    labels = {}
+    labels[:adult] = Neo::Label.create(:text => 'adult')
+    labels[:spam] = Neo::Label.create(:text => 'spam')
+    labels[:news_editorial] = Neo::Label.create(:text => 'news_editorial')
+    labels[:commercial] = Neo::Label.create(:text => 'commercial')
+    labels[:educational_research] = Neo::Label.create(:text => 'educational_research')
+    labels[:discussion] = Neo::Label.create(:text => 'discussion')
+    labels[:personal_leisure] = Neo::Label.create(:text => 'personal_leisure')
+    labels[:media] = Neo::Label.create(:text => 'media')
+    labels[:database] = Neo::Label.create(:text => 'database')
+
+    Neo::HasLabel.all.each(&:destroy)
+    Neo4j::Transaction.run do
+      Label.first(10).each do |label|
+        new_labels = []
+        new_labels << :adult if label[:adult] == 1
+        new_labels << :spam if label[:spam] == 1
+        new_labels << :news_editorial if label[:news_editorial] == 1
+        new_labels << :commercial if label[:commercial] == 1
+        new_labels << :educational_research if label[:educational_research] == 1
+        new_labels << :discussion if label[:discussion] == 1
+        new_labels << :personal_leisure if label[:personal_leisure] == 1
+        new_labels << :media if label[:media] == 1
+        new_labels << :database if label[:database] == 1
+
+        new_labels.each do |nl|
+          Neo::HasLabel.create(
+              from_node: domains[label.domain_id],
+              to_node: labels[nl],
+              assessor_id: label.assessor_id,
+              readability_vis: label.readability_vis,
+              readability_lang: label.readability_lang,
+              neutrality: label.neutrality,
+              bias: label.bias,
+              trustiness: label.trustiness,
+              confidence: label.confidence
+          )
+        end
+
+      end
+    end
+
+
+  end
+
+
 end
