@@ -48,7 +48,9 @@ gem 'bootstrap-modal-rails'
 
 gem 'annotate'
 
-gem 'neo4j'
+gem 'neo4j', branch: :master
+gem 'neo4j-core', branch: :master
+gem 'mechanize'
 
 gem 'unobtrusive_flash', '>=3'
 # Remotipart is a Ruby on Rails gem enabling AJAX file uploads
