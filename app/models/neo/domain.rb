@@ -7,7 +7,7 @@ module Neo
     property :eval_type
     property :lang
 
-    has_many :both, :categories
+    has_many :both, :categories, origin: :category
     has_many :both, :terms, rel_class: HasTerms
     has_many :both, :labels, rel_class: HasLabels
 

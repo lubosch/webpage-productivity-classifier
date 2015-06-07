@@ -9,7 +9,7 @@ module Neo
     property :terms_count
     property :default_multinomial
 
-    has_many :both, :domain
+    has_many :both, :domains, origin: :domain
     has_many :both, :terms, rel_class: HasTerms
   end
 end

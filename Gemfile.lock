@@ -1,3 +1,14 @@
+GIT
+  remote: git://github.com/andreasronge/neo4j.git
+  revision: 7e1f75c9768607e65d74e37fd22048be6c606d7b
+  specs:
+    neo4j (5.0.0.rc.2)
+      active_attr (~> 0.8)
+      activemodel (~> 4)
+      activesupport (~> 4)
+      neo4j-core (>= 5.0.0.rc.1)
+      orm_adapter (~> 0.5.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -143,6 +154,9 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.9.1)
       faraday (>= 0.7.4, < 0.10)
+    faraday_middleware-multi_json (0.0.6)
+      faraday_middleware
+      multi_json
     fast-stemmer (1.0.2)
     ffi (1.9.8)
     gherkin (2.12.2)
@@ -207,19 +221,15 @@ GEM
     multi_test (0.1.2)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
-    neo4j (4.1.5)
-      active_attr (~> 0.8)
-      activemodel (~> 4)
-      activesupport (~> 4)
-      neo4j-core (~> 4.0.0)
-      orm_adapter (~> 0.5.0)
-    neo4j-core (4.0.7)
+    neo4j-core (5.0.0.rc.4)
       activesupport
       faraday (~> 0.9.0)
       faraday_middleware (~> 0.9.1)
+      faraday_middleware-multi_json
       httparty
       httpclient
       json
+      multi_json
       net-http-persistent
       os
       zip
@@ -269,8 +279,6 @@ GEM
     pry-byebug (3.1.0)
       byebug (~> 4.0)
       pry (~> 0.10)
-    pry-rails (0.3.4)
-      pry (>= 0.9.10)
     pry-stack_explorer (0.4.9.2)
       binding_of_caller (>= 0.7)
       pry (>= 0.9.11)
@@ -430,6 +438,7 @@ DEPENDENCIES
   factory_girl (~> 4.5.0)
   faker (~> 1.2)
   fakeweb (~> 1.3)
+  faraday
   fast-stemmer
   haml-rails
   http_accept_language
@@ -438,8 +447,7 @@ DEPENDENCIES
   jquery-ui-rails (~> 5)
   launchy (~> 2.3.0)
   mechanize
-  neo4j
-  neo4j-core
+  neo4j!
   nprogress-rails
   omniauth
   omniauth-facebook
@@ -447,8 +455,8 @@ DEPENDENCIES
   omniauth-twitter
   pg
   pg_search
+  pry
   pry-byebug
-  pry-rails
   pry-stack_explorer
   puma
   rails (= 4.2.1)
