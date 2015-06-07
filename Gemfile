@@ -48,6 +48,8 @@ gem 'bootstrap-modal-rails'
 
 gem 'annotate'
 
+gem 'neo4j'
+
 gem 'unobtrusive_flash', '>=3'
 # Remotipart is a Ruby on Rails gem enabling AJAX file uploads
 gem 'remotipart', '~> 1.2'
@@ -75,7 +77,7 @@ end
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
-  gem 'pry'
+  gem 'pry-rails'
   gem 'pry-byebug'
   gem 'pry-stack_explorer'
 

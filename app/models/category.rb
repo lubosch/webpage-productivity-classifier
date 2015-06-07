@@ -35,13 +35,13 @@ class Category < ActiveRecord::Base
   end
 
   def update_prior_probabilities(sum)
-    self.count = Label.where(self.name.to_sym => 1).count
+    self.count = Label.no_test.where(self.name.to_sym => 1).count
     self.probability = self.count / sum.to_f
     self.save
   end
 
   def self.update_all_probabilities
-    sum = CATEGORIES.inject(0) { |sum, category| sum + Label.where(category => 1).count }
+    sum = CATEGORIES.inject(0) { |sum, category| sum + Label.no_test.where(category => 1).count }
     Category.all.each { |category| category.update_prior_probabilities(sum) }
   end
 

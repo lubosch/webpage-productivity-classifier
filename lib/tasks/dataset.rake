@@ -142,7 +142,7 @@ namespace :dataset do
     categories_all.map { |category| categories[category]= Category.create(:name => category, :count => 0) }
 
     CategoryTerm.transaction do
-      Label.includes(:domain).all.each_with_index do |label, index|
+      Label.no_test.includes(:domain).all.each_with_index do |label, index|
         categories_all.each do |category|
           categories[category].add_terms(label.domain) if label[category] == 1
         end
@@ -152,6 +152,8 @@ namespace :dataset do
       categories.each_value(&:update_probabilities)
     end
 
+    Category.update_all_probabilities
+    Term.update_probabilities
   end
 
 end

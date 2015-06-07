@@ -17,18 +17,29 @@ class DomainTerm < ActiveRecord::Base
   delegate :probability, to: :term, prefix: true
 
 
-  def generating_likelihood(category)
-    category
+  def generating_bernouolli_likelihood(category)
     pk = term.category_terms.find { |ct| ct.category_id == category.id } if term
     if pk.present?
       pk = pk.probability
       xi = 0
     else
-      pk = term ? term.probability : 0.0000000000001
+      pk = term ? term.probability : 0.0001
       xi = 1
     end
-    self.tf * Math.log10(pk**xi * (1-pk)**(1-xi))
-
+    #self.tf *
+    (xi*Math.log2(pk) + (1-xi)*Math.log2((1-pk)))
   end
+
+  def generating_multinomial_likelihood(category)
+    pk = term.category_terms.find { |ct| ct.category_id == category.id } if term
+    if pk.present?
+      pk = pk.probability + 1
+    else
+      # pk = 1
+      pk = term ? term.probability+1 : 1
+    end
+    self.tf * Math.log2(pk)
+  end
+
 
 end

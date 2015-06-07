@@ -28,4 +28,7 @@
 class Label < ActiveRecord::Base
   belongs_to :domain, primary_key: :eval_id
 
+  scope :no_test, -> { where(:domain => Domain.no_test) }
+  scope :test, -> { where(:domain => Domain.test) }
+
 end
