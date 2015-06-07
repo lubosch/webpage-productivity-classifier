@@ -2,13 +2,14 @@
 #
 # Table name: category_terms
 #
-#  id          :integer          not null, primary key
-#  category_id :integer
-#  term_id     :integer
-#  count       :integer
-#  probability :float
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id                      :integer          not null, primary key
+#  category_id             :integer
+#  term_id                 :integer
+#  count                   :integer
+#  probability             :float
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  multinomial_probability :float
 #
 
 require 'rails_helper'

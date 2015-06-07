@@ -33,10 +33,9 @@ class DomainTerm < ActiveRecord::Base
   def generating_multinomial_likelihood(category)
     pk = term.category_terms.find { |ct| ct.category_id == category.id } if term
     if pk.present?
-      pk = pk.probability + 1
+      pk = pk.multinomial_probability
     else
-      # pk = 1
-      pk = term ? term.probability+1 : 1
+      pk = 1
     end
     self.tf * Math.log2(pk)
   end

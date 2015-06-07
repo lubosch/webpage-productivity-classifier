@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150505210332) do
+ActiveRecord::Schema.define(version: 20150607050927) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,8 +20,10 @@ ActiveRecord::Schema.define(version: 20150505210332) do
     t.text     "name"
     t.integer  "count"
     t.float    "probability"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.integer  "vocabulary_size"
+    t.integer  "terms_count"
   end
 
   create_table "category_domains", force: :cascade do |t|
@@ -39,8 +41,9 @@ ActiveRecord::Schema.define(version: 20150505210332) do
     t.integer  "term_id"
     t.integer  "count"
     t.float    "probability"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.float    "multinomial_probability"
   end
 
   add_index "category_terms", ["category_id"], name: "index_category_terms_on_category_id", using: :btree
