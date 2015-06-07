@@ -20,10 +20,11 @@ ActiveRecord::Schema.define(version: 20150607050927) do
     t.text     "name"
     t.integer  "count"
     t.float    "probability"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
     t.integer  "vocabulary_size"
     t.integer  "terms_count"
+    t.float    "default_multinomial"
   end
 
   create_table "category_domains", force: :cascade do |t|

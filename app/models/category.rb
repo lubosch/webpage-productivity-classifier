@@ -2,14 +2,15 @@
 #
 # Table name: categories
 #
-#  id              :integer          not null, primary key
-#  name            :text
-#  count           :integer
-#  probability     :float
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  vocabulary_size :integer
-#  terms_count     :integer
+#  id                  :integer          not null, primary key
+#  name                :text
+#  count               :integer
+#  probability         :float
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  vocabulary_size     :integer
+#  terms_count         :integer
+#  default_multinomial :float
 #
 
 class Category < ActiveRecord::Base
@@ -18,8 +19,10 @@ class Category < ActiveRecord::Base
   CATEGORIES = [:adult, :spam, :news_editorial, :commercial, :educational_research, :discussion, :personal_leisure, :media, :database]
 
   def update_probabilities
-    update(:terms_count => category_terms.sum(:count), :vocabulary_size => category_terms.count)
-    category_terms.update_all("probability = count / #{terms_count}, multinomial_probability = (count+1) / #{terms_count + vocabulary_size.to_f}")
+    terms_count = category_terms.sum(:count)
+    vocabulary_size = category_terms.count
+    update(:terms_count => terms_count, :vocabulary_size => vocabulary_size, :default_multinomial => 1/(vocabulary_size + terms_count))
+    category_terms.update_all("probability = count / #{terms_count.to_f}, multinomial_probability = (count+1) / #{terms_count + vocabulary_size.to_f}")
   end
 
   def add_terms(domain)

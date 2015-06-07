@@ -35,7 +35,7 @@ class DomainTerm < ActiveRecord::Base
     if pk.present?
       pk = pk.multinomial_probability
     else
-      pk = 1
+      pk = 1 / (category.terms_count + category.vocabulary_size.to_f)
     end
     self.tf * Math.log2(pk)
   end

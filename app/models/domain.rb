@@ -30,8 +30,8 @@ class Domain < ActiveRecord::Base
   def category_probability(category)
     likelihood = 0
     domain_terms.includes(:term => :category_terms).each do |dt|
-      # likelihood += dt.generating_multinomial_likelihood(category)
-      likelihood += dt.generating_bernouolli_likelihood(category)
+      likelihood += dt.generating_multinomial_likelihood(category)
+      # likelihood += dt.generating_bernouolli_likelihood(category)
     end
     likelihood + Math.log2(category.probability)
   end
