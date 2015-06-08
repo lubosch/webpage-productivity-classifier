@@ -163,37 +163,45 @@ namespace :dataset do
     terms = {}
     terms_ids = {}
 
-    Neo::Category.destroy_all
+    #TODO: firstly remove all in cypher query
+
+    i = 0
     Category.all.each do |cat|
       categories[cat.id] = Neo::Category.create(name: cat.name, count: cat.count, probability: cat.probability, vocabulary_size: cat.vocabulary_size, terms_count: cat.terms_count, default_multinomial: cat.default_multinomial)
+      i+=1
+      puts "category #{i}" if i%1000 == 0
     end
 
-    Neo::Term.destroy_all
     Term.all.each do |term|
       terms_ids[term.id] = terms[term.eval_id] = Neo::Term.create(text: term.text, eval_id: term.eval_id, tf: term.tf, df: term.df, probability: term.probability)
+      i+=1
+      puts "term #{i}" if i%1000 == 0
     end
 
 
-    Neo::HasTerm.all.each(&:destroy)
     CategoryTerm.all.each do |cat_term|
       Neo::HasTerm.create(from_node: categories[cat_term.category_id], to_node: terms_ids[cat_term.term_id], count: cat_term.count, probability: cat_term.probability, multinomial_probability: cat_term.multinomial_probability)
+      i+=1
+      puts "category term #{i}" if i%1000 == 0
     end
 
     categories.clear
+    terms_ids.clear
 
-    Neo::Domain.destroy_all
     Domain.all.each do |domain|
       domains[domain.eval_id] = Neo::Domain.create(:name => domain.name, :eval_id => domain.eval_id, :eval_type => domain.eval_type, :lang => domain.lang)
+      i+=1
+      puts "domain #{i}" if i%1000 == 0
     end
 
 
     DomainTerm.all.each do |dt|
       Neo::HasTerm.create(from_node: domains[dt.domain_id], to_node: terms[dt.term_id], count: dt.tf)
+      i+=1
+      puts "domain term #{i}" if i%1000 == 0
     end
     terms.clear
-    terms_ids.clear
 
-    Neo::Label.destroy_all
     labels = {}
     labels[:adult] = Neo::Label.create(:text => 'adult')
     labels[:spam] = Neo::Label.create(:text => 'spam')
@@ -205,7 +213,6 @@ namespace :dataset do
     labels[:media] = Neo::Label.create(:text => 'media')
     labels[:database] = Neo::Label.create(:text => 'database')
 
-    Neo::HasLabel.all.each(&:destroy)
     Label.all.each do |label|
       new_labels = []
       new_labels << :adult if label[:adult] == 1
@@ -232,6 +239,8 @@ namespace :dataset do
         )
       end
 
+      i+=1
+      puts "labels #{i}" if i%1000 == 0
     end
   end
 
