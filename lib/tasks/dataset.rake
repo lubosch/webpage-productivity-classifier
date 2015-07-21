@@ -244,4 +244,40 @@ namespace :dataset do
     end
   end
 
+  desc 'convert to category_terms'
+  task :domains_to_neo4j, [:path] => :environment do
+    i = 0
+    Domain.all.each do |domain|
+      Neo::Host.create(:eval_id => domain.eval_id)
+      i+=1
+      puts "domain #{i}" if i%1000 == 0
+    end
+
+  end
+
+
+  desc 'convert to category_terms'
+  task :links_to_neo4j, [:path] => :environment do
+    path = File.expand_path('vendor/datasets/v2-DiscoveryChallenge2010.hostgraph_weighted.graph-txt', Rails.root)
+
+    hosts = {}
+    Neo::Host.all.each { |host| hosts[host.eval_id] = host }
+    index = 0
+    CSV.foreach(path, :headers => false, col_sep: ' ') do |row|
+      sum = row.sum { |r| r.split(':')[1].to_i }.to_f
+      row.each do |link|
+        to = link.split(':')[0].to_i
+        count = link.split(':')[1].to_i
+        if hosts[index] && hosts[to]
+          Neo::HasLink.create(from_node: hosts[index], to_node: hosts[to], count: count, probability: count/sum)
+          Neo::HasConnection.create(from_node: hosts[to], to_node: hosts[index], count: count, probability: count/sum)
+        end
+      end
+
+      puts "links #{index}" if index%1000 == 0
+      index += 1
+    end
+
+  end
+
 end
