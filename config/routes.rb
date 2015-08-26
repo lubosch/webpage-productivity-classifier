@@ -12,6 +12,11 @@ Rails.application.routes.draw do
     post 'train_bayes', to: 'dashboard#train_bayes', as: 'train_bayes'
   end
 
+  namespace :extension_api do
+     resource :active_page, only: [] do
+       post 'change'
+     end
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -14,7 +14,7 @@
 
 class Term < ActiveRecord::Base
 
-  has_many :categoqry_terms
+  has_many :category_terms
   has_many :domain_terms
 
   def self.update_probabilities

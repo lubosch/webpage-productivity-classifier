@@ -22,9 +22,17 @@ class Domain < ActiveRecord::Base
 
   def classify
     category_probabilities = {}
-    Category.all.each { |category| category_probabilities[category.name] = category_probability(category) }
-    category_probabilities = category_probabilities.sort_by { |_c, v| v }.reverse
-    category_probabilities
+    Category.all.each { |category| category_probabilities[category.name.to_sym] = category_probability(category) }
+    category_probabilities.sort_by { |_c, v| v }.reverse
+  end
+
+  def classify_k_nearest
+    category_probabilities = neo_host.classify(0, 1)
+    category_probabilities.blank? ? classify : category_probabilities.sort_by { |_c, v| v }.reverse
+  end
+
+  def neo_host
+    Neo::Host.find_by(:eval_id => eval_id)
   end
 
   def category_probability(category)
@@ -38,20 +46,37 @@ class Domain < ActiveRecord::Base
 
   def self.experiment
     mrr=0
+    r1 = 0
+    r2 = 0
     all = 0
     Domain.test.each do |domain|
       eval = 1
-      result = domain.classify
-      result.each_with_index do |(name, val), i|
-        if domain.labels.find { |label| label[name.to_sym] == 1 }
-          mrr += eval / (i+1).to_f
-          eval += 1
-          all += 1
-        end
-      end
+      result = domain.classify_k_nearest
+      # result[0..1].each_with_index do |(name, _val), i|
+      #   if domain.labels.find { |label| label[name.to_sym] == 1 }
+      #     mrr += eval / (i+1).to_f
+      #     eval += 1
+      #   end
+      # end
+      # all += domain.evaluated_classes.size
 
-      puts "#{mrr} #{all} --- #{result} --- #{domain.labels.inspect}"
+      r1 += 1 if (domain.evaluated_classes & result[0].flatten).present?
+      r2 += 1 if (domain.evaluated_classes & result[0..1].flatten).present?
+      all += 1
+
+      puts "***************************************************************************************"
+      puts "***************************************************************************************"
+      puts "#{r1} #{r2} #{all} --- #{result} --- #{domain.labels.inspect}"
+      puts "***************************************************************************************"
+      puts "***************************************************************************************"
+      puts "#{r1} #{r2} #{all} --- #{result} --- #{domain.labels.inspect}"
+      puts "***************************************************************************************"
+      puts "***************************************************************************************"
     end
+  end
+
+  def evaluated_classes
+    labels.map { |label| label.categories }.flatten.uniq
   end
 
 end

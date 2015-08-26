@@ -31,4 +31,8 @@ class Label < ActiveRecord::Base
   scope :no_test, -> { where(:domain => Domain.no_test) }
   scope :test, -> { where(:domain => Domain.test) }
 
+  def categories
+    Category::CATEGORIES.select { |category| self[category].to_i > 0 }
+  end
+
 end
