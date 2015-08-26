@@ -1,29 +1,27 @@
 # == Schema Information
 #
-# Table name: domains
+# Table name: applications
 #
 #  id         :integer          not null, primary key
 #  name       :string
 #  eval_type  :string
 #  lang       :string
-#  domain_id  :integer
 #  eval_id    :integer
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
 
-class Domain < ActiveRecord::Base
-  belongs_to :domain
-  has_many :domain_terms, primary_key: :eval_id
+class Application < ActiveRecord::Base
+  has_many :application_terms, primary_key: :eval_id, foreign_key: :application_page_id
   has_many :labels, primary_key: :eval_id
 
   scope :no_test, -> { where(:eval_type => nil) }
   scope :test, -> { where(:eval_type => 'test') }
 
   def classify
-    category_probabilities = {}
-    Category.all.each { |category| category_probabilities[category.name.to_sym] = category_probability(category) }
-    category_probabilities.sort_by { |_c, v| v }.reverse
+    activity_type_probabilities = {}
+    ActivityType.all.each { |activity_type| activity_type_probabilities[activity_type.name.to_sym] = activity_type_probability(activity_type) }
+    activity_type_probabilities.sort_by { |_c, v| v }.reverse
   end
 
   def classify_k_nearest
@@ -35,9 +33,9 @@ class Domain < ActiveRecord::Base
     Neo::Host.find_by(:eval_id => eval_id)
   end
 
-  def category_probability(category)
+  def activity_type_probability(category)
     likelihood = 0
-    domain_terms.includes(:term => :category_terms).each do |dt|
+    application_terms.includes(:term => :activity_type_terms).each do |dt|
       likelihood += dt.generating_multinomial_likelihood(category)
       # likelihood += dt.generating_bernouolli_likelihood(category)
     end
@@ -49,27 +47,27 @@ class Domain < ActiveRecord::Base
     r1 = 0
     r2 = 0
     all = 0
-    Domain.test.each do |domain|
+    Application.test.each do |application|
       eval = 1
-      result = domain.classify_k_nearest
+      result = application.classify_k_nearest
       # result[0..1].each_with_index do |(name, _val), i|
-      #   if domain.labels.find { |label| label[name.to_sym] == 1 }
+      #   if application.labels.find { |label| label[name.to_sym] == 1 }
       #     mrr += eval / (i+1).to_f
       #     eval += 1
       #   end
       # end
-      # all += domain.evaluated_classes.size
+      # all += application.evaluated_classes.size
 
-      r1 += 1 if (domain.evaluated_classes & result[0].flatten).present?
-      r2 += 1 if (domain.evaluated_classes & result[0..1].flatten).present?
+      r1 += 1 if (application.evaluated_classes & result[0].flatten).present?
+      r2 += 1 if (application.evaluated_classes & result[0..1].flatten).present?
       all += 1
 
       puts "***************************************************************************************"
       puts "***************************************************************************************"
-      puts "#{r1} #{r2} #{all} --- #{result} --- #{domain.labels.inspect}"
+      puts "#{r1} #{r2} #{all} --- #{result} --- #{application.labels.inspect}"
       puts "***************************************************************************************"
       puts "***************************************************************************************"
-      puts "#{r1} #{r2} #{all} --- #{result} --- #{domain.labels.inspect}"
+      puts "#{r1} #{r2} #{all} --- #{result} --- #{application.labels.inspect}"
       puts "***************************************************************************************"
       puts "***************************************************************************************"
     end

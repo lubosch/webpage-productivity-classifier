@@ -5,7 +5,7 @@
 #  id          :integer          not null, primary key
 #  eval_id     :integer
 #  text        :string
-#  tf          :integer
+#  ttf         :integer
 #  df          :integer
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null

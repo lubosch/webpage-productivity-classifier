@@ -12,7 +12,7 @@ module Neo
         classes = {}
       else
         factor = 100*(4-level)/6.to_f*probability
-        classes = domain.evaluated_classes
+        classes = application.evaluated_classes
         classes = Hash[*classes.map { |klass| [klass, factor] }.flatten]
       end
       # puts "classes #{classes} #{level}"
@@ -29,8 +29,8 @@ module Neo
       return classes
     end
 
-    def domain
-      Domain.find_by_eval_id(eval_id)
+    def application
+      Application.find_by_eval_id(eval_id)
     end
 
 

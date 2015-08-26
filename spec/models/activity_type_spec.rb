@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: categories
+# Table name: activity_types
 #
 #  id                  :integer          not null, primary key
 #  name                :text
@@ -15,6 +15,6 @@
 
 require 'rails_helper'
 
-RSpec.describe Category, type: :model do
+RSpec.describe ActivityType, type: :model do
   pending "add some examples to (or delete) #{__FILE__}"
 end

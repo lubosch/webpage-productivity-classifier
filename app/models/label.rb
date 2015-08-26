@@ -4,7 +4,7 @@
 #
 #  id                   :integer          not null, primary key
 #  eval_id              :integer
-#  domain_id            :integer
+#  application_id       :integer
 #  assessor_id          :integer
 #  adult                :integer
 #  spam                 :integer
@@ -26,13 +26,13 @@
 #
 
 class Label < ActiveRecord::Base
-  belongs_to :domain, primary_key: :eval_id
+  belongs_to :application, primary_key: :eval_id
 
-  scope :no_test, -> { where(:domain => Domain.no_test) }
-  scope :test, -> { where(:domain => Domain.test) }
+  scope :no_test, -> { where(:application => Application.no_test) }
+  scope :test, -> { where(:application => Application.test) }
 
   def categories
-    Category::CATEGORIES.select { |category| self[category].to_i > 0 }
+    ActivityType::ACTIVITY_TYPES.select { |at| self[at].to_i > 0 }
   end
 
 end

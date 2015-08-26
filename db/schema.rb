@@ -11,12 +11,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150607050927) do
+ActiveRecord::Schema.define(version: 20150826214504) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "categories", force: :cascade do |t|
+  create_table "activity_type_terms", force: :cascade do |t|
+    t.integer  "activity_type_id"
+    t.integer  "term_id"
+    t.integer  "tf"
+    t.float    "probability"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+    t.float    "multinomial_probability"
+  end
+
+  add_index "activity_type_terms", ["activity_type_id"], name: "index_activity_type_terms_on_activity_type_id", using: :btree
+  add_index "activity_type_terms", ["term_id"], name: "index_activity_type_terms_on_term_id", using: :btree
+
+  create_table "activity_types", force: :cascade do |t|
     t.text     "name"
     t.integer  "count"
     t.float    "probability"
@@ -27,50 +40,42 @@ ActiveRecord::Schema.define(version: 20150607050927) do
     t.float    "default_multinomial"
   end
 
-  create_table "category_domains", force: :cascade do |t|
-    t.integer  "category_id"
-    t.integer  "domain_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+  create_table "application_activity_types", force: :cascade do |t|
+    t.integer  "activity_type_id"
+    t.integer  "application_id"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
   end
 
-  add_index "category_domains", ["category_id"], name: "index_category_domains_on_category_id", using: :btree
-  add_index "category_domains", ["domain_id"], name: "index_category_domains_on_domain_id", using: :btree
+  add_index "application_activity_types", ["activity_type_id"], name: "index_application_activity_types_on_activity_type_id", using: :btree
+  add_index "application_activity_types", ["application_id"], name: "index_application_activity_types_on_application_id", using: :btree
 
-  create_table "category_terms", force: :cascade do |t|
-    t.integer  "category_id"
-    t.integer  "term_id"
-    t.integer  "count"
-    t.float    "probability"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
-    t.float    "multinomial_probability"
+  create_table "application_pages", force: :cascade do |t|
+    t.integer  "application_id"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
   end
 
-  add_index "category_terms", ["category_id"], name: "index_category_terms_on_category_id", using: :btree
-  add_index "category_terms", ["term_id"], name: "index_category_terms_on_term_id", using: :btree
+  add_index "application_pages", ["application_id"], name: "index_application_pages_on_application_id", using: :btree
 
-  create_table "domain_terms", force: :cascade do |t|
-    t.integer "domain_id"
+  create_table "application_terms", force: :cascade do |t|
+    t.integer "application_page_id"
     t.integer "term_id"
     t.integer "tf"
-    t.integer "df"
   end
 
-  add_index "domain_terms", ["domain_id"], name: "index_domain_terms_on_domain_id", using: :btree
+  add_index "application_terms", ["application_page_id"], name: "index_application_terms_on_application_page_id", using: :btree
 
-  create_table "domains", force: :cascade do |t|
+  create_table "applications", force: :cascade do |t|
     t.string   "name"
     t.string   "eval_type"
     t.string   "lang"
-    t.integer  "domain_id"
     t.integer  "eval_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  add_index "domains", ["domain_id"], name: "index_domains_on_domain_id", using: :btree
-  add_index "domains", ["eval_id"], name: "index_domains_on_eval_id", using: :btree
+  add_index "applications", ["eval_id"], name: "index_applications_on_eval_id", using: :btree
 
   create_table "identities", force: :cascade do |t|
     t.integer  "user_id"
@@ -84,7 +89,7 @@ ActiveRecord::Schema.define(version: 20150607050927) do
 
   create_table "labels", force: :cascade do |t|
     t.integer  "eval_id"
-    t.integer  "domain_id"
+    t.integer  "application_id"
     t.integer  "assessor_id"
     t.integer  "adult"
     t.integer  "spam"
@@ -105,21 +110,23 @@ ActiveRecord::Schema.define(version: 20150607050927) do
     t.datetime "updated_at",           null: false
   end
 
-  add_index "labels", ["domain_id"], name: "index_labels_on_domain_id", using: :btree
+  add_index "labels", ["application_id"], name: "index_labels_on_application_id", using: :btree
 
   create_table "terms", force: :cascade do |t|
     t.integer  "eval_id"
     t.string   "text"
-    t.integer  "tf"
+    t.integer  "ttf"
     t.integer  "df"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.decimal  "probability"
   end
 
-  create_table "user_activities", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "user_application_pages", force: :cascade do |t|
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+    t.integer  "application_page_id"
+    t.integer  "user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -143,10 +150,10 @@ ActiveRecord::Schema.define(version: 20150607050927) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
-  add_foreign_key "category_domains", "categories"
-  add_foreign_key "category_domains", "domains"
-  add_foreign_key "category_terms", "categories"
-  add_foreign_key "category_terms", "terms"
-  add_foreign_key "domains", "domains"
+  add_foreign_key "activity_type_terms", "activity_types"
+  add_foreign_key "activity_type_terms", "terms"
+  add_foreign_key "application_activity_types", "activity_types"
+  add_foreign_key "application_activity_types", "applications"
+  add_foreign_key "application_pages", "applications"
   add_foreign_key "identities", "users"
 end

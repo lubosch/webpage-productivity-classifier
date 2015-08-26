@@ -21,13 +21,13 @@ namespace :dataset do
     end
 
 
-    Domain.transaction do
+    Application.transaction do
 
       CSV.foreach(path, :headers => false, col_sep: ' ') do |row|
         alter_id = test_docs[row[1]].to_i if test_docs[row[1]]
         eval_type = 'test' if test_docs.has_key?(row[1])
         lang = langs[row[1]] if langs[row[1]].present?
-        Domain.create(name: row[0], eval_type: eval_type, alter_id: alter_id, eval_id: row[1].to_i, lang: lang)
+        Application.create(name: row[0], eval_type: eval_type, alter_id: alter_id, eval_id: row[1].to_i, lang: lang)
       end
 
     end
@@ -51,12 +51,12 @@ namespace :dataset do
     docs = []
     index = 0
     CSV.foreach(path, :headers => false, col_sep: ' ') do |data|
-      domain_id = data.shift.to_i
+      application_id = data.shift.to_i
       data.each_slice(3).each do |row|
         index += 1
-        docs.push(sql_insert_query_sanitizer(domain_id, row[0].to_i, row[1].to_i, row[2].to_i))
+        docs.push(sql_insert_query_sanitizer(application_id, row[0].to_i, row[1].to_i, row[2].to_i))
         if index%200_000 == 0
-          sql_insert_query_executer(DomainTerm, docs, 'domain_id, term_id, tf, df')
+          sql_insert_query_executer(ApplicationTerm, docs, 'application_id, term_id, tf, df')
           docs.clear
           puts index
         end
@@ -136,15 +136,15 @@ namespace :dataset do
 
   desc 'convert to category_terms'
   task :category_terms, [:path] => :environment do
-    Category.destroy_all
+    ActivityType.destroy_all
     categories = {}
     categories_all = [:adult, :spam, :news_editorial, :commercial, :educational_research, :discussion, :personal_leisure, :media, :database]
-    categories_all.map { |category| categories[category]= Category.create(:name => category, :count => 0) }
+    categories_all.map { |category| categories[category]= ActivityType.create(:name => category, :count => 0) }
 
-    CategoryTerm.transaction do
-      Label.no_test.includes(:domain).all.each_with_index do |label, index|
+    ActivityTypeTerm.transaction do
+      Label.no_test.includes(:application).all.each_with_index do |label, index|
         categories_all.each do |category|
-          categories[category].add_terms(label.domain) if label[category] == 1
+          categories[category].add_terms(label.application) if label[category] == 1
         end
         puts index if index%10 == 0
       end
@@ -152,13 +152,13 @@ namespace :dataset do
       categories.each_value(&:update_probabilities)
     end
 
-    Category.update_all_probabilities
+    ActivityType.update_all_probabilities
     Term.update_probabilities
   end
 
   desc 'copy to neo4j'
   task :clone_to_neo4j, [:path] => :environment do
-    domains = {}
+    applications = {}
     categories = {}
     terms = {}
     terms_ids = {}
@@ -166,7 +166,7 @@ namespace :dataset do
     #TODO: firstly remove all in cypher query
 
     i = 0
-    Category.all.each do |cat|
+    ActivityType.all.each do |cat|
       categories[cat.id] = Neo::Category.create(name: cat.name, count: cat.count, probability: cat.probability, vocabulary_size: cat.vocabulary_size, terms_count: cat.terms_count, default_multinomial: cat.default_multinomial)
       i+=1
       puts "category #{i}" if i%1000 == 0
@@ -179,8 +179,8 @@ namespace :dataset do
     end
 
 
-    CategoryTerm.all.each do |cat_term|
-      Neo::HasTerm.create(from_node: categories[cat_term.category_id], to_node: terms_ids[cat_term.term_id], count: cat_term.count, probability: cat_term.probability, multinomial_probability: cat_term.multinomial_probability)
+    ActivityTypeTerm.all.each do |cat_term|
+      Neo::HasTerm.create(from_node: categories[cat_term.activity_type_id], to_node: terms_ids[cat_term.term_id], count: cat_term.count, probability: cat_term.probability, multinomial_probability: cat_term.multinomial_probability)
       i+=1
       puts "category term #{i}" if i%1000 == 0
     end
@@ -188,15 +188,15 @@ namespace :dataset do
     categories.clear
     terms_ids.clear
 
-    Domain.all.each do |domain|
-      domains[domain.eval_id] = Neo::Domain.create(:name => domain.name, :eval_id => domain.eval_id, :eval_type => domain.eval_type, :lang => domain.lang)
+    Application.all.each do |application|
+      applications[application.eval_id] = Neo::Domain.create(:name => application.name, :eval_id => application.eval_id, :eval_type => application.eval_type, :lang => application.lang)
       i+=1
       puts "domain #{i}" if i%1000 == 0
     end
 
 
-    DomainTerm.all.each do |dt|
-      Neo::HasTerm.create(from_node: domains[dt.domain_id], to_node: terms[dt.term_id], count: dt.tf)
+    ApplicationTerm.all.each do |dt|
+      Neo::HasTerm.create(from_node: applications[dt.application_id], to_node: terms[dt.term_id], count: dt.tf)
       i+=1
       puts "domain term #{i}" if i%1000 == 0
     end
@@ -227,7 +227,7 @@ namespace :dataset do
 
       new_labels.each do |nl|
         Neo::HasLabel.create(
-            from_node: domains[label.domain_id],
+            from_node: applications[label.application_id],
             to_node: labels[nl],
             assessor_id: label.assessor_id,
             readability_vis: label.readability_vis,
@@ -245,10 +245,10 @@ namespace :dataset do
   end
 
   desc 'convert to category_terms'
-  task :domains_to_neo4j, [:path] => :environment do
+  task :applications_to_neo4j, [:path] => :environment do
     i = 0
-    Domain.all.each do |domain|
-      Neo::Host.create(:eval_id => domain.eval_id)
+    Application.all.each do |application|
+      Neo::Host.create(:eval_id => application.eval_id)
       i+=1
       puts "domain #{i}" if i%1000 == 0
     end

@@ -1,19 +1,19 @@
 # == Schema Information
 #
-# Table name: category_terms
+# Table name: activity_type_terms
 #
 #  id                      :integer          not null, primary key
-#  category_id             :integer
+#  activity_type_id        :integer
 #  term_id                 :integer
-#  count                   :integer
+#  tf                      :integer
 #  probability             :float
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  multinomial_probability :float
 #
 
-class CategoryTerm < ActiveRecord::Base
-  belongs_to :category
+class ActivityTypeTerm < ActiveRecord::Base
+  belongs_to :activity_type
   belongs_to :term
 
 
