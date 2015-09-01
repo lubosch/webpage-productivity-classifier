@@ -248,7 +248,7 @@ namespace :dataset do
   task :applications_to_neo4j, [:path] => :environment do
     i = 0
     Application.all.each do |application|
-      Neo::Host.create(:eval_id => application.eval_id)
+      Neo::AppPage.create(:eval_id => application.eval_id)
       i+=1
       puts "domain #{i}" if i%1000 == 0
     end
@@ -261,7 +261,7 @@ namespace :dataset do
     path = File.expand_path('vendor/datasets/v2-DiscoveryChallenge2010.hostgraph_weighted.graph-txt', Rails.root)
 
     hosts = {}
-    Neo::Host.all.each { |host| hosts[host.eval_id] = host }
+    Neo::AppPage.all.each { |host| hosts[host.eval_id] = host }
     index = 0
     CSV.foreach(path, :headers => false, col_sep: ' ') do |row|
       sum = row.sum { |r| r.split(':')[1].to_i }.to_f

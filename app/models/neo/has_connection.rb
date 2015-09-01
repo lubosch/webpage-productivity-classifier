@@ -2,8 +2,8 @@ module Neo
   class HasConnection
     include Neo4j::ActiveRel
 
-    from_class Host
-    to_class Host
+    from_class AppPage
+    to_class AppPage
     type 'HAS_CONNECTION'
 
     property :count, type: Integer

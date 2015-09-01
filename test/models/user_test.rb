@@ -18,6 +18,7 @@
 #  lname                  :string
 #  fname                  :string
 #  username               :string
+#  desktop_logger         :integer
 #
 
 require 'test_helper'

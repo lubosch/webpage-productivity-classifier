@@ -6,6 +6,9 @@
 #  application_id :integer
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  url            :string
+#  static         :integer
+#  user_static    :integer
 #
 
 require 'rails_helper'

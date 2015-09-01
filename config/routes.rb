@@ -12,8 +12,11 @@ Rails.application.routes.draw do
   end
 
   namespace :extension_api do
-    resource :active_page, only: [] do
-      post 'change'
+    resource :active_pages, only: [] do
+      post 'tab_change'
+      post 'new_page'
+      post 'chrome_closed'
+      post 'page_lost_focus'
     end
   end
 

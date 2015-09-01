@@ -2,13 +2,16 @@
 #
 # Table name: applications
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  eval_type  :string
-#  lang       :string
-#  eval_id    :integer
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id          :integer          not null, primary key
+#  name        :string
+#  eval_type   :string
+#  lang        :string
+#  eval_id     :integer
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  url         :string
+#  static      :integer
+#  user_static :integer
 #
 
 class Application < ActiveRecord::Base
@@ -30,7 +33,7 @@ class Application < ActiveRecord::Base
   end
 
   def neo_host
-    Neo::Host.find_by(:eval_id => eval_id)
+    Neo::AppPage.find_by(:eval_id => eval_id)
   end
 
   def activity_type_probability(category)
@@ -75,6 +78,28 @@ class Application < ActiveRecord::Base
 
   def evaluated_classes
     labels.map { |label| label.categories }.flatten.uniq
+  end
+
+  def self.extract_domain(url)
+    url = "http://#{url}" if URI.parse(url).scheme.nil?
+    URI.parse(url).host.downcase
+    URI.parse(url).host.downcase
+  end
+
+  def self.app_lang(url)
+    :en
+  end
+
+  def self.app_name(url)
+    name = extract_domain(url)
+    name.split('.')[0..-2].join(' ').capitalize
+  end
+
+  def self.find_or_create_by_params(url)
+    domain = extract_domain(url) # TODO url domain
+    name = app_name(url)
+    lang = app_lang(url)
+    where(url: domain).first_or_create(eval_type: 'experiment', lang: lang, static: 0, user_static: 0, name: name)
   end
 
 end

@@ -18,6 +18,7 @@
 #  lname                  :string
 #  fname                  :string
 #  username               :string
+#  desktop_logger         :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

@@ -1,11 +1,11 @@
 module Neo
-  class Host
+  class App
     include Neo4j::ActiveNode
 
     property :eval_id, type: Integer, index: :exact
+    property :id, type: Integer, index: :exact
 
-    has_many :out, :to_hosts, rel_class: HasLink, model_class: Host
-    has_many :in, :from_hosts, rel_class: HasConnection, model_class: Host
+    has_many :both, :app_pages, rel_class: HasPage, model_class: AppPage
 
     def classify(level, probability)
       if level == 0
@@ -26,11 +26,11 @@ module Neo
         end
       end
 
-      return classes
+      classes
     end
 
     def application
-      Application.find_by_eval_id(eval_id)
+      Application.find_by_id(id)
     end
 
 

@@ -18,6 +18,7 @@
 #  lname                  :string
 #  fname                  :string
 #  username               :string
+#  desktop_logger         :integer
 #
 
 class User < ActiveRecord::Base
@@ -25,6 +26,8 @@ class User < ActiveRecord::Base
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable, :omniauthable,
          :recoverable, :rememberable, :trackable, :validatable, :omniauth_providers => [:facebook, :twitter]
+
+  has_many :user_application_pages
 
   TEMP_EMAIL_PREFIX = 'change@me'
   TEMP_EMAIL_REGEX = /\Achange@me/

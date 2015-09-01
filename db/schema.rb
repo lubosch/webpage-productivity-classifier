@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150826214504) do
+ActiveRecord::Schema.define(version: 20150830123610) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 20150826214504) do
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
     t.float    "multinomial_probability"
+    t.string   "type"
   end
 
   add_index "activity_type_terms", ["activity_type_id"], name: "index_activity_type_terms_on_activity_type_id", using: :btree
@@ -54,6 +55,9 @@ ActiveRecord::Schema.define(version: 20150826214504) do
     t.integer  "application_id"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
+    t.string   "url"
+    t.integer  "static"
+    t.integer  "user_static"
   end
 
   add_index "application_pages", ["application_id"], name: "index_application_pages_on_application_id", using: :btree
@@ -62,6 +66,7 @@ ActiveRecord::Schema.define(version: 20150826214504) do
     t.integer "application_page_id"
     t.integer "term_id"
     t.integer "tf"
+    t.string  "type"
   end
 
   add_index "application_terms", ["application_page_id"], name: "index_application_terms_on_application_page_id", using: :btree
@@ -71,8 +76,11 @@ ActiveRecord::Schema.define(version: 20150826214504) do
     t.string   "eval_type"
     t.string   "lang"
     t.integer  "eval_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.string   "url"
+    t.integer  "static"
+    t.integer  "user_static"
   end
 
   add_index "applications", ["eval_id"], name: "index_applications_on_eval_id", using: :btree
@@ -127,6 +135,11 @@ ActiveRecord::Schema.define(version: 20150826214504) do
     t.datetime "updated_at",          null: false
     t.integer  "application_page_id"
     t.integer  "user_id"
+    t.integer  "length"
+    t.integer  "scroll_count"
+    t.integer  "scroll_diff"
+    t.integer  "tab_id"
+    t.integer  "type"
   end
 
   create_table "users", force: :cascade do |t|
@@ -145,6 +158,7 @@ ActiveRecord::Schema.define(version: 20150826214504) do
     t.string   "lname"
     t.string   "fname"
     t.string   "username"
+    t.integer  "desktop_logger"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

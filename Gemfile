@@ -17,7 +17,8 @@ gem 'coffee-rails', '~> 4.1.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 gem 'therubyracer', platforms: :ruby
 
-gem 'devise'
+# gem 'devise'
+gem 'devise_token_auth'
 gem 'devise-i18n'
 gem 'omniauth'
 gem 'omniauth-twitter'
@@ -47,6 +48,8 @@ gem 'bootstrap-sass'
 gem 'bootstrap-modal-rails'
 
 gem 'annotate'
+
+# gem 'angular_rails_csrf'
 
 # gem 'neo4j', branch: :master
 gem 'neo4j', github: 'andreasronge/neo4j'

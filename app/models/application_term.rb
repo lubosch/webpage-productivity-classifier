@@ -6,6 +6,7 @@
 #  application_page_id :integer
 #  term_id             :integer
 #  tf                  :integer
+#  type                :string
 #
 
 class ApplicationTerm < ActiveRecord::Base
