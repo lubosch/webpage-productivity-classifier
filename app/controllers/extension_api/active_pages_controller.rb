@@ -1,4 +1,4 @@
-class ExtensionApi::ActivePagesController < ApplicationController
+class ExtensionApi::ActivePagesController < ExtensionApiController
 
   before_action :load_user
 

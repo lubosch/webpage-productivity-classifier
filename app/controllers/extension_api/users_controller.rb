@@ -1,8 +1,7 @@
-class ExtensionApi::UsersController < ApplicationController
+class ExtensionApi::UsersController < ExtensionApiController
 
   def profile
     @user = current_user
-    binding.pry
     if @user
       render json: @user
     else
