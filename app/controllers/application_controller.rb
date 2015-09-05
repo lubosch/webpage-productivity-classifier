@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
 
   def render_200
     respond_to do |format|
-      format.any { head :ok}
+      format.any { head :ok }
       format.html { render :file => "#{Rails.root}/public/200", :layout => false, :status => :not_found }
     end
   end
@@ -21,6 +21,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def render_401
+    respond_to do |format|
+      format.html { render :file => "#{Rails.root}/public/403", :layout => false, :status => 401 }
+      format.any { head :not_authorized, status: 401 }
+    end
+  end
+
   def render_500
     respond_to do |format|
       format.html { render :file => "#{Rails.root}/public/500", :layout => false, :status => :not_found }
@@ -28,12 +35,8 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  rescue_from CanCan::AccessDenied do | exception |
-    # flash[:error] = exception.message
-    respond_to do |format|
-      format.html { render :file => "#{Rails.root}/public/403", :layout => false, :status => :access_denied }
-      format.any { head :not_found }
-    end
+  rescue_from CanCan::AccessDenied do |exception|
+    render_401
   end
 
   def after_sign_in_path_for(resource)

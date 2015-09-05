@@ -3,6 +3,8 @@ class ExtensionApi::ActivePagesController < ApplicationController
   before_action :load_user
 
   def tab_change
+    binding.pry
+    render_200
 
   end
 
@@ -12,6 +14,7 @@ class ExtensionApi::ActivePagesController < ApplicationController
     app_act.length = params[:active_length].to_i
     app_act.scroll_count = params[:scroll_count].to_i
     app_act.save
+    render_200
   end
 
   def chrome_closed
@@ -19,11 +22,13 @@ class ExtensionApi::ActivePagesController < ApplicationController
     #   app_activity.application
     #   app_activity.length ||= DateTime.current.to_i - app_activity.created_at.to_i
     #   app_activity.save
+    render_200
   end
 
   def new_page
     ap = ApplicationPage.find_or_create_by_params(params)
     user_activity = UserApplicationPage.create(user: @user, application_page: ap, tab_id: tab_id)
+    render_200
   end
 
   def load_user

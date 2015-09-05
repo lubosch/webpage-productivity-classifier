@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  use_doorkeeper { controllers :applications => 'oauth/applications' }
   devise_for :users, :controllers => {omniauth_callbacks: 'omniauth_callbacks'}
 
   root 'pages#index'
@@ -17,6 +18,16 @@ Rails.application.routes.draw do
       post 'new_page'
       post 'chrome_closed'
       post 'page_lost_focus'
+      get 'tab_change'
+      get 'new_page'
+      get 'chrome_closed'
+      get 'page_lost_focus'
+
+    end
+
+    resource :user do
+      get :profile, on: :collection
+
     end
   end
 
