@@ -5,9 +5,11 @@ module Neo
     property :url, type: String, index: :exact
     property :id, type: Integer, index: :exact
 
-    has_many :out, :to_hosts, rel_class: HasLink, model_class: AppPage
-    has_many :in, :from_hosts, rel_class: HasConnection, model_class: AppPage
-    has_one :both, :app, rel_class: HasPage, model_class: App
+    has_many :out, :to_hosts, rel_class: Neo::HasLink, model_class: Neo::AppPage
+    has_many :in, :from_hosts, rel_class: Neo::HasLink, model_class: Neo::AppPage
+    has_many :out, :to_switch, rel_class: Neo::HasSwitch, model_class: Neo::AppPage
+    has_many :in, :from_switch, rel_class: Neo::HasSwitch, model_class: Neo::AppPage
+    has_one :both, :app, rel_class: Neo::HasPage, model_class: Neo::App
 
     def classify(level, probability)
       if level == 0
@@ -51,13 +53,20 @@ module Neo
     end
 
     def set_referrer(referrer)
-      app_page = AppPage.find_by_url(referrer)
+      app_page = from_hosts.where(url: referrer).first || AppPage.find_by(url: referrer)
       if app_page
-        link = HasLink.find_or_create(from_node: app_page, to_node: self)
-        link.count ? link.count += 1 : link.count = 1
+        link = app_page.to_hosts.first_rel_to(self) || HasLink.new(from_node: app_page, to_node: self, count: 0)
+        link.count += 1
+        link.save
+      end
+    end
 
-        link = HasConnection.find_or_create(from_node: self, to_node: app_page)
-        link.count ? link.count += 1 : link.count = 1
+    def set_switch(referrer)
+      app_page = from_switch.where(url: referrer).first || AppPage.find_by(url: referrer)
+      if app_page
+        link = app_page.to_switch.first_rel_to(self) || HasSwitch.new(from_node: app_page, to_node: self, count: 0)
+        link.count += 1
+        link.save
       end
     end
 

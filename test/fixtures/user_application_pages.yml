@@ -7,11 +7,13 @@
 #  updated_at          :datetime         not null
 #  application_page_id :integer
 #  user_id             :integer
-#  length              :integer
+#  length              :float
 #  scroll_count        :integer
 #  scroll_diff         :integer
 #  tab_id              :integer
-#  type                :integer
+#  app_type            :integer
+#  scroll_up           :integer
+#  scroll_down         :integer
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html

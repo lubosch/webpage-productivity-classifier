@@ -91,4 +91,8 @@ class User < ActiveRecord::Base
     self.email && self.email !~ TEMP_EMAIL_REGEX
   end
 
+  def active_app?
+    user_application_pages.last_chrome
+  end
+
 end

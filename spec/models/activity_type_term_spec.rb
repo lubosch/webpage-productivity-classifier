@@ -10,7 +10,7 @@
 #  created_at              :datetime         not null
 #  updated_at              :datetime         not null
 #  multinomial_probability :float
-#  type                    :string
+#  term_type               :string
 #
 
 require 'rails_helper'

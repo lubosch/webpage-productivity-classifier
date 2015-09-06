@@ -3,36 +3,40 @@ class ExtensionApi::ActivePagesController < ExtensionApiController
   before_action :load_user
 
   def tab_change
-    binding.pry
+    new_page = @user.user_application_pages.where(tab_id: params[:tab_id]).last
+    old_page = @user.user_application_pages.last
+    old_page.tab_change(new_page) if new_page && old_page && old_page != new_page
     render_200
-
   end
 
   def page_lost_focus
-    ap = ApplicationPage.find_by(url: params[:url])
-    app_act = @user.user_application_pages.where(application_page: ap).last
-    app_act.length = params[:active_length].to_i
-    app_act.scroll_count = params[:scroll_count].to_i
-    app_act.save
+    app_act = @user.user_application_pages.where(tab_id: params[:tab_id]).last
+    if app_act
+      app_act.length = params[:active_length]
+      app_act.scroll_up = params[:up_scroll_count]
+      app_act.scroll_down = params[:down_scroll_count]
+      app_act.scroll_diff = app_act.scroll_down - app_act.scroll_up
+      app_act.scroll_count = app_act.scroll_up + app_act.scroll_down
+      app_act.save
+    end
     render_200
   end
 
-  def chrome_closed
-    #   app_activity = @user.user_application_pages.last
-    #   app_activity.application
-    #   app_activity.length ||= DateTime.current.to_i - app_activity.created_at.to_i
-    #   app_activity.save
+  def chrome_activated
+    app_act = @user.user_application_pages.where(tab_id: params[:tab_id]).last
+    @user.user_application_pages.create(user: @user, application_page: app_act.application_page, tab_id: app_act.tab_id, app_type: app_act.app_type) if app_act && !app_act.active?
     render_200
   end
 
   def new_page
     ap = ApplicationPage.find_or_create_by_params(params)
-    user_activity = UserApplicationPage.create(user: @user, application_page: ap, tab_id: tab_id)
+    @user.user_application_pages.create(application_page: ap, tab_id: params[:tab_id], app_type: 'chrome')
     render_200
   end
 
   def load_user
     @user = current_user
+    render_401 unless @user
   end
 
 end

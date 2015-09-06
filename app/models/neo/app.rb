@@ -5,7 +5,7 @@ module Neo
     property :eval_id, type: Integer, index: :exact
     property :id, type: Integer, index: :exact
 
-    has_many :both, :app_pages, rel_class: HasPage, model_class: AppPage
+    has_many :both, :app_pages, rel_class: Neo::HasPage, model_class: Neo::AppPage
 
     def classify(level, probability)
       if level == 0

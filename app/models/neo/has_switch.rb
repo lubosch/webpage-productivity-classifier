@@ -1,10 +1,10 @@
 module Neo
-  class HasConnection
+  class HasSwitch
     include Neo4j::ActiveRel
 
-    from_class AppPage
-    to_class AppPage
-    type 'HAS_CONNECTION'
+    from_class Neo::AppPage
+    to_class Neo::AppPage
+    type 'HAS_SWITCH'
 
     property :count, type: Integer
     property :probability, type: Float

@@ -2,8 +2,8 @@ module Neo
   class HasLink
     include Neo4j::ActiveRel
 
-    from_class AppPage
-    to_class AppPage
+    from_class Neo::AppPage
+    to_class Neo::AppPage
     type 'HAS_LINK'
 
     property :count, type: Integer

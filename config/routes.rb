@@ -16,7 +16,7 @@ Rails.application.routes.draw do
     resource :active_pages, only: [] do
       post 'tab_change'
       post 'new_page'
-      post 'chrome_closed'
+      post 'chrome_activated'
       post 'page_lost_focus'
     end
 

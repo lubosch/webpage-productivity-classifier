@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150902192208) do
+ActiveRecord::Schema.define(version: 20150905232341) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,7 +24,7 @@ ActiveRecord::Schema.define(version: 20150902192208) do
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
     t.float    "multinomial_probability"
-    t.string   "type"
+    t.string   "term_type"
   end
 
   add_index "activity_type_terms", ["activity_type_id"], name: "index_activity_type_terms_on_activity_type_id", using: :btree
@@ -66,7 +66,7 @@ ActiveRecord::Schema.define(version: 20150902192208) do
     t.integer "application_page_id"
     t.integer "term_id"
     t.integer "tf"
-    t.string  "type"
+    t.string  "term_type"
   end
 
   add_index "application_terms", ["application_page_id"], name: "index_application_terms_on_application_page_id", using: :btree
@@ -178,11 +178,13 @@ ActiveRecord::Schema.define(version: 20150902192208) do
     t.datetime "updated_at",          null: false
     t.integer  "application_page_id"
     t.integer  "user_id"
-    t.integer  "length"
+    t.float    "length"
     t.integer  "scroll_count"
     t.integer  "scroll_diff"
     t.integer  "tab_id"
-    t.integer  "type"
+    t.integer  "app_type"
+    t.integer  "scroll_up"
+    t.integer  "scroll_down"
   end
 
   create_table "users", force: :cascade do |t|

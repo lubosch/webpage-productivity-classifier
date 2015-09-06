@@ -33,14 +33,14 @@ class Term < ActiveRecord::Base
       term = where(text: word).first_or_initialize(ttf: 0, df: 0, probability: 0.0)
       term.ttf += count || 1
       term.save
-      terms[term] = count
+      terms[term] = count || 1
     end
     terms
   end
 
   def self.create_text_terms(sentences)
     words = {}
-    sentences.(&:split).flatten.each { |word| words[word] ? words[word] += 1 : words[word] = 1 }
+    sentences.map(&:split).flatten.each { |word| words[word] ? words[word] += 1 : words[word] = 1 }
     create_terms_from_array(words)
   end
 

@@ -17,7 +17,7 @@ class ApplicationPage < ActiveRecord::Base
 
   def self.find_or_create_by_params(params)
     transaction do
-      ap = ApplicationPage.find_by_url(url)
+      ap = ApplicationPage.find_by_url(params[:url])
       ap ? ap.compare_terms(params[:title], params[:meta_description], params[:headers], params[:tfidf]) : ap = create_by_params(params)
       ap
     end
@@ -27,33 +27,40 @@ class ApplicationPage < ActiveRecord::Base
     application = Application.find_or_create_by_params(params[:url])
     ap = ApplicationPage.create(application: application, url: params[:url], static: 0, user_static: 0)
     ap.create_terms(params[:title], params[:meta_description], params[:headers], params[:tfidf])
-    ap.create_neo_app_page(referrer)
+    neo_app = ap.find_or_create_neo_app_page
+    neo_app.set_referrer(params[:referrer]) if params[:referrer].present?
     ap
   end
 
   def create_terms(title, description, headers, tfidf)
-    title_terms = Term.create_terms_from_sentence(title)
-    description_terms = Term.create_terms_from_sentence(description)
-    header_terms = Term.create_text_terms(headers)
-
-    write_in_db(title_terms, 'title')
-    write_in_db(description_terms, 'description')
-    write_in_db(header_terms, 'header')
+    if title.present?
+      title_terms = Term.create_terms_from_sentence(title)
+      write_in_db(title_terms, 'title')
+    end
+    if description.present?
+      description_terms = Term.create_terms_from_sentence(description)
+      write_in_db(description_terms, 'description')
+    end
+    if headers.present?
+      header_terms = Term.create_text_terms(headers)
+      write_in_db(header_terms, 'header')
+    end
   end
 
   def write_in_db(terms, type)
+    # binding.pry
     terms.each do |term, count|
-      at = application_terms.where(term: term, type: type).find_or_initialize(tf: 0)
+      at = application_terms.where(term: term, term_type: type).first_or_initialize(tf: 0)
       at.tf += count
       at.save
     end
   end
 
-  def create_neo_app_page(referrer)
-    neo_app_page.set_referrer(referrer)
+  def connect_previous_tab(old_page)
+    find_or_create_neo_app_page.set_switch(old_page.url)
   end
 
-  def neo_app_page
+  def find_or_create_neo_app_page
     Neo::AppPage.find_or_create_by_id(id, url, application.id, application.url)
   end
 
