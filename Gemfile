@@ -53,7 +53,7 @@ gem 'annotate'
 # gem 'angular_rails_csrf'
 
 # gem 'neo4j', branch: :master
-gem 'neo4j', github: 'andreasronge/neo4j'
+gem 'neo4j', '~> 5.2'#, github: 'andreasronge/neo4j'
 # gem 'neo4j-core', branch: :master
 gem 'mechanize'
 gem 'faraday'
