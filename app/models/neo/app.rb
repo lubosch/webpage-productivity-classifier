@@ -3,7 +3,8 @@ module Neo
     include Neo4j::ActiveNode
 
     property :eval_id, type: Integer, index: :exact
-    property :id, type: Integer, index: :exact
+    property :application_id, type: Integer, index: :exact
+    property :url, type: String, index: :exact
 
     has_many :both, :app_pages, rel_class: Neo::HasPage, model_class: Neo::AppPage
 
@@ -30,7 +31,7 @@ module Neo
     end
 
     def application
-      Application.find_by_id(id)
+      Application.find_by_id(self.application_page_id)
     end
 
 

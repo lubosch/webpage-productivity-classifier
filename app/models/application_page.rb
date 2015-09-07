@@ -45,10 +45,15 @@ class ApplicationPage < ActiveRecord::Base
       header_terms = Term.create_text_terms(headers)
       write_in_db(header_terms, 'header')
     end
+
+    if tfidf.present?
+      tfs = Term.create_terms_from_array(tfidf)
+      write_in_db(tfs, 'text')
+    end
+
   end
 
   def write_in_db(terms, type)
-    # binding.pry
     terms.each do |term, count|
       at = application_terms.where(term: term, term_type: type).first_or_initialize(tf: 0)
       at.tf += count

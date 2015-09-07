@@ -3,7 +3,7 @@ module Neo
     include Neo4j::ActiveNode
 
     property :url, type: String, index: :exact
-    property :id, type: Integer, index: :exact
+    property :application_page_id, type: Integer, index: :exact
 
     has_many :out, :to_hosts, rel_class: Neo::HasLink, model_class: Neo::AppPage
     has_many :in, :from_hosts, rel_class: Neo::HasLink, model_class: Neo::AppPage
@@ -34,22 +34,21 @@ module Neo
     end
 
     def application_page
-      ApplicationPage.find_by_id(id)
+      ApplicationPage.find_by_id(self.application_page_id)
     end
 
     def self.find_or_create_by_id(id, url, application_id, application_url)
-      app_page = find_or_create_by(url: url)
-      app_page.update(id: id) if id != app_page.id
+      app_page = find_or_create_by(application_page_id: id)
+      app_page.update(url: url) if url != app_page.url
       app_page.connect_app(application_id, application_url)
       app_page
     end
 
     def connect_app(application_id, application_url)
-      unless app
-        app = App.find_or_create_by(id: application_id)
-        app.update(url: application_url)
-        update(app: app)
-      end
+      app = App.find_or_create_by(application_id: application_id)
+      app.url = application_url
+      app.save
+      update(app: app)
     end
 
     def set_referrer(referrer)
