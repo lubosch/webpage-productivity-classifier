@@ -15,6 +15,8 @@ class ApplicationPage < ActiveRecord::Base
   belongs_to :application
   has_many :application_terms
 
+  delegate :name, to: :application, prefix: true
+
   def self.find_or_create_by_params(params)
     transaction do
       ap = ApplicationPage.find_by_url(params[:url])

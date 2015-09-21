@@ -10,13 +10,14 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
- *= require bootstrap-modal-bs3patch
- *= require bootstrap-modal
  *= require_self
  */
 
 @import "bootstrap-sprockets";
 @import "bootstrap";
+@import "bootstrap-modal-bs3patch";
+@import "bootstrap-modal";
 @import "variables";
 @import "mixins";
 @import "sb-admin-2";
+@import "vis.min";

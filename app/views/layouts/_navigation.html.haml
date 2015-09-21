@@ -7,10 +7,10 @@
         %span.icon-bar
         %span.icon-bar
         %span.icon-bar
-      = link_to 'Productivity Optimizer', root_path, class: 'navbar-brand'
+      %a.navbar-brand{'ui-sref': 'index'}='Productivity Optimizer'
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
         %li
-          =link_to 'Dashboard', dashboards_path
+          %a{'ui-sref': 'dashboards'}='Dashboard'
       %ul.nav.navbar-nav.pull-right
         = render 'layouts/navigation_links'

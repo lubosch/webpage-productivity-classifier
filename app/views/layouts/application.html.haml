@@ -7,12 +7,13 @@
     = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = csrf_meta_tags
-  %body{'ng-app':'wpc', 'ng-controller': 'HomeCtrl'}
+  %body{'ng-app':'wpc'}
     #wrapper
       = render 'layouts/navigation'
     #page-wrapper
       = render 'layouts/messages'
       .unobtrusive-flash-container
-      = yield
+      %div{'ui-view': ''}
+
   =render 'pages/login_modal'
   =render 'pages/sign_up_modal'

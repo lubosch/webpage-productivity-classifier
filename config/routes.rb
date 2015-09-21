@@ -22,7 +22,12 @@ Rails.application.routes.draw do
       get :profile, on: :collection
     end
 
+  end
 
+  namespace :api do
+    resource :dashboards, only: [] do
+      get :overview, on: :collection
+    end
   end
 
   resources :dashboards, only: :index do

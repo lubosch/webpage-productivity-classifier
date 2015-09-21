@@ -28,6 +28,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable, :omniauth_providers => [:facebook, :twitter]
 
   has_many :user_application_pages
+  has_many :application_pages, through: :user_application_pages
   has_many :oauth_applications, class_name: 'Doorkeeper::Application', as: :owner
 
   TEMP_EMAIL_PREFIX = 'change@me'

@@ -6,6 +6,8 @@ gem 'dotenv-rails'
 gem 'rails', '4.2.1'
 # Use postgres as the database for Active Record
 gem 'pg'
+
+gem 'arel'
 # PgSearch builds named scopes that take advantage of PostgreSQL's full text search.
 gem 'pg_search'
 # Use SCSS for stylesheets
@@ -56,6 +58,7 @@ gem 'annotate'
 
 # gem 'angularjs-rails'
 gem 'angular-rails-templates'
+gem 'angularjs-rails-resource', '~> 2.0.0'
 
 gem 'bower-rails'
 

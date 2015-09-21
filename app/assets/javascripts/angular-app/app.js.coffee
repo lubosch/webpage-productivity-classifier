@@ -1,6 +1,11 @@
 @app = angular.module('wpc', [
 # additional dependencies here, such as restangular
-  'templates'
+  'templates',
+  'rails',
+  'ui.router',
+  'templates',
+  'ngVis'
+
 ])
 
 # for compatibility with Rails CSRF protection
@@ -9,7 +14,3 @@
   '$httpProvider', ($httpProvider)->
     $httpProvider.defaults.headers.common['X-CSRF-Token'] = $('meta[name=csrf-token]').attr('content')
 ])
-
-@app.run(->
-  console.log 'angular app running'
-)
