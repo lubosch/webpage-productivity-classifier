@@ -1,3 +1,4 @@
+/lib/assets/bower_components
 *.rbc
 capybara-*.html
 .rspec

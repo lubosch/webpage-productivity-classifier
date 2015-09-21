@@ -1,5 +1,5 @@
 -# navigation styled for Bootstrap 3.0
-%nav.navbar.navbar-default.navbar-fixed-top
+%nav.navbar.navbar-default.navbar-static-top
   .container
     .navbar-header
       %button.navbar-toggle{"data-target" => ".navbar-collapse", "data-toggle" => "collapse", :type => "button"}
@@ -11,6 +11,6 @@
     .collapse.navbar-collapse
       %ul.nav.navbar-nav
         %li
-          =link_to 'Dashboard', user_activities_path
+          =link_to 'Dashboard', dashboards_path
       %ul.nav.navbar-nav.pull-right
         = render 'layouts/navigation_links'

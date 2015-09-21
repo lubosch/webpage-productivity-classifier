@@ -4,12 +4,10 @@ Rails.application.routes.draw do
 
   root 'pages#index'
 
-  resources :user_activities
-
   get '/profile' => 'users#profile', :as => :profile
   namespace :admin do
-    get '', to: 'dashboard#index', as: '/'
-    get 'training', to: 'dashboard#training', as: 'training'
+    get '', to: 'dashboards#index', as: '/'
+    get 'training', to: 'dashboards#training', as: 'training'
   end
 
   namespace :extension_api do
@@ -20,10 +18,15 @@ Rails.application.routes.draw do
       post 'page_lost_focus'
     end
 
-    resource :user do
+    resource :users do
       get :profile, on: :collection
-
     end
+
+
+  end
+
+  resources :dashboards, only: :index do
+
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

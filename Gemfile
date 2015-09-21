@@ -10,6 +10,8 @@ gem 'pg'
 gem 'pg_search'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
+gem 'less-rails', '~> 2.7.0'
+
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
@@ -52,6 +54,11 @@ gem 'annotate'
 
 # gem 'angular_rails_csrf'
 
+# gem 'angularjs-rails'
+gem 'angular-rails-templates'
+
+gem 'bower-rails'
+
 # gem 'neo4j', branch: :master
 gem 'neo4j', '~> 5.2'#, github: 'andreasronge/neo4j'
 # gem 'neo4j-core', branch: :master
@@ -76,6 +83,8 @@ gem 'fast-stemmer'
 # gem 'capistrano-rails', group: :development
 
 gem 'rails_12factor', group: :production
+
+gem 'thin'
 
 group :development do
   gem 'rails_layout'
