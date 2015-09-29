@@ -1,4 +1,6 @@
-angular.module('wpc').config ($stateProvider, $urlRouterProvider)->
+angular.module('wpc').config ($locationProvider, $stateProvider, $urlRouterProvider)->
+  $locationProvider.html5Mode(enabled: true, requireBase: false);
+
   $urlRouterProvider.otherwise ->
     return '/'
 

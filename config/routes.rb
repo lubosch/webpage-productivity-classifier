@@ -30,9 +30,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :dashboards, only: :index do
-
-  end
+  get '*path' => 'pages#index'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
