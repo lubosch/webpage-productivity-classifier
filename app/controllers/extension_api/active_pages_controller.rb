@@ -4,8 +4,8 @@ class ExtensionApi::ActivePagesController < ExtensionApiController
 
   def tab_change
     new_page = @user.user_application_pages.where(tab_id: params[:tab_id]).last
-    old_page = @user.user_application_pages.last
-    old_page.tab_change(new_page) if new_page && old_page && old_page != new_page
+    old_page = @user.user_application_pages.where(tab_id: params[:previous_tab_id]).last if params[:previous_tab_id].present?
+    new_page.tab_change(old_page) if new_page && old_page != new_page
     render_200
   end
 

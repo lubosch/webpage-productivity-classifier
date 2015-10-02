@@ -22,7 +22,7 @@ class UserApplicationPage < ActiveRecord::Base
   belongs_to :user
 
   scope :last_chrome, -> { joins(:application_page).where(app_type: 'chrome') }
-  scope :today, -> {where(created_at: 14.days.ago.at_beginning_of_day..DateTime.now)}
+  scope :today, -> { where(created_at: 14.days.ago.at_beginning_of_day..DateTime.now) }
 
   delegate :connect_previous_tab, :url, :application_name, :application_id, to: :application_page
 
@@ -37,9 +37,10 @@ class UserApplicationPage < ActiveRecord::Base
     self.scroll_down ||= 0
   end
 
-  def tab_change(new_page)
-    user.user_application_pages.create(application_page: new_page.application_page, tab_id: new_page.tab_id, app_type: new_page.app_type)
-    new_page.connect_previous_tab(self)
+  def tab_change(old_page)
+    user.user_application_pages.create(application_page: application_page, tab_id: tab_id, app_type: app_type)
+    # new_page.connect_previous_tab(self)
+    application_page.connect_previous_tab(old_page) if old_page
   end
 
   def active?
