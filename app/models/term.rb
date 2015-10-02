@@ -23,7 +23,7 @@ class Term < ActiveRecord::Base
   end
 
   def self.create_terms_from_sentence(sentence)
-    words = sentence.split.map(&:stem)
+    words = sentence.split#.map(&:stem)
     create_terms_from_array(words)
   end
 
