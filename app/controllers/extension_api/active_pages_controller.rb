@@ -11,14 +11,7 @@ class ExtensionApi::ActivePagesController < ExtensionApiController
 
   def page_lost_focus
     app_act = @user.user_application_pages.where(tab_id: params[:tab_id]).last
-    if app_act
-      app_act.length = params[:active_length]
-      app_act.scroll_up = params[:up_scroll_count]
-      app_act.scroll_down = params[:down_scroll_count]
-      app_act.scroll_diff = app_act.scroll_down - app_act.scroll_up
-      app_act.scroll_count = app_act.scroll_up + app_act.scroll_down
-      app_act.save
-    end
+    app_act.log_activity(params) if app_act
     render_200
   end
 

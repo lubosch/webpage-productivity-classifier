@@ -14,6 +14,9 @@
 #  app_type            :integer
 #  scroll_up           :integer
 #  scroll_down         :integer
+#  key_pressed         :integer
+#  key_pressed_rate    :float
+#  scroll_rate         :float
 #
 
 class UserApplicationPage < ActiveRecord::Base
@@ -45,6 +48,19 @@ class UserApplicationPage < ActiveRecord::Base
 
   def active?
     length == 0
+  end
+
+  def log_activity(params)
+    self.length = params[:active_length].to_f
+    self.scroll_up = params[:up_scroll_count]
+    self.scroll_down = params[:down_scroll_count]
+    self.scroll_diff = self.scroll_down - self.scroll_up
+    self.scroll_count = self.scroll_up + self.scroll_down
+    self.scroll_rate = self.scroll_count / self.length
+    self.key_pressed = params[:key_pressed]
+    self.key_pressed_rate = self.key_pressed / self.length
+    self.save
+
   end
 
 end

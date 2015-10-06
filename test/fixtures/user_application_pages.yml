@@ -14,6 +14,9 @@
 #  app_type            :integer
 #  scroll_up           :integer
 #  scroll_down         :integer
+#  key_pressed         :integer
+#  key_pressed_rate    :float
+#  scroll_rate         :float
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html

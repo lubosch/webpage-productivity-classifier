@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150905232341) do
+ActiveRecord::Schema.define(version: 20151004171108) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -185,6 +185,9 @@ ActiveRecord::Schema.define(version: 20150905232341) do
     t.integer  "app_type"
     t.integer  "scroll_up"
     t.integer  "scroll_down"
+    t.integer  "key_pressed"
+    t.float    "key_pressed_rate"
+    t.float    "scroll_rate"
   end
 
   create_table "users", force: :cascade do |t|
