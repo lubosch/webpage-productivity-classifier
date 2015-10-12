@@ -1,6 +1,6 @@
 class ExtensionApi::ActivePagesController < ExtensionApiController
 
-  before_action :load_user
+  prepend_before_filter :load_user
 
   def tab_change
     new_page = @user.user_application_pages.where(tab_id: params[:tab_id]).last
@@ -23,7 +23,7 @@ class ExtensionApi::ActivePagesController < ExtensionApiController
 
   def new_page
     ap = ApplicationPage.find_or_create_by_params(params)
-    @user.user_application_pages.create(application_page: ap, tab_id: params[:tab_id], app_type: 'chrome')
+    @user.user_application_pages.create(application_page: ap, tab_id: params[:tab_id], app_type: params[:app_type])
     render_200
   end
 

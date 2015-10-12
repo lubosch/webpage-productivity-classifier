@@ -83,7 +83,6 @@ class Application < ActiveRecord::Base
   def self.extract_domain(url)
     url = "http://#{url}" if URI.parse(url).scheme.nil?
     URI.parse(url).host.downcase
-    URI.parse(url).host.downcase
   end
 
   def self.app_lang(url)
@@ -91,15 +90,23 @@ class Application < ActiveRecord::Base
   end
 
   def self.app_name(url)
+    url.split(/[\/\\]+/)[-1]
+  end
+
+  def self.web_name(url)
     name = extract_domain(url)
     name.split('.')[0..-2].join(' ').capitalize
   end
 
   def self.find_or_create_by_params(url)
-    domain = extract_domain(url) # TODO url domain
-    name = app_name(url)
+    domain = uri?(url) ? extract_domain(url) : url
+    name = uri?(url) ? web_name(url) : app_name(url)
     lang = app_lang(url)
     where(url: domain).first_or_create(eval_type: 'experiment', lang: lang, static: 0, user_static: 0, name: name)
+  end
+
+  def self.uri?(url)
+    url.match URI::regexp(%w(http https))
   end
 
 end

@@ -1,7 +1,7 @@
 module Neo4j
   class Application < Rails::Application
     config.neo4j.session_type = :server_db
-    config.neo4j.session_path = 'http://localhost:7474'
+    Rails.env == "production" ? config.neo4j.session_path = 'http://localhost:7474' : config.neo4j.session_path = 'http://localhost:7475'
     config.neo4j.session_options = {
         basic_auth: {username: 'neo4j', password: ENV['neo4j_pass']},
         initialize: {

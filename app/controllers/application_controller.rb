@@ -21,12 +21,12 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # def render_401
-  #   respond_to do |format|
-  #     format.html { render :file => "#{Rails.root}/public/403", :layout => false, :status => 401 }
-  #     format.any { head :not_authorized, status: 401 }
-  #   end
-  # end
+  def render_401
+    respond_to do |format|
+      format.html { render :file => "#{Rails.root}/public/403", :layout => false, :status => 401 }
+      format.any { head :unauthorized }
+    end
+  end
 
   def render_500
     respond_to do |format|
