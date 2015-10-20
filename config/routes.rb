@@ -3,8 +3,9 @@ Rails.application.routes.draw do
   devise_for :users, :controllers => {omniauth_callbacks: 'omniauth_callbacks'}
 
   root 'pages#index'
-
   get '/profile' => 'users#profile', :as => :profile
+
+
   namespace :admin do
     get '', to: 'dashboards#index', as: '/'
     get 'training', to: 'dashboards#training', as: 'training'
@@ -27,6 +28,9 @@ Rails.application.routes.draw do
   namespace :api do
     resource :dashboards, only: [] do
       get :overview, on: :collection
+    end
+    resource :experiments, only: [] do
+      get :application_list, on: :collection
     end
   end
 

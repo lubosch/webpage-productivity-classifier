@@ -10,7 +10,7 @@ angular.module('wpc').controller("DashboardCtrl", [
         "showCurrentTime": true,
         "showMajorLabels": true,
         "showMinorLabels": true
-        zoomMax: 86400000
+        zoomMax: 3600000
         "stack": false
       }
 #
@@ -40,5 +40,4 @@ angular.module('wpc').controller("DashboardCtrl", [
 #      timeline = new vis.Timeline(container, items, overviewOptions);
 
     )
-    $scope.exampleValue = "Hello angular and rails"
 ])

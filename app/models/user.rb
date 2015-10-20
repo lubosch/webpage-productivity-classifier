@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
 
   has_many :user_application_pages
   has_many :application_pages, through: :user_application_pages
+  has_many :applications, through: :application_pages
   has_many :oauth_applications, class_name: 'Doorkeeper::Application', as: :owner
 
   TEMP_EMAIL_PREFIX = 'change@me'
@@ -94,6 +95,10 @@ class User < ActiveRecord::Base
 
   def active_app?
     user_application_pages.last_chrome
+  end
+
+  def best_unclassified_apps
+    ApplicationPage.where(:id => application_pages.group(:application_id, :id).having('count(application_id) > 5').limit(10).pluck(:id))
   end
 
 end

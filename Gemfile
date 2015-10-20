@@ -63,7 +63,7 @@ gem 'angularjs-rails-resource', '~> 2.0.0'
 gem 'bower-rails'
 
 # gem 'neo4j', branch: :master
-gem 'neo4j', '~> 5.2'#, github: 'andreasronge/neo4j'
+gem 'neo4j', '~> 5.2' #, github: 'andreasronge/neo4j'
 # gem 'neo4j-core', branch: :master
 gem 'mechanize'
 gem 'faraday'
@@ -90,6 +90,9 @@ gem 'rails_12factor', group: :production
 gem 'thin'
 
 group :development do
+  gem 'guard', :require => false
+  gem 'guard-livereload', :require => false
+  gem 'rack-livereload'
   gem 'rails_layout'
   gem 'capistrano-rails'
 end

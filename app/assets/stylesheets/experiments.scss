@@ -1,0 +1,14 @@
+.bottom-panel {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.panel.drop-active {
+  border: 2px dashed $panel-primary-border;
+}
+
+.panel.drop-target {
+  //border: 1px solid $panel-danger-border;
+  font-weight: 600;
+}

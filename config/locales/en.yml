@@ -22,3 +22,7 @@
 en:
   dashboard:
     overview: "Overview"
+  experiment:
+    title: "Experiment"
+    description: "Description how to use it"
+    menu_item: "Experiment"

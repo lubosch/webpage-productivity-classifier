@@ -1,0 +1,8 @@
+.col-md-2.col-lg-2
+  .panel.panel-green{id: '{{application_type.id}}'}
+    .panel-heading
+      {{application_type.text}}
+    .panel-body
+      .list-group{'ng-repeat': 'app_page in application_type.application_pages'}
+        %a.list-group-item{href: '#'}
+          {{app_page.name}}
