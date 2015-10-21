@@ -5,7 +5,8 @@ angular.module('wpc').controller("ExperimentCtrl", [
       $scope.application_list = application_list['applications']
     )
 
-    $scope.$on '$viewContentLoaded', init_drags
+    $scope.$on '$viewContentLoaded', ->
+      init_drags($scope)
     $scope.application_types = [
       ApplicationType.new('bucket-adult', 'Adult content'),
       ApplicationType.new('bucket-news', 'News'),
@@ -22,7 +23,7 @@ angular.module('wpc').controller("ExperimentCtrl", [
 
 ])
 
-init_drags = ->
+init_drags = (scope)->
   interact('[id^=bucket]').dropzone({
     overlap: 0.25,
     ondropactivate: (event) ->
@@ -45,6 +46,15 @@ init_drags = ->
     ondrop: (event) ->
       draggableElement = event.relatedTarget
       dropzoneElement = event.target
+
+      app_id = parseInt($(draggableElement).attr('data-app-id'))
+      app = _.findWhere(scope.application_list, {id: app_id})
+      bucket_id = $(dropzoneElement).attr('id')
+      bucket = _.findWhere(scope.application_types, {id: bucket_id})
+      bucket.application_pages.push(app)
+      scope.$apply();
+
+      $(draggableElement).hide()
     ,
     ondropdeactivate: (event) ->
 # remove active dropzone feedback

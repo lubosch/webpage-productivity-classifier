@@ -3,6 +3,6 @@
     .panel-heading
       {{application_type.text}}
     .panel-body
-      .list-group{'ng-repeat': 'app_page in application_type.application_pages'}
-        %a.list-group-item{href: '#'}
+      .list-group{'ng-repeat': 'app_page in application_type.application_pages track by app_page.id'}
+        %a.list-group-item{href: '#', id: 'pages-item-{{app_page.id}}'}
           {{app_page.name}}

@@ -21,22 +21,11 @@ makeit_draggable = (el) ->
 #      elementRect: {top: 0, left: 0, bottom: 1, right: 1}
 #    },
 #  enable autoScroll
-    autoScroll: true,
+    autoScroll: false,
 
     onmove: dragMoveListener,
 # call this function on every dragend event
 });
-
-
-#init_drags = ->
-#  $('[id^=bucket]').droppable({drop: demodrop});
-#
-#demodrop = (e, ui) ->
-#  draggable = ui.draggable
-#  alert(draggable.text() + " was just dropped on " + e.target.id);
-#
-#c
-# call this function on every dragmove event
 
 dragMoveListener = (event) ->
   target = event.target
