@@ -2,13 +2,23 @@
   position: fixed;
   bottom: 0;
   width: 100%;
+  //z-index: -10;
 }
 
 .panel.drop-active {
-  border: 2px dashed $panel-primary-border;
+  border: 2px dashed $panel-success-border;
 }
 
 .panel.drop-target {
-  //border: 1px solid $panel-danger-border;
+  //border: inherit;
   font-weight: 600;
+  border: 1px solid $brand-success;
+  opacity: 0.8;
+}
+
+.draggable.can-drop {
+}
+
+.application-types{
+  margin: 100px 20px 20px 0;
 }

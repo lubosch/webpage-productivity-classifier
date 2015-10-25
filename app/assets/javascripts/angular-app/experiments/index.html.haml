@@ -1,9 +1,12 @@
-.row
-  .col-lg-12
-    %h1.page-header=I18n.t('experiment.title')
+#page-wrapper{'ng-class': "{true: 'no-left-menu', false: 'no-left-menu'}[hiddenLeftMenu]"}
   .row
     .col-lg-12
-      = I18n.t('experiment.description')
-      %div{'experiment-application-list': '', 'ng-repeat': 'application in application_list track by application.id'}
-  .bottom-panel
-    %div{'experiment-application-type': '', 'ng-repeat': 'application_type in application_types'}
+      %h1.page-header=I18n.t('experiment.title')
+    .row
+      .col-lg-12
+        = I18n.t('experiment.description')
+        %div{'experiment-application-list': '', 'ng-repeat': 'application in application_list track by application.id'}
+    .row.application-types
+      %div{'experiment-application-type': '', 'ng-repeat': 'application_type in application_types'}
+    .row.pull-right
+      %button{'ng-click': 'submit'}

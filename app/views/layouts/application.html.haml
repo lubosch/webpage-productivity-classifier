@@ -10,9 +10,7 @@
   %body{'ng-app':'wpc'}
     #wrapper
       = render 'layouts/navigation'
-    #page-wrapper
-      = render 'layouts/messages'
-      .unobtrusive-flash-container
+    #page-wrapper{'ng-class': "{true: 'no-left-menu', false: 'no-left-menu'}[hiddenLeftMenu]"}
       %div{'ui-view': ''}
 
   =render 'pages/login_modal'

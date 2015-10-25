@@ -163,6 +163,8 @@ GEM
       multi_json
     fast-stemmer (1.0.2)
     ffi (1.9.8)
+    font-awesome-rails (4.4.0.0)
+      railties (>= 3.2, < 5.0)
     formatador (0.2.5)
     gherkin (2.12.2)
       multi_json (~> 1.3)
@@ -501,6 +503,7 @@ DEPENDENCIES
   fakeweb (~> 1.3)
   faraday
   fast-stemmer
+  font-awesome-rails
   guard
   guard-livereload
   haml-rails

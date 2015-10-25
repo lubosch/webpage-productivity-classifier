@@ -91,6 +91,8 @@ gem 'rails_12factor', group: :production
 
 gem 'thin'
 
+gem 'font-awesome-rails'
+
 group :development do
   gem 'guard', :require => false
   gem 'guard-livereload', :require => false

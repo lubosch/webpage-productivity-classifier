@@ -1,6 +1,8 @@
 angular.module('wpc').controller("ExperimentCtrl", [
-  '$scope', 'ApplicationList', 'ApplicationType',
-  ($scope, ApplicationList, ApplicationType)->
+  '$scope', '$rootScope', 'ApplicationList', 'ApplicationType',
+  ($scope, $rootScope, ApplicationList, ApplicationType)->
+    $rootScope.hiddenLeftMenu = true
+
     ApplicationList.query().then ((application_list) ->
       $scope.application_list = application_list['applications']
     )
@@ -8,15 +10,15 @@ angular.module('wpc').controller("ExperimentCtrl", [
     $scope.$on '$viewContentLoaded', ->
       init_drags($scope)
     $scope.application_types = [
-      ApplicationType.new('bucket-adult', 'Adult content'),
-      ApplicationType.new('bucket-news', 'News'),
-      ApplicationType.new('bucket-commercial', 'Commercial'),
-      ApplicationType.new('bucket-educational', 'Educational, Research'),
-      ApplicationType.new('bucket-discussion', 'Discussion'),
-      ApplicationType.new('bucket-personal', 'Personal'),
-      ApplicationType.new('bucket-leisure', 'Leisure'),
-      ApplicationType.new('bucket-multimedia', 'Multimedia'),
-      ApplicationType.new('bucket-other', 'Other'),
+      new ApplicationType('bucket-adult', 'Adult content'),
+      new ApplicationType('bucket-news', 'News'),
+      new ApplicationType('bucket-commercial', 'Commercial'),
+      new ApplicationType('bucket-educational', 'Educational, Research'),
+      new ApplicationType('bucket-discussion', 'Discussion'),
+      new ApplicationType('bucket-personal', 'Personal'),
+      new ApplicationType('bucket-leisure', 'Leisure'),
+      new ApplicationType('bucket-multimedia', 'Multimedia'),
+      new ApplicationType('bucket-other', 'Other'),
 
     ]
 
@@ -25,7 +27,7 @@ angular.module('wpc').controller("ExperimentCtrl", [
 
 init_drags = (scope)->
   interact('[id^=bucket]').dropzone({
-    overlap: 0.25,
+    overlap: 'pointer',
     ondropactivate: (event) ->
 # add active dropzone feedback
       event.target.classList.add('drop-active')
@@ -51,7 +53,7 @@ init_drags = (scope)->
       app = _.findWhere(scope.application_list, {id: app_id})
       bucket_id = $(dropzoneElement).attr('id')
       bucket = _.findWhere(scope.application_types, {id: bucket_id})
-      bucket.application_pages.push(app)
+      bucket.addApp(app)
       scope.$apply();
 
       $(draggableElement).hide()

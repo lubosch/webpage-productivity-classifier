@@ -1,14 +1,23 @@
-angular.module('wpc').service('ApplicationType', [
+angular.module('wpc').factory('ApplicationType',
   () ->
-    id = ''
-    name = ''
+    ApplicationType = (id, text) ->
+      @id = id
+      @text = text
+      @application_pages = []
+      return
 
-    return {
-    new: (id, text)->
-      return {
-      id: id,
-      text: text
-      application_pages: []
-      }
+    ApplicationType.prototype = {
+      addApp: (app) ->
+        @application_pages.push(app)
+      ,
+      removeApp: (app) ->
+        @application_pages = _.reject(@application_pages, (item)->
+          item.id == app.id
+        )
+        $('#experiment-draggable-' + app.id).show()
+        $('#experiment-draggable-' + app.id).removeAttr('style')
+        return
+
     }
-])
+    return ApplicationType
+)
