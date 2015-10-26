@@ -2,11 +2,13 @@
 #
 # Table name: application_activity_types
 #
-#  id               :integer          not null, primary key
-#  activity_type_id :integer
-#  application_id   :integer
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
+#  id                  :integer          not null, primary key
+#  activity_type_id    :integer
+#  application_id      :integer
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  based_on            :string
+#  application_page_id :integer
 #
 
 require 'rails_helper'

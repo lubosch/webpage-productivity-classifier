@@ -31,6 +31,8 @@ Rails.application.routes.draw do
     end
     resource :experiments, only: [] do
       get :application_list, on: :collection
+      get :application_types, on: :collection
+      post :app_categorization, on: :collection
     end
   end
 

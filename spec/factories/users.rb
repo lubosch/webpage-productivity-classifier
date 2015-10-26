@@ -31,6 +31,7 @@ FactoryGirl.define do
     factory :admin do
       email 'admin@admin.com'
       password "adminadmin"
+      initialize_with {User.find_or_initialize_by(email: email)}
     end
 
     factory :default do

@@ -11,7 +11,7 @@ angular.module('wpc').directive 'experimentApplicationList', ->
 
 makeit_draggable = (el) ->
 #  debugger
-  interact('.draggable').draggable({
+  interact(el.children()[0]).draggable({
 #  enable inertial throwing
     inertia: true,
 #  keep the element within the area of it's parent
@@ -20,7 +20,6 @@ makeit_draggable = (el) ->
 #      endOnly: true,
 #      elementRect: {top: 0, left: 0, bottom: 1, right: 1}
 #    },
-#  enable autoScroll
     autoScroll: false,
 
     onmove: dragMoveListener,

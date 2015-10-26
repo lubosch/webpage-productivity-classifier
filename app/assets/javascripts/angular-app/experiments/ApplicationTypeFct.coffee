@@ -14,8 +14,10 @@ angular.module('wpc').factory('ApplicationType',
         @application_pages = _.reject(@application_pages, (item)->
           item.id == app.id
         )
-        $('#experiment-draggable-' + app.id).show()
+        $('#experiment-draggable-' + app.id).removeClass('invisible')
         $('#experiment-draggable-' + app.id).removeAttr('style')
+        $('#experiment-draggable-' + app.id).removeAttr('data-y')
+        $('#experiment-draggable-' + app.id).removeAttr('data-x')
         return
 
     }

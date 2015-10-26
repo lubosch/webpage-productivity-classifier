@@ -2,7 +2,7 @@
   .panel.panel-green{id: '{{application_type.id}}'}
     .panel-heading
       {{application_type.text}}
-    .panel-body
+    .panel-footer
       .list-group{'ng-repeat': 'app_page in application_type.application_pages track by app_page.id'}
         %a.list-group-item{href: '#', id: 'pages-item-{{app_page.id}}', 'data-item-id': '{{app_page.id}}'}
           %i.fa.fa-times.fa-fw.text-danger{'ng-click': 'application_type.removeApp(app_page)'}
