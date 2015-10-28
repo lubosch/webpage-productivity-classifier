@@ -49,7 +49,7 @@ gem 'haml-rails'
 # jquery loading bar
 gem 'nprogress-rails'
 # puma web server
-gem 'puma'
+gem 'unicorn-rails'
 # bootstrap-sass
 gem 'bootstrap-sass'
 gem 'bootstrap-modal-rails'
@@ -98,7 +98,11 @@ group :development do
   gem 'guard-livereload', :require => false
   gem 'rack-livereload'
   gem 'rails_layout'
-  gem 'capistrano-rails'
+  gem 'capistrano-rails', require: false
+  gem 'capistrano3-unicorn', require: false
+  gem 'capistrano-rvm'
+  gem 'capistrano-bundler', '~> 1.1.2', require: false
+  gem 'capistrano-rails-collection', require: false
 end
 
 group :development, :test do
