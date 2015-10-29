@@ -6,6 +6,7 @@ pid               "#{app_path}/current/tmp/pids/unicorn.pid"
 
 # listen
 listen "/tmp/unicorn-#{app_name}.socket", :backlog => 64
+listen "147.175.149.242:9002", :tcp_nopush => true
 
 # logging
 stderr_path "log/unicorn-#{app_name}.stderr.log"
