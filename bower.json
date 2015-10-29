@@ -5,7 +5,11 @@
       "angular": "v1.5.0-build.4260",
       "angular-visjs": "4.0.2",
       "angular-ui-router": "v0.2.15"
+    },
+    "resolutions" : {
+      "angular": "1.5.0-build.4260+sha.befeeb3"
     }
+
   },
   "vendor": {
     "name": "bower-rails generated vendor assets",
