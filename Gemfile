@@ -60,6 +60,7 @@ gem 'annotate'
 
 gem 'angularjs-rails'
 gem 'angular-rails-templates'
+gem 'angular-ui-router-rails'
 gem 'angularjs-rails-resource', '~> 2.0.0'
 
 gem 'bower-rails'
