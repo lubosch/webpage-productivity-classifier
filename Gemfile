@@ -58,7 +58,7 @@ gem 'annotate'
 
 # gem 'angular_rails_csrf'
 
-# gem 'angularjs-rails'
+gem 'angularjs-rails'
 gem 'angular-rails-templates'
 gem 'angularjs-rails-resource', '~> 2.0.0'
 
