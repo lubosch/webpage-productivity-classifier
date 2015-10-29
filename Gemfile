@@ -103,6 +103,7 @@ group :development do
   gem 'capistrano-rvm'
   gem 'capistrano-bundler', '~> 1.1.2', require: false
   gem 'capistrano-rails-collection', require: false
+  gem 'capistrano-linked-files', require: false
 end
 
 group :development, :test do

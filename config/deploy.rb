@@ -39,7 +39,13 @@ set :deploy_via, :copy
 set :copy_exclude, [".git/*", ".gitignore", ".DS_Store"]
 
 set :linked_dirs, %w{bin log tmp/backup tmp/pids tmp/cache tmp/sockets vendor/bundle}
-set :linked_files, %w{.env}
+set :linked_files, %w{.env config/unicorn.rb config/unicorn_init.sh}
+
+set :format, :pretty
+set :log_level, :debug
+set :pty, true
+
+set :ssh_options, {forward_agent: true}
 
 
 namespace :deploy do
@@ -53,4 +59,38 @@ namespace :deploy do
     end
   end
 
+  task :restart do
+    invoke 'unicorn:restart'
+  end
+
+  task :setup_config do
+    on roles(:app), in: :sequence, wait: 1 do
+      execute :sudo, "ln -nfs #{current_path}/config/apache.conf /etc/apache2/sites-enabled/#{fetch(:app_name)}.conf"
+      execute :sudo, "ln -nfs #{current_path}/config/unicorn_init.sh /etc/init.d/unicorn_#{fetch(:app_name)}"
+      # run "mkdir -p #{shared_path}/config"
+      put File.read(".env.example"), "#{shared_path}/.env"
+      puts "Now edit the config files in #{shared_path}."
+    end
+  end
+
+  # after "deploy:setup", "deploy:setup_config"
+
+  # task :symlink_config, roles: :app do
+  #   run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+  # end
+  # after "deploy:finalize_update", "deploy:symlink_config"
+
+  desc "Make sure local git is in sync with remote."
+  task :check_revision do
+    unless `git rev-parse HEAD` == `git rev-parse origin/master`
+      puts "WARNING: HEAD is not the same as origin/master"
+      puts "Run `git push` to sync changes."
+      exit
+    end
+  end
+
+  before "deploy", "deploy:check_revision"
+
 end
+
+after 'deploy:publishing', 'deploy:restart'
