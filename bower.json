@@ -1,5 +1,4 @@
 {
-  "name": "stay_productive",
   "lib": {
     "name": "bower-rails generated lib assets",
     "dependencies": {
