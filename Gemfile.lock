@@ -44,8 +44,6 @@ GEM
       railties (>= 3.1)
       sprockets
       tilt
-    angular-ui-router-rails (0.2.15)
-    angularjs-rails (1.4.4)
     angularjs-rails-resource (2.0.0)
     annotate (2.6.10)
       activerecord (>= 3.2, <= 4.3)
@@ -73,6 +71,8 @@ GEM
       i18n
       rake (>= 10.0.0)
       sshkit (~> 1.3)
+    capistrano-bower (1.1.0)
+      capistrano (~> 3.0)
     capistrano-bundler (1.1.4)
       capistrano (~> 3.1)
       sshkit (~> 1.2)
@@ -495,8 +495,6 @@ PLATFORMS
 
 DEPENDENCIES
   angular-rails-templates
-  angular-ui-router-rails
-  angularjs-rails
   angularjs-rails-resource (~> 2.0.0)
   annotate
   arel
@@ -505,6 +503,7 @@ DEPENDENCIES
   bower-rails
   byebug
   cancan
+  capistrano-bower
   capistrano-bundler (~> 1.1.2)
   capistrano-linked-files
   capistrano-rails

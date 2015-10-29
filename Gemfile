@@ -58,9 +58,9 @@ gem 'annotate'
 
 # gem 'angular_rails_csrf'
 
-gem 'angularjs-rails'
+# gem 'angularjs-rails'
 gem 'angular-rails-templates'
-gem 'angular-ui-router-rails'
+# gem 'angular-ui-router-rails'
 gem 'angularjs-rails-resource', '~> 2.0.0'
 
 gem 'bower-rails'
@@ -105,6 +105,7 @@ group :development do
   gem 'capistrano-bundler', '~> 1.1.2', require: false
   gem 'capistrano-rails-collection', require: false
   gem 'capistrano-linked-files', require: false
+  gem 'capistrano-bower', require: false
 end
 
 group :development, :test do
