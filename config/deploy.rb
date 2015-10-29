@@ -39,7 +39,7 @@ set :deploy_via, :copy
 set :copy_exclude, [".git/*", ".gitignore", ".DS_Store"]
 
 set :linked_dirs, %w{bin log tmp/backup tmp/pids tmp/cache tmp/sockets vendor/bundle}
-set :linked_files, %w{.env config/unicorn-example.rb config/unicorn_init.sh}
+set :linked_files, %w{.env config/unicorn.rb config/unicorn_init.sh}
 
 set :format, :pretty
 set :log_level, :debug
