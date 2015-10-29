@@ -1,0 +1,16 @@
+{
+  "lib": {
+    "name": "bower-rails generated lib assets",
+    "dependencies": {
+      "angular": "v1.5.0-build.4260",
+      "angular-visjs": "4.0.2",
+      "angular-ui-router": "v0.2.15"
+    }
+  },
+  "vendor": {
+    "name": "bower-rails generated vendor assets",
+    "dependencies": {
+      // "three.js"    : "https://raw.github.com/mrdoob/three.js/master/build/three.js"
+    }
+  }
+}
