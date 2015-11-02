@@ -1,7 +1,7 @@
 angular.module('wpc').directive 'experimentApplicationType', ->
   return {
   restrict: 'A',
-  templateUrl: 'assets/angular-app/experiments/application_type.html'
+  templateUrl: "<%= asset_path('angular-app/experiments/application_type.html') %>"
   link: (scope, elm, attr)->
     makeit_dropable(elm, scope)
   }

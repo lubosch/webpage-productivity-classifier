@@ -13,6 +13,6 @@ angular.module('wpc').config ($locationProvider, $stateProvider, $urlRouterProvi
   $stateProvider.state 'dashboards', {
     url: '/dashboards',
     controller: 'DashboardCtrl',
-    templateUrl: '/assets/angular-app/templates/dashboards/index.html'
+    templateUrl: "<%= asset_path('angular-app/templates/dashboards/index.html') %>"
   }
 

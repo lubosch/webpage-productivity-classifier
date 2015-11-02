@@ -1,7 +1,7 @@
 angular.module('wpc').directive 'experimentApplicationList', ->
   return {
   restrict: 'A',
-  templateUrl: 'assets/angular-app/experiments/application_list.html'
+  templateUrl: "<%= asset_path('angular-app/experiments/application_list.html') %>"
   link: (scope, elm, attr)->
     makeit_draggable(elm)
 #    elm.draggable()

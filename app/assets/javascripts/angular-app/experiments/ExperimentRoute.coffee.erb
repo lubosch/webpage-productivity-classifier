@@ -2,6 +2,6 @@ angular.module('wpc').config ($locationProvider, $stateProvider, $urlRouterProvi
   $stateProvider.state 'experiments', {
     url: '/experiments',
     controller: 'ExperimentCtrl',
-    templateUrl: '/assets/angular-app/experiments/index.html'
+    templateUrl: "<%= asset_path('angular-app/experiments/index.html') %>"
   }
 
