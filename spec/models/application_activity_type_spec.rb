@@ -9,6 +9,7 @@
 #  updated_at          :datetime         not null
 #  based_on            :string
 #  application_page_id :integer
+#  is_work             :integer
 #
 
 require 'rails_helper'

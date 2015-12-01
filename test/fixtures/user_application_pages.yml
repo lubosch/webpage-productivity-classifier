@@ -17,6 +17,7 @@
 #  key_pressed         :integer
 #  key_pressed_rate    :float
 #  scroll_rate         :float
+#  ip                  :string
 #
 
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html

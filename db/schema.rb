@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151026015155) do
+ActiveRecord::Schema.define(version: 20151201203645) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(version: 20151026015155) do
     t.datetime "updated_at",          null: false
     t.string   "based_on"
     t.integer  "application_page_id"
+    t.integer  "is_work"
   end
 
   add_index "application_activity_types", ["activity_type_id"], name: "index_application_activity_types_on_activity_type_id", using: :btree
@@ -96,6 +97,13 @@ ActiveRecord::Schema.define(version: 20151026015155) do
   end
 
   add_index "identities", ["user_id"], name: "index_identities_on_user_id", using: :btree
+
+  create_table "implicit_work_logs", force: :cascade do |t|
+    t.string   "ip"
+    t.integer  "in_work"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "labels", force: :cascade do |t|
     t.integer  "eval_id"
@@ -190,6 +198,7 @@ ActiveRecord::Schema.define(version: 20151026015155) do
     t.integer  "key_pressed"
     t.float    "key_pressed_rate"
     t.float    "scroll_rate"
+    t.string   "ip"
   end
 
   create_table "users", force: :cascade do |t|

@@ -17,6 +17,7 @@
 #  key_pressed         :integer
 #  key_pressed_rate    :float
 #  scroll_rate         :float
+#  ip                  :string
 #
 
 class UserApplicationPage < ActiveRecord::Base
