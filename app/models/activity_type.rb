@@ -16,7 +16,8 @@
 class ActivityType < ActiveRecord::Base
 
   has_many :activity_type_terms, :dependent => :delete_all
-  ACTIVITY_TYPES = [:adult, :spam, :news_editorial, :commercial, :educational_research, :discussion, :personal_leisure, :media, :database]
+  has_many :application_activity_types, :dependent => :delete_all
+  ACTIVITY_TYPES = [:adult, :communication_scheduling, :social_networks, :graphic_tools, :multimedia, :news_blogs, :leisure_fun, :educational_research, :shopping, :software_development, :others, :multicategory]
 
   def update_probabilities
     terms_count = activity_type_terms.sum(:tf)
