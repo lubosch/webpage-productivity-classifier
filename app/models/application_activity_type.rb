@@ -23,7 +23,7 @@ class ApplicationActivityType < ActiveRecord::Base
       result[:application_pages].each do |app_page_hash|
         app_page = ApplicationPage.find_by_id(app_page_hash[:id])
         app_act_type = ApplicationActivityType.where(application_page: app_page).first_or_initialize
-        app_act_type.update(activity_type: act_type, application_page: app_page, application: app_page.application, based_on: 'user_defined')
+        app_act_type.update(activity_type: act_type, application_page: app_page, application: app_page.application, based_on: 'user_defined', is_work: app_page_hash[:is_work])
       end if result[:application_pages]
     end
   end

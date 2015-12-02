@@ -17,5 +17,14 @@ angular.module('wpc').controller("ExperimentCtrl", [
 
     $scope.submit = ->
       $http.post('/api/experiments/app_categorization.json', {result: $scope.application_types})
+
+    $scope.set_working_app = (id) ->
+      app = _.findWhere($scope.application_list, {id: id})
+      app['is_work'] = true
+
+    $scope.set_non_working_app = (id) ->
+      app = _.findWhere($scope.application_list, {id: id})
+      app['is_work'] = false
+
 ])
 
