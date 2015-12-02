@@ -41,8 +41,8 @@ class UserApplicationPage < ActiveRecord::Base
     self.scroll_down ||= 0
   end
 
-  def tab_change(old_page)
-    user.user_application_pages.create(application_page: application_page, tab_id: tab_id, app_type: app_type)
+  def tab_change(old_page, ip)
+    user.user_application_pages.create(application_page: application_page, tab_id: tab_id, app_type: app_type, ip: ip)
     # new_page.connect_previous_tab(self)
     application_page.connect_previous_tab(old_page) if old_page
   end

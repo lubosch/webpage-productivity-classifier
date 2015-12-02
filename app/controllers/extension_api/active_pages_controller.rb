@@ -5,7 +5,7 @@ class ExtensionApi::ActivePagesController < ExtensionApiController
   def tab_change
     new_page = @user.user_application_pages.where(tab_id: params[:tab_id]).last
     old_page = @user.user_application_pages.where(tab_id: params[:previous_tab_id]).last if params[:previous_tab_id].present?
-    new_page.tab_change(old_page) if new_page && old_page != new_page
+    new_page.tab_change(old_page, request.remote_ip) if new_page && old_page != new_page
     render_200
   end
 
@@ -23,7 +23,7 @@ class ExtensionApi::ActivePagesController < ExtensionApiController
 
   def new_page
     ap = ApplicationPage.find_or_create_by_params(params)
-    @user.user_application_pages.create(application_page: ap, tab_id: params[:tab_id], app_type: params[:app_type])
+    @user.user_application_pages.create(application_page: ap, tab_id: params[:tab_id], app_type: params[:app_type], ip: request.remote_ip)
     render_200
   end
 
