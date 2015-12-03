@@ -46,7 +46,7 @@ class ApplicationPage < ActiveRecord::Base
       write_in_db(description_terms, 'description')
     end
     if headers.present? && application_terms.headers.blank?
-      header_terms = Term.create_text_terms(headers)
+      header_terms = Term.create_text_sterms(headers)
       write_in_db(header_terms, 'header')
     end
 
