@@ -20,15 +20,16 @@ class ApplicationPage < ActiveRecord::Base
 
   def self.find_or_create_by_params(params)
     transaction do
-      ap = ApplicationPage.find_by_url(params[:url])
-      ap ? ap.compare_terms(params[:title], params[:meta_description], params[:headers], params[:tfidf]) : ap = create_by_params(params)
-      ap
+      # ap = ApplicationPage.find_by_url(params[:url])
+      # ap ? ap.compare_terms(params[:title], params[:meta_description], params[:headers], params[:tfidf]) : ap =
+      create_by_params(params)
+      # ap
     end
   end
 
   def self.create_by_params(params)
     application = Application.find_or_create_by_params(params[:url])
-    ap = ApplicationPage.create(application: application, url: params[:url], static: 0, user_static: 0)
+    ap = ApplicationPage.where(application: application, url: params[:url]).first_or_create(static: 0, user_static: 0)
     ap.create_terms(params[:title], params[:meta_description], params[:headers], params[:tfidf])
     neo_app = ap.find_or_create_neo_app_page
     neo_app.set_referrer(params[:referrer]) if params[:referrer].present?
@@ -36,20 +37,20 @@ class ApplicationPage < ActiveRecord::Base
   end
 
   def create_terms(title, description, headers, tfidf)
-    if title.present?
+    if title.present? && application_terms.titles.blank?
       title_terms = Term.create_terms_from_sentence(title)
       write_in_db(title_terms, 'title')
     end
-    if description.present?
+    if description.present? && application_terms.descriptions.blank?
       description_terms = Term.create_terms_from_sentence(description)
       write_in_db(description_terms, 'description')
     end
-    if headers.present?
+    if headers.present? && application_terms.headers.blank?
       header_terms = Term.create_text_terms(headers)
       write_in_db(header_terms, 'header')
     end
 
-    if tfidf.present?
+    if tfidf.present? && application_terms.texts.blank?
       tfs = Term.create_terms_from_array(tfidf)
       write_in_db(tfs, 'text')
     end

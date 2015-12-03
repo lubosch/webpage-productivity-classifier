@@ -18,6 +18,9 @@ class ApplicationTerm < ActiveRecord::Base
   delegate :probability, to: :term, prefix: true
 
   scope :titles, -> {where(term_type: 'title')}
+  scope :descriptions, -> {where(term_type: 'description')}
+  scope :headers, -> {where(term_type: 'header')}
+  scope :texts, -> {where(term_type: 'text')}
 
   def generating_bernouolli_likelihood(category)
     pk = term.activity_type_terms.find { |att| att.activity_type_id == category.id } if term
