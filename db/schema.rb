@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151202012310) do
+ActiveRecord::Schema.define(version: 20151203025953) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,6 +49,7 @@ ActiveRecord::Schema.define(version: 20151202012310) do
     t.string   "based_on"
     t.integer  "application_page_id"
     t.integer  "is_work"
+    t.integer  "user_id"
   end
 
   add_index "application_activity_types", ["activity_type_id"], name: "index_application_activity_types_on_activity_type_id", using: :btree

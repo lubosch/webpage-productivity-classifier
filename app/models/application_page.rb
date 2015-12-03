@@ -14,6 +14,7 @@
 class ApplicationPage < ActiveRecord::Base
   belongs_to :application
   has_many :application_terms
+  has_many :application_activity_types
 
   delegate :name, to: :application, prefix: true
 
@@ -55,9 +56,13 @@ class ApplicationPage < ActiveRecord::Base
 
   end
 
+  def titles
+    application_terms.titles.joins(:term).pluck(:text).join(' ')
+  end
+
   def write_in_db(terms, type)
     terms.each do |term, count|
-      at = application_terms.where(term: term, term_type: type).first_or_initialize(tf: 0)
+      at = application_terms.where(term: term.id, term_type: type).first_or_initialize(tf: 0)
       at.tf += count
       at.save
     end

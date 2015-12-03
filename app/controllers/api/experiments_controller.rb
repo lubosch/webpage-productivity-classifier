@@ -14,7 +14,7 @@ class Api::ExperimentsController < ApplicationController
 
   #user
   def app_categorization
-    ApplicationActivityType.define_by_user(params[:result])
+    ApplicationActivityType.define_by_user(params[:result], @user)
     render_200
   end
 

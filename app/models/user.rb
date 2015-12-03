@@ -31,6 +31,7 @@ class User < ActiveRecord::Base
   has_many :application_pages, through: :user_application_pages
   has_many :applications, through: :application_pages
   has_many :oauth_applications, class_name: 'Doorkeeper::Application', as: :owner
+  has_many :application_activity_types
 
   TEMP_EMAIL_PREFIX = 'change@me'
   TEMP_EMAIL_REGEX = /\Achange@me/
@@ -98,7 +99,13 @@ class User < ActiveRecord::Base
   end
 
   def best_unclassified_apps
-    ApplicationPage.where(:id => application_pages.group(:application_id, :id).having('count(application_id) > 5').limit(10).pluck(:id))
+    ApplicationPage
+        .where(:id => application_pages.joins("LEFT OUTER JOIN application_activity_types ON application_activity_types.application_page_id = application_pages.id AND application_activity_types.user_id = #{self.id} ")
+                          .group(:application_id)
+                          .order('count("application_pages"."application_id") DESC')
+                          .where('application_activity_types.application_page_id IS NULL')
+                          .limit(10)
+                          .pluck('min("application_pages"."id")'))
   end
 
 end

@@ -10,6 +10,7 @@
 #  based_on            :string
 #  application_page_id :integer
 #  is_work             :integer
+#  user_id             :integer
 #
 
 require 'rails_helper'

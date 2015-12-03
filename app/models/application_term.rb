@@ -10,13 +10,14 @@
 #
 
 class ApplicationTerm < ActiveRecord::Base
-  belongs_to :application, primary_key: :eval_id, foreign_key: :application_page_id
+  belongs_to :application#, primary_key: :eval_id, foreign_key: :application_page_id
   belongs_to :application_page
-  belongs_to :term, primary_key: :eval_id
+  belongs_to :term
 
   delegate :text, to: :term, prefix: true
   delegate :probability, to: :term, prefix: true
 
+  scope :titles, -> {where(term_type: 'title')}
 
   def generating_bernouolli_likelihood(category)
     pk = term.activity_type_terms.find { |att| att.activity_type_id == category.id } if term

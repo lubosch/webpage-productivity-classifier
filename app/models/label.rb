@@ -26,7 +26,7 @@
 #
 
 class Label < ActiveRecord::Base
-  belongs_to :application, primary_key: :eval_id
+  belongs_to :application#, primary_key: :eval_id
 
   scope :no_test, -> { where(:application => Application.no_test) }
   scope :test, -> { where(:application => Application.test) }
