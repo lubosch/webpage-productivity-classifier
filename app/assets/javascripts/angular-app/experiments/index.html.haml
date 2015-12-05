@@ -9,5 +9,9 @@
     .row.application-types
       %div{'experiment-application-type': '', 'ng-repeat': 'application_type in application_types'}
     .row.pull-right
-      %button.btn-lg.btn-primary{'ng-click': 'submit()'}
+      %button.btn-lg.btn-primary{'ng-click': 'submit()','ng-show': '!exp_success'}
         Submit
+      %p.text-success{'ng-show': 'exp_success'}
+        %i.fa.fa-heart
+        Thank you for your time and help
+
