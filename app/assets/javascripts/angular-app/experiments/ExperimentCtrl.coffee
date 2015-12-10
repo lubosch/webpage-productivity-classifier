@@ -1,6 +1,6 @@
 angular.module('wpc').controller("ExperimentCtrl", [
   '$scope', '$rootScope', 'ApplicationList', 'ApplicationType', 'ApplicationTypes', '$http',
-  ($scope, $rootScope, ApplicationList, ApplicationType, ApplicationTypes ,$http)->
+  ($scope, $rootScope, ApplicationList, ApplicationType, ApplicationTypes, $http)->
     $rootScope.hiddenLeftMenu = true
 
     ApplicationList.query().then ((application_list) ->
@@ -16,7 +16,8 @@ angular.module('wpc').controller("ExperimentCtrl", [
         init_drags($scope)
 
     $scope.submit = ->
-      $http.post('/api/experiments/app_categorization.json', {result: $scope.application_types})
+      $http.post('/api/experiments/app_categorization.json', {result: $scope.application_types}).then ->
+        $scope.exp_success = true
 
     $scope.set_working_app = (id) ->
       app = _.findWhere($scope.application_list, {id: id})

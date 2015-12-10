@@ -7,4 +7,7 @@
         %a.list-group-item{href: '#', id: 'pages-item-{{app_page.id}}', 'data-item-id': '{{app_page.id}}'}
           %i.fa.fa-times.fa-fw.text-danger{'ng-click': 'application_type.removeApp(app_page)'}
           {{app_page.name}}
-          %i.pull-right.fa{'ng-class': "[app_page.is_work === true ? 'fa-thumbs-up' : '', app_page.is_work === false ? 'fa-thumbs-down' : '']"}
+          %i.pull-right.fa.fa-thumbs-up{'ng-show': 'app_page.is_work === true'}
+          %i.pull-right.fa.fa-thumbs-up.text-gray{'ng-show': '!app_page.is_work', 'ng-click': 'set_working_app(app_page.id)'}
+          %i.pull-right.fa.fa-thumbs-down{'ng-show': 'app_page.is_work === false'}
+          %i.pull-right.fa.fa-thumbs-down.text-gray{'ng-show': 'app_page.is_work !== false', 'ng-click': 'set_non_working_app(app_page.id)'}

@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     resource :experiments, only: [] do
       post 'in_work'
       post 'not_in_work'
+      get 'beer_count'
     end
 
   end

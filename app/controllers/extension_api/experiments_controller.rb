@@ -15,6 +15,10 @@ class ExtensionApi::ExperimentsController < ExtensionApiController
     render_200
   end
 
+  def beer_count
+    render json: { 'beer_count' => @user.application_activity_types.count / 30.0 }
+  end
+
   protected
 
   def load_user
