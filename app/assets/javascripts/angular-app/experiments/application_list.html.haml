@@ -1,8 +1,8 @@
-.draggable.col-lg-3.col-md-6{id: 'experiment-draggable-{{application.id}}', 'data-app-id': '{{application.id}}' }
+.draggable{id: 'experiment-draggable-{{application.id}}', 'data-app-id': '{{application.id}}' }
   .panel.panel-primary
     .panel-heading.fit-text
       {{application.name}}
-      .pull-right
+      .pull-right.thumbs-space
         %i.fa.fa-thumbs-down{'ng-click': 'set_non_working_app(application.id)', 'ng-class': "application.is_work === false ? 'text-success' : 'exp-head-icon' "}
         %i.exp-head-icon.fa.fa-thumbs-up{'ng-click': 'set_working_app(application.id)', 'ng-class': "application.is_work === true ? 'text-success' : 'exp-head-icon' "}
     .panel-body.fit-text

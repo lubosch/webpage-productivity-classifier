@@ -15,6 +15,7 @@ angular.module('wpc').factory('ApplicationType',
           item.id == app.id
         )
         $('#experiment-draggable-' + app.id).removeClass('invisible')
+        $('#experiment-draggable-' + app.id).parent().removeClass('hidden')
         $('#experiment-draggable-' + app.id).removeAttr('style')
         $('#experiment-draggable-' + app.id).removeAttr('data-y')
         $('#experiment-draggable-' + app.id).removeAttr('data-x')

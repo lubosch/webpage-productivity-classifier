@@ -4,8 +4,8 @@
   'rails',
   'ui.router',
   'templates',
-  'ngVis'
-
+  'ngVis',
+  'angular-intro'
 ])
 
 # for compatibility with Rails CSRF protection

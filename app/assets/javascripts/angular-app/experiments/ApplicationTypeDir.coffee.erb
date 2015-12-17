@@ -8,7 +8,7 @@ angular.module('wpc').directive 'experimentApplicationType', ->
 
 makeit_dropable = (el, scope) ->
 #  debugger
-  interact(el.children().children()[0]).dropzone({
+  interact(el.children()[0]).dropzone({
     overlap: 'pointer',
     ondropactivate: (event) ->
 # add active dropzone feedback
@@ -32,12 +32,13 @@ makeit_dropable = (el, scope) ->
       dropzoneElement = event.target
       app_id = parseInt($(draggableElement).attr('data-app-id'))
       app = _.findWhere(scope.application_list, {id: app_id})
-      bucket_id = parseInt($(dropzoneElement).attr('id'))
+      bucket_id = parseInt($(dropzoneElement).attr('data-app-type-id'))
       bucket = _.findWhere(scope.application_types, {id: bucket_id})
       bucket.addApp(app)
       scope.$apply();
 
       draggableElement.classList.add('invisible')
+      draggableElement.parentElement.classList.add('hidden')
     ,
     ondropdeactivate: (event) ->
 # remove active dropzone feedback
