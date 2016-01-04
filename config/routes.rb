@@ -34,6 +34,7 @@ Rails.application.routes.draw do
   namespace :api do
     resource :dashboards, only: [] do
       get :overview, on: :collection
+      get :words_cloud, on: :collection
     end
     resource :experiments, only: [] do
       get :application_list, on: :collection

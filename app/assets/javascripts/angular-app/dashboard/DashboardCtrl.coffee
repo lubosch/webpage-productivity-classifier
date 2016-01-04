@@ -1,6 +1,6 @@
 angular.module('wpc').controller("DashboardCtrl", [
-  '$scope', 'Overview', 'VisDataSet',
-  ($scope, Overview, VisDataSet)->
+  '$scope', 'Overview', 'WordsCloud', 'VisDataSet',
+  ($scope, Overview, WordsCloud, VisDataSet)->
     Overview.query({period: 'day'}).then ((overview) ->
       overviewOptions = {
         align: "center",
@@ -31,4 +31,11 @@ angular.module('wpc').controller("DashboardCtrl", [
       $scope.overviewLoaded = true
 
     )
+
+    WordsCloud.query({period: 'day'}).then (data) ->
+      $scope.words = data
+#      $.each(data, (id, obj) ->
+#        $scope.words.push({text: obj.text, weight: obj.weight})
+#      )
+      return
 ])

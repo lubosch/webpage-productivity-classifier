@@ -5,7 +5,8 @@
   'ui.router',
   'templates',
   'ngVis',
-  'angular-intro'
+  'angular-intro',
+  'angular-jqcloud'
 ])
 
 # for compatibility with Rails CSRF protection

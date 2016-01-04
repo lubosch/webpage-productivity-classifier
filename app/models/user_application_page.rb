@@ -24,9 +24,11 @@ class UserApplicationPage < ActiveRecord::Base
 
   belongs_to :application_page
   belongs_to :user
+  has_many :application_terms, through: :application_page
 
   scope :last_chrome, -> { joins(:application_page).where(app_type: 'chrome') }
   scope :today, -> { where(created_at: 24.hours.ago..DateTime.now) }
+  scope :ranged, -> (since, till) { where(created_at: since..till) }
 
   delegate :connect_previous_tab, :url, :application_name, :application_id, to: :application_page
 

@@ -108,4 +108,13 @@ class User < ActiveRecord::Base
                           .pluck('min("application_pages"."id")'))
   end
 
+
+  def apps(since, till)
+    user_application_pages.joins(:application_page => :application).ranged(since, till)
+  end
+
+  def apps_w_stats(since, till)
+    apps(since, till).group(:application_id, :name).select('application_id, name, count(*) count, sum(length) length')
+  end
+
 end
