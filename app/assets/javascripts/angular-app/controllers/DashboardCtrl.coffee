@@ -16,6 +16,10 @@ angular.module('wpc').controller("DashboardCtrl", [
         end: Date.now()
       }
       #
+      overview['data'].forEach (item)->
+        item.start = vis.moment.utc(item.start).local()
+        item.end = vis.moment.utc(item.end).local()
+
       dsg = new VisDataSet()
       dsg.add (overview['groups'])
 
