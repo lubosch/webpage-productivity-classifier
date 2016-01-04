@@ -1,7 +1,7 @@
 json.data @activities do |activity|
   json.id activity.id
-  json.start activity.created_at.strftime('%Y-%m-%d %H:%M:%S')
-  json.end (activity.created_at + activity.length.to_f).strftime('%Y-%m-%d %H:%M:%S')
+  json.start activity.created_at.in_time_zone.strftime('%Y-%m-%d %H:%M:%S')
+  json.end (activity.created_at.in_time_zone + activity.length.to_f).strftime('%Y-%m-%d %H:%M:%S')
   json.group activity.application_id
   json.content activity.url
 end
