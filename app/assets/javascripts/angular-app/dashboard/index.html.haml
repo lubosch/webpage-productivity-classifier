@@ -1,7 +1,12 @@
 .row
   .col-xs-12
     %h1.page-header=I18n.t('dashboard.overview')
+  -#.row
   .row
+    .row.col-xs-12.col-sm-6.col-md-4.col-xs-3
+      .panel-body
+        %h3 Select date range
+        %input.form-control.date-picker{'date-range-picker': '', type: 'text', 'ng-model' => 'datePicker', max: 'datePicker.maxDate', options: "{timePicker: true, timePickerIncrement: 60, timePicker24Hour: true, locale: {format: 'DD.MM.YYYY H:mm '}}"}
     .col-xs-12
       .panel.panel-default
         .panel-body

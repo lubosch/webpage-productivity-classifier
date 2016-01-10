@@ -3,7 +3,7 @@ json.data @activities do |activity|
   json.start activity.created_at.strftime('%Y-%m-%d %H:%M:%S')
   json.end (activity.created_at + activity.length.to_f).strftime('%Y-%m-%d %H:%M:%S')
   json.group activity.application_id
-  json.content activity.url
+  json.content activity.titles
 end
 
 index = 0

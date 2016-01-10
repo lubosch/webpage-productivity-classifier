@@ -6,7 +6,8 @@
   'templates',
   'ngVis',
   'angular-intro',
-  'angular-jqcloud'
+  'angular-jqcloud',
+  'daterangepicker'
 ])
 
 # for compatibility with Rails CSRF protection

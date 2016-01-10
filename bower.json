@@ -7,7 +7,8 @@
       "vis": "4.11.0",
       "angular-ui-router": "v0.2.15",
       "angular-intro.js": "v1.3.0",
-      "angular-jqcloud": "v1.0.2"
+      "angular-jqcloud": "v1.0.2",
+      "angular-daterangepicker": "v0.2.2"
     },
     "resolutions" : {
       "angular": "1.5.0-build.4260+sha.befeeb3",

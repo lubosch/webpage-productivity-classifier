@@ -55,7 +55,7 @@ class ApplicationTerm < ActiveRecord::Base
         0.5
       when TERM_TYPES[:text]
         0.1
-      when TERM_TYPES[description]
+      when TERM_TYPES[:description]
         0.8
       else
         0.0

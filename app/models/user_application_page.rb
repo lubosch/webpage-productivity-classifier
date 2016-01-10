@@ -30,7 +30,7 @@ class UserApplicationPage < ActiveRecord::Base
   scope :today, -> { where(created_at: 24.hours.ago..DateTime.now) }
   scope :ranged, -> (since, till) { where(created_at: since..till) }
 
-  delegate :connect_previous_tab, :url, :application_name, :application_id, to: :application_page
+  delegate :connect_previous_tab, :url, :titles, :application_name, :application_id, to: :application_page
 
 
   before_create :default_values
