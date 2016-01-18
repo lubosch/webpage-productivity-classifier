@@ -2,7 +2,7 @@ angular.module('wpc').controller("DashboardCtrl", [
   '$scope', 'Overview', 'WordsCloud', 'VisDataSet', '$compile',
   ($scope, Overview, WordsCloud, VisDataSet, compile)->
     morning_date = new Date()
-    if morning_date.getHours >= 5
+    if morning_date.getHours() >= 5
       morning_date.setHours(5)
     else
       morning_date.setHours(5)
@@ -14,10 +14,13 @@ angular.module('wpc').controller("DashboardCtrl", [
       date_changed()
     )
 
+    $scope.weights = {text: 0.1, description: 0.8, header: 0.5, title: 1.0, duration: 60}
+
     date_changed = ->
       WordsCloud.query({start_day: $scope.datePicker.startDate, end_day: $scope.datePicker.endDate}).then (data) ->
-        time_words = gather_time_words(data)
+        time_words = gather_time_words(data, $scope)
         timeline_data = gathet_timeline_data(time_words, compile, $scope)
+        debugger;
 
 
         if (timeline_data.length > 0)
@@ -88,21 +91,21 @@ angular.module('wpc').controller("DashboardCtrl", [
 
 ])
 
-term_weight = (term_type) ->
+term_weight = (term_type, $scope) ->
   switch(term_type)
     when 'title'
-      1.0
+      $scope.weights.title
     when 'header'
-      0.5
+      $scope.weights.header
     when 'text'
-      0.1
+      $scope.weights.text
     when 'description'
-      0.8
+      $scope.weights.description
     else
       0.0
 
 
-gather_time_words = (data) ->
+gather_time_words = (data, $scope) ->
   words = {}
   i = 0
   len = data.length
@@ -115,13 +118,12 @@ gather_time_words = (data) ->
       act_term = words[sk][uap.termId]
       words[sk][uap.termId] = {
         count: act_term.count + 1,
-        weight: act_term.weight + term_weight(uap.termType) * uap.length / 100.0,
+        weight: act_term.weight + term_weight(uap.termType, $scope) * uap.length / $scope.weights.duration,
         text: uap.termText
       }
     else
-      words[sk][uap.termId] = {count: 1, weight: term_weight(uap.termType) * uap.length / 100.0, text: uap.termText}
+      words[sk][uap.termId] = {count: 1, weight: term_weight(uap.termType, $scope) * uap.length / $scope.weights.duration, text: uap.termText}
     i += 1
-
 
   i = 0
   keys = Object.keys(words)
@@ -142,7 +144,7 @@ gathet_timeline_data = (time_words, compile, scope)->
     start_date = moment(keys[i], 'YYYY-MM-DD HH:mm')
     end_date = moment(start_date).hours(start_date.hours() + 1)
     if (start_date.isValid() && end_date.isValid())
-      jqcloud = compile('<jqcloud words="words[\'' + keys[i] + '\']" steps=5 width=500 height=300 autoResize="true" shape="rectangular" />')(scope)
+      jqcloud = compile('<jqcloud words="words[\'' + keys[i] + '\']" steps=10 width=800 height=500 autoResize="true" shape="rectangular" />')(scope)
       timeline_data.push({id: i, content: jqcloud[0], start: start_date, end: end_date})
     i += 1
   timeline_data
