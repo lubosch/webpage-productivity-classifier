@@ -29,7 +29,8 @@ class ApplicationPage < ActiveRecord::Base
 
   def self.create_by_params(params)
     application = Application.find_or_create_by_params(params[:url])
-    ap = ApplicationPage.where(application: application, url: params[:url]).first_or_create(static: 0, user_static: 0)
+    ap = ApplicationPage.where(application: application, url: params[:url]).last
+    ap = ApplicationPage.create(application: application, url: params[:url], static: 0, user_static: 0) if !ap || ap.id && !ap.identical?(params[:title], params[:tfidf])
     ap.create_terms(params[:title], params[:meta_description], params[:headers], params[:tfidf])
     neo_app = ap.find_or_create_neo_app_page
     neo_app.set_referrer(params[:referrer]) if params[:referrer].present?
@@ -79,6 +80,26 @@ class ApplicationPage < ActiveRecord::Base
 
   def compare_terms(title, description, headers, tfidf)
     #TODO should evaluate if page changed or is static
+  end
+
+  def identical?(title, text)
+    act_text = application_terms.texts.joins(:term).pluck(:text)
+    words = text.present? ? text.map(&:first) : []
+
+    act_titles = application_terms.titles.joins(:term).pluck(:text)
+    titles = title.split
+
+    if (act_text & words).size < [act_text.size, words.size].min*0.8 || (act_titles & titles).size < [act_titles.size, titles.size].min*0.7
+      return false
+    elsif (act_text & words).size < [act_text.size, words.size].min || (act_titles & titles).size < [act_titles.size, titles.size].min
+      remove_different((act_titles-titles), (act_text - words))
+    end
+    true
+  end
+
+  def remove_different(titles, words)
+    application_terms.joins(:term).where(text: titles, term_type: ApplicationTerm::TERM_TYPES[:title]).destroy_all
+    application_terms.joins(:term).where(text: words, term_type: ApplicationTerm::TERM_TYPES[:text]).destroy_all
   end
 
 end
