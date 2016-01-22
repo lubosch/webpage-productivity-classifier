@@ -98,8 +98,8 @@ class ApplicationPage < ActiveRecord::Base
   end
 
   def remove_different(titles, words)
-    application_terms.joins(:term).where(text: titles, term_type: ApplicationTerm::TERM_TYPES[:title]).destroy_all
-    application_terms.joins(:term).where(text: words, term_type: ApplicationTerm::TERM_TYPES[:text]).destroy_all
+    application_terms.joins(:term).where('text IN (?)', titles).where(term_type: ApplicationTerm::TERM_TYPES[:title]).destroy_all
+    application_terms.joins(:term).where('text IN (?)', words).where(term_type: ApplicationTerm::TERM_TYPES[:text]).destroy_all
   end
 
 end
