@@ -6,8 +6,8 @@ angular.module('wpc').config ($locationProvider, $stateProvider, $urlRouterProvi
 
   $stateProvider.state 'index', {
     url: '/'
-    controller: 'HomeCtrl',
-    template: 'HomeCtrl'
+    controller: 'SplashCtrl',
+    templateUrl: "<%= asset_path('angular-app/splash/splash.html') %>"
   }
 
   $stateProvider.state 'dashboards', {

@@ -5,15 +5,17 @@
         =I18n.t('experiment.title')
         %button.btn.btn-primary{'ng-click': 'runIntro();','ng-show': '!exp_success'}
           Run intro
-    .row
+    .row-fluid
       .col-lg-12
         %div.col-lg-3.col-md-6{'experiment-application-list': '', 'ng-repeat': 'application in application_list track by application.id'}
     .row.application-types
-      %div.col-md-2.col-lg-2{'experiment-application-type': '', 'ng-repeat': 'application_type in application_types'}
-    .row.pull-right
-      %button.btn-lg.btn-primary{'ng-click': 'submit()','ng-show': '!exp_success'}
-        Submit
-      %p.text-success{'ng-show': 'exp_success'}
-        %i.fa.fa-heart
-        Thank you for your time and help
+      .col-lg-12
+        %div.col-md-2.col-lg-2{'experiment-application-type': '', 'ng-repeat': 'application_type in application_types'}
+    .row.col-lg-12
+      .pull-right
+        %button.btn-lg.btn-primary{'ng-click': 'submit()','ng-show': '!exp_success'}
+          Submit
+        %p.text-success{'ng-show': 'exp_success'}
+          %i.fa.fa-heart
+          Thank you for your time and help
 

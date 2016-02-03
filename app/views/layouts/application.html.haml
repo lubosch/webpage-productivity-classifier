@@ -7,11 +7,10 @@
     = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true
     = javascript_include_tag 'application', 'data-turbolinks-track' => true
     = csrf_meta_tags
-  %body{'ng-app':'wpc'}
-    #wrapper
-      = render 'layouts/navigation'
-    #page-wrapper{'ng-class': "{true: 'no-left-menu', false: 'no-left-menu'}[hiddenLeftMenu]"}
-      %div{'ui-view': ''}
+  %body#page-top{'ng-app':'wpc'}
+    = render 'layouts/navigation'
+    -##page-wrapper{'ng-class': "{true: 'no-left-menu', false: 'no-left-menu'}[hiddenLeftMenu]"}
+    %obal{'ui-view': ''}
 
   =render 'pages/login_modal'
   =render 'pages/sign_up_modal'

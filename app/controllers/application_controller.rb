@@ -1,11 +1,13 @@
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
-  protect_from_forgery with: :exception
+  # protect_from_forgery with: :exception
   # before_filter :ensure_signup_complete, only: [:new, :create, :update, :destroy]
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :set_locale
   after_filter :prepare_unobtrusive_flash
+  respond_to :html, :json
+
 
   def render_200
     respond_to do |format|
@@ -77,6 +79,5 @@ class ApplicationController < ActionController::Base
       redirect_to finish_signup_path(current_user)
     end
   end
-
 
 end

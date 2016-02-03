@@ -24,6 +24,10 @@ angular.module('wpc').controller("ExperimentCtrl", [
       app = _.findWhere($scope.application_list, {id: id})
       app['is_work'] = true
 
+    $scope.unset_working_app = (id) ->
+      app = _.findWhere($scope.application_list, {id: id})
+      app['is_work'] = null
+
     $scope.set_non_working_app = (id) ->
       app = _.findWhere($scope.application_list, {id: id})
       app['is_work'] = false

@@ -1,19 +1,43 @@
 -# navigation styled for Bootstrap 3.0
-%nav.navbar.navbar-default.navbar-static-top
-  .container
-    .navbar-header
-      %button.navbar-toggle{"data-target" => ".navbar-collapse", "data-toggle" => "collapse", :type => "button"}
-        %span.sr-only Toggle navigation
-        %span.icon-bar
-        %span.icon-bar
-        %span.icon-bar
-      %a.navbar-brand{'ui-sref': 'index'}='Productivity Optimizer'
-    .collapse.navbar-collapse
-      %ul.nav.navbar-nav
-        %li
-          %a{'ui-sref': 'dashboards'}='Dashboard'
-      %ul.nav.navbar-nav
-        %li
-          %a{'ui-sref': 'experiments'}=t('experiment.menu_item')
-      %ul.nav.navbar-nav.pull-right
-        = render 'layouts/navigation_links'
+%plate{'ng-controller': 'NavCtrl'}
+  %nav.navbar.navbar-default.navbar-static-top{'ng-hide': "$state.includes('index')"}
+    .container-fluid
+      .navbar-header
+        %button.navbar-toggle.collapsed{"data-target" => "#bs-example-navbar-collapse-2", "data-toggle" => "collapse", :type => "button"}
+          %span.sr-only Toggle navigation
+          %span.icon-bar
+          %span.icon-bar
+          %span.icon-bar
+        %a.navbar-brand{'ui-sref': 'index'}='Stay productive'
+      #bs-example-navbar-collapse-2.collapse.navbar-collapse
+        %ul.nav.navbar-nav
+          %li{'ng-class': "{'active': $state.includes('dashboards')}"}
+            %a{'ui-sref': 'dashboards'}='Dashboard'
+          %li{'ng-class': "{'active': $state.includes('experiments')}"}
+            %a{'ui-sref': 'experiments'}=t('experiment.menu_item')
+        %ul.nav.navbar-nav.navbar-right
+          = render 'layouts/navigation_links'
+  %nav#mainNav.navbar.navbar-default.navbar-fixed-top.affix-top{'ng-show': "$state.includes('index')"}
+    .container-fluid
+      / Brand and toggle get grouped for better mobile display
+      .navbar-header
+        %button.navbar-toggle.collapsed{"data-target" => "#bs-example-navbar-collapse-1", "data-toggle" => "collapse", :type => "button"}
+          %span.sr-only Toggle navigation
+          %span.icon-bar
+          %span.icon-bar
+          %span.icon-bar
+        %a.navbar-brand.page-scroll{:href => "#page-top"} Stay Productive
+      / Collect the nav links, forms, and other content for toggling
+      #bs-example-navbar-collapse-1.collapse.navbar-collapse
+        %ul.nav.navbar-nav.navbar-right
+          %li
+            %a.page-scroll{:href => "#about"} About
+          %li
+            %a.page-scroll{:href => "#features"} Features
+          %li
+            %a.page-scroll{:href => "#download"} Download
+          %li
+            %a.page-scroll{:href => "#contact"} Contact
+          %li
+            %a{:href => "#sign_up", 'data-toggle':  'modal', 'ng-hide': 'logged_in' } Sign up
+            %a{'ui-sref': "dashboards", 'ng-show': 'logged_in'} Dashboard

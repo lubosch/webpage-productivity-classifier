@@ -318,18 +318,33 @@ table.dataTable thead .sorting:after {
 }
 
 .panel-green {
-    border-color: $brand-success;
+    border-color: $green-darker;
     .panel-heading {
-        border-color: $brand-success;
+        border-color: $green-darker;
         color: white;
-        background-color: $brand-success;
+        background-color: $green-darker;
     }
     a {
         color: $brand-success;
         &:hover {
-            color: darken($brand-success, 15%);
+            color: darken($green-darker, 15%);
         }
     }
+}
+
+.panel-blue {
+  border-color: $blue-darker;
+  .panel-heading {
+    border-color: $blue-darker;
+    color: white;
+    background-color: $blue-darker;
+  }
+  a {
+    color: $blue-darker;
+    &:hover {
+      color: darken($blue-darker, 15%);
+    }
+  }
 }
 
 .panel-red {

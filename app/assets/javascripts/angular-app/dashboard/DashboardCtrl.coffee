@@ -20,7 +20,7 @@ angular.module('wpc').controller("DashboardCtrl", [
       WordsCloud.query({start_day: $scope.datePicker.startDate, end_day: $scope.datePicker.endDate}).then (data) ->
         time_words = gather_time_words(data, $scope)
         timeline_data = gathet_timeline_data(time_words, compile, $scope)
-        debugger;
+#        debugger;
 
 
         if (timeline_data.length > 0)

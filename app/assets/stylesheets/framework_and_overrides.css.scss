@@ -1,10 +1,3 @@
-// import the CSS framework
-@import "bootstrap-sprockets";
-@import "bootstrap";
-
-@import 'nprogress';
-@import 'nprogress-bootstrap';
-
 // make all images responsive by default
 img {
   @extend .img-responsive;
@@ -40,7 +33,22 @@ main {
   width: 100%;
   margin-top: 51px; // accommodate the navbar
   }
-section {
-  @extend .row;
-  margin-top: 20px;
-  }
+//section {
+//  @extend .row;
+//  margin-top: 20px;
+//  }
+
+.navbar-static-top {
+  left: 0;
+  right: 0;
+}
+
+.panel-group a {
+  color: $gray-darker;
+}
+
+.equal, .equal > div[class*='col-'] {
+  display: -webkit-flex;
+  display: flex;
+  flex:1 1 auto;
+}
