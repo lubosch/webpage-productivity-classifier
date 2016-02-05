@@ -25,40 +25,64 @@
     .row
       .col-lg-3.col-md-6.text-center
         .service-box
-          %i.fa.fa-4x.fa-diamond.wow.bounceIn.text-primary
-          %h3 Sturdy Templates
-          %p.text-muted Our templates are updated regularly so they don't break.
+          %i.fa.fa-4x.fa-bar-chart.wow.bounceIn.text-primary
+          %h3 Watch Your Activity
+          %p.text-muted Forgot to log your work? Look at what have you been doing that time and how long. Jira integration coming soon.
       .col-lg-3.col-md-6.text-center
         .service-box
-          %i.fa.fa-4x.fa-paper-plane.wow.bounceIn.text-primary{"data-wow-delay" => ".1s"}
-          %h3 Ready to Ship
-          %p.text-muted You can use this theme as is, or you can make changes!
+          %i.fa.fa-4x.fa-bell-slash-o.wow.bounceIn.text-primary{"data-wow-delay" => ".1s"}
+          %h3 Minimize Distractions
+          %p.text-muted Every application is yelling at you? Turn off distracting ones!
       .col-lg-3.col-md-6.text-center
         .service-box
-          %i.fa.fa-4x.fa-newspaper-o.wow.bounceIn.text-primary{"data-wow-delay" => ".2s"}
-          %h3 Up to Date
-          %p.text-muted We update dependencies to keep things fresh.
+          %i.fa.fa-4x.fa-user.wow.bounceIn.text-primary{"data-wow-delay" => ".2s"}
+          %h3 Personalize
+          %p.text-muted We know you are unique. All your applications will be distinguished by your preferences
       .col-lg-3.col-md-6.text-center
         .service-box
-          %i.fa.fa-4x.fa-heart.wow.bounceIn.text-primary{"data-wow-delay" => ".3s"}
-          %h3 Made with Love
-          %p.text-muted You have to make your websites with love these days!
+          %i.fa.fa-4x.fa-file-text-o.wow.bounceIn.text-primary{"data-wow-delay" => ".3s"}
+          %h3 Awesome Reports
+          %p.text-muted Wondering how productive have you been today? Compare, share, but foremost, know where you may get better!
 %aside#download.bg-dark
   .container.text-center
     .call-to-action
       %h2 Free Download!
-      %a.btn.btn-default.btn-xl.wow.tada{:href => "#"} Download Now!
+      %hr.light
+  .container
+    .row
+      .col-lg-4.col-md-4.col-xs-6.text-center
+        .service-box
+          %img.img-rounded{src: 'assets/images/google-chrome-extension.png', style: 'width: 30%; height: 30%;'}
+          %br
+          Install through Google Store
+          %a.btn.btn-default.btn-xl.wow.pulse{:href => 'https://chrome.google.com/webstore/detail/mblgangnjaapjmmpenjhmhnpokpighfj', target: '_blank'} Chrome Extension
+      .col-lg-4.col-md-4.col-xs-6.text-center
+        .service-box
+          %img.img-rounded{src: 'assets/images/linux_art.png', style: 'width: 26%; height: 26%;'}
+          %br
+          %p
+            sudo dpkg -i unix-productivity-logger.deb
+          %a.btn.btn-default.btn-xl.wow.pulse{:href => 'installers/unix-productivity-logger.deb', download: '', target: '_blank'} Linux
+      .col-lg-4.col-md-4.col-xs-6.text-center
+        .service-box
+          %img.img-rounded{src: 'assets/images/windows-8-icon.png', style: 'width: 30%; height: 30%;'}
+          %br
+          %p
+            Unzip to a folder and run
+          %a.btn.btn-default.btn-xl.wow.pulse{:href => "#"} Windows
 %section#contact
   .container
     .row
       .col-lg-8.col-lg-offset-2.text-center
-        %h2.section-heading Let's Get In Touch!
+        %h2.section-heading Give Us a Feedback
         %hr.primary
-          %p Ready to start your next project with us? That's great! Give us a call or send us an email and we will get back to you as soon as possible!
+          %p Did you like this project? Or did you not? Is something missing to you or you want a new feature? Give us a touch!
       .col-lg-4.col-lg-offset-2.text-center
-        %i.fa.fa-phone.fa-3x.wow.bounceIn
-        %p 123-456-6789
-      .col-lg-4.text-center
-        %i.fa.fa-envelope-o.fa-3x.wow.bounceIn{"data-wow-delay" => ".1s"}
+        %i.fa.fa-envelope-o.fa-3x.wow.bounceIn
         %p
-          %a{:href => "mailto:your-email@your-domain.com"} feedback@startbootstrap.com
+          %a{:href => "mailto:vnenk@swips.sk"} vnenk@swips.sk
+      .col-lg-4.text-center
+        %i.fa.fa-comment.fa-3x.wow.bounceIn{"data-wow-delay" => ".1s"}
+        %p
+          %a{href: '#feedback-form', 'data-toggle': 'modal'} Send a message
+          %div{'contact-form': ''}
