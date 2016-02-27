@@ -1,8 +1,18 @@
+.navbar-default.sidebar{role: 'navigation'}
+  .sidebar-nav.navbar-collapse
+    %ul#left-menu.nav.in
+      %li
+        %a.active{href: '#dashboard'}
+          %i.fa.fa-dashboard.fa-fw
+          Dashboard
+      -#%li
+      -#  %a{href: '#activity-log'}
+      -#    %i.fa.fa-dashboard.fa-fw
+      -#    Activity log
 #page-wrapper.left-menu
   .row
     .col-xs-12
       %h1.page-header=I18n.t('dashboard.overview')
-    -#.row
     .row
       .row.col-xs-12.col-sm-6.col-md-4.col-xs-3
         .panel-body

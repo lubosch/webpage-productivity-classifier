@@ -55,6 +55,7 @@ class UserApplicationPage < ActiveRecord::Base
 
   def log_activity(params)
     self.length = params[:active_length].to_f
+    self.length = Time.now - self.created_at if self.created_at + self.length > Time.now + 15
     self.scroll_up = params[:up_scroll_count].to_i
     self.scroll_down = params[:down_scroll_count].to_i
     self.scroll_diff = self.scroll_down - self.scroll_up

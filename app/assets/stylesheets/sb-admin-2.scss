@@ -139,7 +139,7 @@ body {
         z-index: 1;
         position: absolute;
         width: 250px;
-        margin-top: 51px;
+        margin-top: 20px;
     }
 
     .navbar-top-links .dropdown-messages,
@@ -318,16 +318,16 @@ table.dataTable thead .sorting:after {
 }
 
 .panel-green {
-    border-color: $green-darker;
+    border-color: $brand-green;
     .panel-heading {
-        border-color: $green-darker;
+        border-color: $brand-green;
         color: white;
-        background-color: $green-darker;
+        background-color: $brand-green;
     }
     a {
-        color: $brand-success;
+        color: $brand-green;
         &:hover {
-            color: darken($green-darker, 15%);
+            color: darken($brand-green, 15%);
         }
     }
 }
@@ -337,7 +337,7 @@ table.dataTable thead .sorting:after {
   .panel-heading {
     border-color: $blue-darker;
     color: white;
-    background-color: $blue-darker;
+    background-color: $brand-primary;
   }
   a {
     color: $blue-darker;

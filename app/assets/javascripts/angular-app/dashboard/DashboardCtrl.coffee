@@ -53,7 +53,7 @@ angular.module('wpc').controller("DashboardCtrl", [
           align: "center",
           autoResize: true
           selectable: true
-          orientation: "bottom"
+          orientation: "both"
           showCurrentTime: true
           showMajorLabels: true
           showMinorLabels: true
@@ -145,7 +145,7 @@ gathet_timeline_data = (time_words, compile, scope)->
     end_date = moment(start_date).hours(start_date.hours() + 1)
     if (start_date.isValid() && end_date.isValid())
       jqcloud = compile('<jqcloud words="words[\'' + keys[i] + '\']" steps=10 width=800 height=500 autoResize="true" shape="rectangular" />')(scope)
-      timeline_data.push({id: i, content: jqcloud[0], start: start_date, end: end_date})
+      timeline_data.push({id: i, content: jqcloud[0], start: start_date, end: end_date, className: 'unclassified'})
     i += 1
   timeline_data
 

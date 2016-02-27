@@ -12,7 +12,7 @@
 .panel.drop-target {
   //border: inherit;
   font-weight: 600;
-  border: 1px solid $brand-success;
+  border: 1px solid $brand-green;
   opacity: 0.8;
 }
 
@@ -24,12 +24,12 @@
 }
 
 .panel-heading .text-success {
-  color: $brand-success;
+  color: $brand-info;
 }
 
 .exp-head-icon:hover {
   cursor: default;
-  color: darken($brand-success, 10%);
+  color: $brand-info;
 }
 
 .text-gray {

@@ -15,6 +15,7 @@ class ApplicationPage < ActiveRecord::Base
   belongs_to :application
   has_many :application_terms
   has_many :application_activity_types
+  has_many :user_application_pages
 
   delegate :name, to: :application, prefix: true
 
