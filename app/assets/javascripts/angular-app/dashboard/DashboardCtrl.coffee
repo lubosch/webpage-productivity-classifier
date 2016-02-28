@@ -1,6 +1,6 @@
 angular.module('wpc').controller("DashboardCtrl", [
-  '$scope', 'Overview', 'WordsCloud', 'VisDataSet', '$compile',
-  ($scope, Overview, WordsCloud, VisDataSet, compile)->
+  '$scope', 'Overview', 'WordsCloud', 'VisDataSet', '$compile', '$filter', 'wwwCutFilter', '$sce',
+  ($scope, Overview, WordsCloud, VisDataSet, compile, $filter, wwwCutFilter, $sce)->
     morning_date = new Date()
     if morning_date.getHours() >= 5
       morning_date.setHours(5)
@@ -20,8 +20,6 @@ angular.module('wpc').controller("DashboardCtrl", [
       WordsCloud.query({start_day: $scope.datePicker.startDate, end_day: $scope.datePicker.endDate}).then (data) ->
         time_words = gather_time_words(data, $scope)
         timeline_data = gathet_timeline_data(time_words, compile, $scope)
-#        debugger;
-
 
         if (timeline_data.length > 0)
           $scope.words = time_words
@@ -31,7 +29,8 @@ angular.module('wpc').controller("DashboardCtrl", [
             items: new VisDataSet([{
               start: $scope.datePicker.startDate,
               end: $scope.datePicker.endDate,
-              content: 'No data'
+              content: 'No activity logged at that time'
+              className: 'unclassified'
             }])
           }
 
@@ -63,9 +62,22 @@ angular.module('wpc').controller("DashboardCtrl", [
 #          end: Date.now()
         }
 
+        if overview['data'].length == 0
+          overview['data'] = [{startAt: $scope.datePicker.startDate, endAt: $scope.datePicker.endDate, name: 'No activity logged at that time', applicationId: 999}]
+          overview['groups'] = [{index: 0, id: 999, duration: 0, name: 'Nothing'}]
+
         overview['data'].forEach (item)->
-          item.start = vis.moment.utc(item.start).local()
-          item.end = vis.moment.utc(item.end).local()
+          item.start = vis.moment.utc(item.startAt).local()
+          item.end = vis.moment.utc(item.endAt).local()
+          item.content = $sce.trustAsHtml(item.name)
+          item.title = $sce.trustAsHtml(item.name)
+          item.className = 'unclassified'
+          item.group = item.applicationId
+
+        overview['groups'].forEach (item)->
+          item.content = $sce.trustAsHtml($filter('capitalize')(wwwCutFilter(item.name), 'all')) + ' (' + $filter('number')(item.duration, 0) + ' sec)'
+          item.order = item.index
+          item.id = item.id
 
         dsg = new VisDataSet()
         dsg.add (overview['groups'])
@@ -73,17 +85,8 @@ angular.module('wpc').controller("DashboardCtrl", [
         dsi = new VisDataSet()
         dsi.add (overview['data'])
 
-        if(dsi.length > 0)
-          $scope.overview = {items: dsi, groups: dsg}
-          $scope.overviewLoaded = true
-        else
-          $scope.overview = {
-            items: new VisDataSet([{
-              start: $scope.datePicker.startDate,
-              end: $scope.datePicker.endDate,
-              content: 'No data'
-            }])
-          }
+        $scope.overview = {items: dsi, groups: dsg}
+        $scope.overviewLoaded = true
         $scope.overviewOptions = overviewOptions
         return
 
@@ -122,7 +125,11 @@ gather_time_words = (data, $scope) ->
         text: uap.termText
       }
     else
-      words[sk][uap.termId] = {count: 1, weight: term_weight(uap.termType, $scope) * uap.length / $scope.weights.duration, text: uap.termText}
+      words[sk][uap.termId] = {
+        count: 1,
+        weight: term_weight(uap.termType, $scope) * uap.length / $scope.weights.duration,
+        text: uap.termText
+      }
     i += 1
 
   i = 0

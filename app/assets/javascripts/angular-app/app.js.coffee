@@ -8,7 +8,10 @@
   'angular-intro',
   'angular-jqcloud',
   'daterangepicker',
-  'Devise'
+  'Devise',
+  '720kb.tooltips',
+  'ngSanitize',
+  'puigcerber.capitalize'
 ])
 
 # for compatibility with Rails CSRF protection
