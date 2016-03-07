@@ -100,10 +100,10 @@ class User < ActiveRecord::Base
 
   def best_unclassified_apps
     ApplicationPage
-        .where(:id => application_pages.joins("LEFT OUTER JOIN application_activity_types ON application_activity_types.application_page_id = application_pages.id AND application_activity_types.user_id = #{self.id} ")
+        .where(:id => application_pages
                           .group(:application_id)
                           .order('count("application_pages"."application_id") DESC')
-                          .where('application_activity_types.application_page_id IS NULL')
+                          .where.not(application_id: application_activity_types.pluck(:application_id))
                           .limit(10)
                           .pluck('min("application_pages"."id")'))
   end

@@ -14,8 +14,8 @@
 
 class Term < ActiveRecord::Base
 
-  has_many :activity_type_terms
-  has_many :application_terms
+  has_many :activity_type_terms, dependent: :delete_all
+  has_many :application_terms, dependent: :delete_all
 
   def self.update_probabilities
     sum = Term.sum(:ttf)
