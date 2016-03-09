@@ -22,6 +22,11 @@ class Application < ActiveRecord::Base
   scope :no_test, -> { where(:eval_type => nil) }
   scope :test, -> { where(:eval_type => 'test') }
 
+  def detect_language
+    guess = CLD.detect_language(application_pages.joins(:application_terms => :term).pluck('terms.text'))
+    guess[:code] if guess[:reliable]
+  end
+
   def classify
     activity_type_probabilities = {}
     ActivityType.all.each { |activity_type| activity_type_probabilities[activity_type.name.to_sym] = activity_type_probability(activity_type) }
@@ -102,8 +107,7 @@ class Application < ActiveRecord::Base
   def self.find_or_create_by_params(url)
     domain = uri?(url) ? extract_domain(url) : url
     name = uri?(url) ? web_name(url) : app_name(url)
-    lang = app_lang(url)
-    where(url: domain).first_or_create(eval_type: 'experiment', lang: lang, static: 0, user_static: 0, name: name)
+    Application.where(url: domain).first_or_create(eval_type: 'experiment', static: 0, user_static: 0, name: name)
   end
 
   def self.uri?(url)

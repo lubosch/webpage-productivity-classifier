@@ -94,6 +94,13 @@ gem 'thin'
 
 gem 'font-awesome-rails'
 
+# language detection
+gem 'cld2', require: 'cld'
+
+# gem 'airbrake', '~> 5.1'
+
+gem 'stopwords-filter', require: 'stopwords'
+
 group :development do
   gem 'guard', :require => false
   gem 'guard-livereload', :require => false

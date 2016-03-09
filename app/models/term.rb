@@ -22,9 +22,8 @@ class Term < ActiveRecord::Base
     Term.update_all("probability = ttf / #{sum.to_f}")
   end
 
-  def self.create_terms_from_sentence(sentence)
-    words = sentence.split#.map(&:stem)
-    create_terms_from_array(words)
+  def self.update_ttf
+
   end
 
   def self.create_terms_from_array(words)
@@ -37,12 +36,5 @@ class Term < ActiveRecord::Base
     end
     terms
   end
-
-  def self.create_text_terms(sentences)
-    words = {}
-    sentences.map(&:split).flatten.each { |word| words[word] ? words[word] += 1 : words[word] = 1 }
-    create_terms_from_array(words)
-  end
-
 
 end
