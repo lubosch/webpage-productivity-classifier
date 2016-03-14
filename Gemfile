@@ -97,7 +97,7 @@ gem 'font-awesome-rails'
 # language detection
 gem 'cld2', require: 'cld'
 
-# gem 'airbrake', '~> 5.1'
+gem 'airbrake', '~> 5.1'
 
 gem 'stopwords-filter', require: 'stopwords'
 

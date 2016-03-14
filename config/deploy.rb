@@ -90,6 +90,7 @@ namespace :deploy do
   end
 
   before "deploy", "deploy:check_revision"
+  after :finished, 'airbrake:deploy'
 
 end
 
@@ -106,3 +107,5 @@ end
 before 'deploy:compile_assets', 'bower:install'
 
 after 'deploy:publishing', 'deploy:restart'
+
+

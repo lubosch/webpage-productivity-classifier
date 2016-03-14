@@ -24,6 +24,7 @@ require 'capistrano/rails/migrations'
 require 'capistrano/rails/collection'
 require 'capistrano/linked_files'
 require 'capistrano3/unicorn'
+require 'airbrake/capistrano/tasks'
 # require 'capistrano/bower'
 
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined
