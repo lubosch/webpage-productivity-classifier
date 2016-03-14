@@ -63,7 +63,12 @@ angular.module('wpc').controller("DashboardCtrl", [
         }
 
         if overview['data'].length == 0
-          overview['data'] = [{startAt: $scope.datePicker.startDate, endAt: $scope.datePicker.endDate, name: 'No activity logged at that time', applicationId: 999}]
+          overview['data'] = [{
+            startAt: $scope.datePicker.startDate
+            endAt: $scope.datePicker.endDate
+            name: 'No activity logged at that time'
+            applicationId: 999
+          }]
           overview['groups'] = [{index: 0, id: 999, duration: 0, name: 'Nothing'}]
 
         overview['data'].forEach (item)->
@@ -74,8 +79,13 @@ angular.module('wpc').controller("DashboardCtrl", [
           item.className = 'unclassified'
           item.group = item.applicationId
 
+        overview['data'] = _.filter(overview['data'], (item) ->
+          item.start < item.end
+        )
+
         overview['groups'].forEach (item)->
-          item.content = $sce.trustAsHtml($filter('capitalize')(wwwCutFilter(item.name), 'all')) + ' (' + $filter('number')(item.duration, 0) + ' sec)'
+          item.duration_nice = moment.duration(item.duration, 'seconds')
+          item.content = $sce.trustAsHtml($filter('capitalize')(wwwCutFilter(item.name), 'all')) + ' (' + item.duration_nice.format() + ' )'
           item.order = item.index
           item.id = item.id
 

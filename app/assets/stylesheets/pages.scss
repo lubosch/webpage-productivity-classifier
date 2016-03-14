@@ -2,11 +2,11 @@
   word-wrap: break-word;
 }
 
-html,body{
+html, body {
   height: 100%
 }
 
-@media(min-width:768px) {
+@media(min-width: 768px) {
   #page-wrapper.no-left-menu {
     margin: 0 0 0 0;
     border-left: 0 solid darken($gray-lightest, 6.5%);
@@ -14,3 +14,10 @@ html,body{
   }
 }
 
+.ptop {
+  padding-top: 3%;
+}
+
+.pbot {
+  padding-top: 3%;
+}

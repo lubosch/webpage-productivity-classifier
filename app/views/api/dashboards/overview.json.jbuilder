@@ -1,8 +1,8 @@
 json.data @activities do |activity|
   json.id activity.id
-  json.start_at activity.created_at.strftime('%Y-%m-%d %H:%M:%S')
-  json.end_at (activity.created_at + activity.length.to_f).strftime('%Y-%m-%d %H:%M:%S')
-  json.application_id activity.application_id
+  json.startAt activity.created_at.strftime('%Y-%m-%d %H:%M:%S')
+  json.endAt (activity.created_at + activity.length.to_f).strftime('%Y-%m-%d %H:%M:%S')
+  json.applicationId activity.application_id
   json.name (@activity_terms[activity.application_page_id] || activity.titles || '-')
 end
 

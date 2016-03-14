@@ -3,14 +3,10 @@
     .panel-heading.fit-text
       {{application.name}}
       .pull-right.thumbs-space
-        -#%i.fa.fa-thumbs-down.text-success{'ng-click': 'set_non_working_app(application.id)', 'ng-show': "application.is_work ' : 'exp-head-icon' "}
-        -#%i.exp-head-icon.fa.fa-thumbs-up{'ng-click': 'set_working_app(application.id)', 'ng-class': "application.is_work === true ? 'text-success' : 'exp-head-icon' "}
-        -#%i.fa.fa-thumbs-down{'ng-click': 'set_non_working_app(application.id)', 'ng-class': "application.is_work === false ? 'text-success' : 'exp-head-icon' "}
-        -#%i.exp-head-icon.fa.fa-thumbs-up{'ng-click': 'set_working_app(application.id)', 'ng-class': "application.is_work === true ? 'text-success' : 'exp-head-icon' "}
-        %i.fa.fa-thumbs-up.text-success{'ng-show': 'application.is_work === true', 'ng-click': 'unset_working_app(application.id)'}
-        %i.fa.fa-thumbs-up.exp-head-icon{'ng-show': '!application.is_work', 'ng-click': 'set_working_app(application.id)'}
         %i.fa.fa-thumbs-down.text-success{'ng-show': 'application.is_work === false', 'ng-click': 'unset_working_app(application.id)'}
         %i.fa.fa-thumbs-down.exp-head-icon{'ng-show': 'application.is_work !== false', 'ng-click': 'set_non_working_app(application.id)'}
+        %i.fa.fa-thumbs-up.text-success{'ng-show': 'application.is_work === true', 'ng-click': 'unset_working_app(application.id)'}
+        %i.fa.fa-thumbs-up.exp-head-icon{'ng-show': '!application.is_work', 'ng-click': 'set_working_app(application.id)'}
 
     .panel-body.fit-text
       .row.col-md-12
