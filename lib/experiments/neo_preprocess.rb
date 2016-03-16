@@ -2,9 +2,9 @@ module Experiments
   class NeoPreprocess
     def self.simple_weights
 
-      sf = File.open('s.txt', 'w')
-      tf = File.open('t.txt', 'w')
-      wf = File.open('w.txt', 'w')
+      sf = File.open('sw.txt', 'w')
+      tf = File.open('tw.txt', 'w')
+      wf = File.open('ww.txt', 'w')
 
       s = []
       d = []
@@ -46,8 +46,6 @@ module Experiments
       sf.close
       tf.close
       wf.close
-
-      binding.pry
     end
 
   end

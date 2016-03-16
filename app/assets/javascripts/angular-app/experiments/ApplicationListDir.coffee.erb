@@ -24,7 +24,7 @@ makeit_draggable = (el) ->
 
     onmove: dragMoveListener,
 # call this function on every dragend event
-});
+  }).styleCursor(false)
 
 dragMoveListener = (event) ->
   target = event.target
