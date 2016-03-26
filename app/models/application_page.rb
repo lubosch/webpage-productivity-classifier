@@ -17,6 +17,7 @@ class ApplicationPage < ActiveRecord::Base
   has_many :terms, through: :application_terms
   has_many :application_activity_types
   has_many :user_application_pages
+  has_one :application_cluster, as: :application
 
   delegate :name, to: :application, prefix: true
 

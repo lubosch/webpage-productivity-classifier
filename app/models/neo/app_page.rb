@@ -11,6 +11,10 @@ module Neo
     has_many :in, :from_switch, rel_class: Neo::HasSwitch, model_class: Neo::AppPage
     has_one :both, :app, rel_class: Neo::HasPage, model_class: Neo::App
 
+    def application_id
+      app.application_id if app
+    end
+
     def classify(level, probability)
       if level == 0
         classes = {}

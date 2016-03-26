@@ -36,6 +36,7 @@ config/settings.local.yml
 config/settings/*.local.yml
 config/environments/*.local.yml
 
+/lib/experiment_files
 # Ignore RubyMine config files
 .idea/*
 /spec/vcr_cassettes

@@ -18,6 +18,7 @@ class Application < ActiveRecord::Base
   has_many :application_terms, foreign_key: :application_page_id
   has_many :labels #, primary_key: :eval_id
   has_many :application_pages
+  has_one :application_cluster, as: :application
 
   scope :no_test, -> { where(:eval_type => nil) }
   scope :test, -> { where(:eval_type => 'test') }

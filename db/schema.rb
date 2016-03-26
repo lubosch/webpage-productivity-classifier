@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151203025953) do
+ActiveRecord::Schema.define(version: 20160325194430) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,6 +54,16 @@ ActiveRecord::Schema.define(version: 20151203025953) do
 
   add_index "application_activity_types", ["activity_type_id"], name: "index_application_activity_types_on_activity_type_id", using: :btree
   add_index "application_activity_types", ["application_id"], name: "index_application_activity_types_on_application_id", using: :btree
+
+  create_table "application_clusters", force: :cascade do |t|
+    t.integer  "application_id"
+    t.string   "application_type"
+    t.integer  "cluster_id"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+  end
+
+  add_index "application_clusters", ["application_id", "application_type"], name: "application_clusters_polymoprh_application_index", using: :btree
 
   create_table "application_pages", force: :cascade do |t|
     t.integer  "application_id"
