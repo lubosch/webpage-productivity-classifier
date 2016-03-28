@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160325194430) do
+ActiveRecord::Schema.define(version: 20160328001159) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,6 +84,20 @@ ActiveRecord::Schema.define(version: 20160325194430) do
   end
 
   add_index "application_terms", ["application_page_id"], name: "index_application_terms_on_application_page_id", using: :btree
+
+  create_table "application_type_probabilities", force: :cascade do |t|
+    t.integer  "application_id"
+    t.integer  "activity_type_id"
+    t.string   "method"
+    t.float    "value"
+    t.integer  "application_page_id"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+  end
+
+  add_index "application_type_probabilities", ["activity_type_id"], name: "index_application_type_probabilities_on_activity_type_id", using: :btree
+  add_index "application_type_probabilities", ["application_id"], name: "index_application_type_probabilities_on_application_id", using: :btree
+  add_index "application_type_probabilities", ["application_page_id"], name: "index_application_type_probabilities_on_application_page_id", using: :btree
 
   create_table "applications", force: :cascade do |t|
     t.string   "name"
@@ -240,5 +254,8 @@ ActiveRecord::Schema.define(version: 20160325194430) do
   add_foreign_key "application_activity_types", "activity_types"
   add_foreign_key "application_activity_types", "applications"
   add_foreign_key "application_pages", "applications"
+  add_foreign_key "application_type_probabilities", "activity_types"
+  add_foreign_key "application_type_probabilities", "application_pages"
+  add_foreign_key "application_type_probabilities", "applications"
   add_foreign_key "identities", "users"
 end

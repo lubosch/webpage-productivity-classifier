@@ -138,4 +138,19 @@ class ApplicationPage < ActiveRecord::Base
     words.compact
   end
 
+  def classify
+    activity_type_probabilities = {}
+    ActivityType.all.each { |activity_type| activity_type_probabilities[activity_type.name.to_sym] = activity_type_probability(activity_type) }
+    activity_type_probabilities.sort_by { |_c, v| v.nan? ? -999999999 : v }.reverse
+  end
+
+  def activity_type_probability(category)
+    likelihood = 0
+    application_terms.includes(:term => :activity_type_terms).each do |dt|
+      likelihood += dt.generating_multinomial_likelihood(category)
+      # likelihood += dt.generating_bernouolli_likelihood(category)
+    end
+    likelihood + Math.log2(category.probability + 1)
+  end
+
 end

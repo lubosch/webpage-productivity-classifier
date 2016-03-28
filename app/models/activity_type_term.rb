@@ -17,10 +17,4 @@ class ActivityTypeTerm < ActiveRecord::Base
   belongs_to :activity_type
   belongs_to :term
 
-
-  # def recalculate_probability(sum)
-  #   update_attribute(:probability, self.count / sum.to_f)
-  #   update_attribute(:multinomial_probability, self.count+1 / sum.to_f+1)
-  # end
-
 end

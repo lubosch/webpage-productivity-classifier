@@ -17,15 +17,6 @@ class Term < ActiveRecord::Base
   has_many :activity_type_terms, dependent: :delete_all
   has_many :application_terms, dependent: :delete_all
 
-  def self.update_probabilities
-    sum = Term.sum(:ttf)
-    Term.update_all("probability = ttf / #{sum.to_f}")
-  end
-
-  def self.update_ttf
-
-  end
-
   def self.create_terms_from_array(words)
     terms = {}
     words.map do |word, count|

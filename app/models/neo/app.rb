@@ -14,7 +14,8 @@ module Neo
       else
         factor = 100*(4-level)/6.to_f*probability
         classes = application.evaluated_classes
-        classes = Hash[*classes.map { |klass| [klass, factor] }.flatten]
+        classes = Hash[classes.map { |klass| [klass, factor] }.flatten]
+
       end
       # puts "classes #{classes} #{level}"
 
