@@ -106,6 +106,10 @@ class ApplicationPage < ActiveRecord::Base
     true
   end
 
+  def neo_app_page
+    Neo::AppPage.find_by(application_page_id: self.id)
+  end
+
   def remove_different(titles, words)
     application_terms.joins(:term).where('text IN (?)', titles).where(term_type: ApplicationTerm::TERM_TYPES[:title]).destroy_all
     application_terms.joins(:term).where('text IN (?)', words).where(term_type: ApplicationTerm::TERM_TYPES[:text]).destroy_all
@@ -144,6 +148,12 @@ class ApplicationPage < ActiveRecord::Base
     activity_type_probabilities.sort_by { |_c, v| v.nan? ? -999999999 : v }.reverse
   end
 
+  def classify_knn
+    return [] if neo_app_page.blank?
+    category_probabilities = neo_app_page.classify(0, 1)
+    category_probabilities .sort_by { |_c, v| v }.reverse
+  end
+
   def activity_type_probability(category)
     likelihood = 0
     application_terms.includes(:term => :activity_type_terms).each do |dt|
@@ -151,6 +161,11 @@ class ApplicationPage < ActiveRecord::Base
       # likelihood += dt.generating_bernouolli_likelihood(category)
     end
     likelihood + Math.log2(category.probability + 1)
+  end
+
+  def evaluated_classes
+    classes = application_activity_types.joins(:activity_type).pluck('name').map(&:to_sym).uniq
+    application.evaluated_classes if classes.blank?
   end
 
 end

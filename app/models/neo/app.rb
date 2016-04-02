@@ -32,7 +32,7 @@ module Neo
     end
 
     def application
-      Application.find_by_id(self.application_page_id)
+      Application.find_by_id(self.application_id)
     end
 
 

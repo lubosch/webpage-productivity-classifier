@@ -7,11 +7,11 @@ module Clustering
 
       Neo::AppPage.find_each do |app_page|
         app_page.to_hosts.each_with_rel do |app_page_dest, rel|
-          sf.puts("#{app_page.application_page_id}\t#{app_page_dest.application_page_id}\t#{w1}")
+          sf.puts("#{app_page.application_page_id}\t#{app_page_dest.application_page_id}\t#{w1}\t#{rel.count}")
         end
 
         app_page.to_switch.each_with_rel do |app_page_dest, rel|
-          sf.puts("#{app_page.application_page_id}\t#{app_page_dest.application_page_id}\t#{w2}")
+          sf.puts("#{app_page.application_page_id}\t#{app_page_dest.application_page_id}\t#{w2}\t#{rel.count}")
         end
       end
       sf.close
@@ -25,7 +25,7 @@ module Clustering
 
       Neo::AppPage.find_each do |app_page|
         app_page.to_hosts.each_with_rel do |app_page_dest, rel|
-          sf.puts("#{app_page.application_page_id}\t#{app_page_dest.application_page_id}")
+          sf.puts("#{app_page.application_page_id}\t#{app_page_dest.application_page_id}\t#{rel.count}")
         end
       end
       sf.close
@@ -38,7 +38,7 @@ module Clustering
 
       Neo::AppPage.find_each do |app_page|
         app_page.to_switch.each_with_rel do |app_page_dest, rel|
-          sf.puts("#{app_page.application_page_id}\t#{app_page_dest.application_page_id}")
+          sf.puts("#{app_page.application_page_id}\t#{app_page_dest.application_page_id}\t#{rel.count}")
         end
       end
       sf.close
@@ -51,11 +51,11 @@ module Clustering
 
       Neo::AppPage.find_each do |app_page|
         app_page.to_hosts.each_with_rel do |app_page_dest, rel|
-          sf.puts("#{app_page.application_id}\t#{app_page_dest.application_id}\t#{w1}") if app_page.application_id && app_page_dest.application_id
+          sf.puts("#{app_page.application_id}\t#{app_page_dest.application_id}\t#{w1}\t#{rel.count}") if app_page.application_id && app_page_dest.application_id
         end
 
         app_page.to_switch.each_with_rel do |app_page_dest, rel|
-          sf.puts("#{app_page.application_id}\t#{app_page_dest.application_id}\t#{w2}") if app_page.application_id && app_page_dest.application_id
+          sf.puts("#{app_page.application_id}\t#{app_page_dest.application_id}\t#{w2}\t#{rel.count}") if app_page.application_id && app_page_dest.application_id
         end
       end
       sf.close
@@ -68,7 +68,7 @@ module Clustering
 
       Neo::AppPage.find_each do |app_page|
         app_page.to_hosts.each_with_rel do |app_page_dest, rel|
-          sf.puts("#{app_page.application_id}\t#{app_page_dest.application_id}") if app_page.application_id && app_page_dest.application_id && app_page_dest.application_id != app_page.application_id
+          sf.puts("#{app_page.application_id}\t#{app_page_dest.application_id}\t#{rel.count}") if app_page.application_id && app_page_dest.application_id
         end
       end
       sf.close
@@ -81,7 +81,7 @@ module Clustering
 
       Neo::AppPage.find_each do |app_page|
         app_page.to_switch.each_with_rel do |app_page_dest, rel|
-          sf.puts("#{app_page.application_id}\t#{app_page_dest.application_id}") if app_page.application_id && app_page_dest.application_id
+          sf.puts("#{app_page.application_id}\t#{app_page_dest.application_id}\t#{rel.count}") if app_page.application_id && app_page_dest.application_id
         end
       end
       sf.close

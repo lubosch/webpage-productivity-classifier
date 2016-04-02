@@ -19,20 +19,56 @@ module Neo
       if level == 0
         classes = {}
       else
-        factor = 100*(4-level)/6.to_f*probability
-        classes = application.evaluated_classes
+        factor = (4-level)/6.to_f*probability
+        classes = application_page && application_page.evaluated_classes || []
         classes = Hash[*classes.map { |klass| [klass, factor] }.flatten]
       end
-      # puts "classes #{classes} #{level}"
 
+      from_hosts_count = from_hosts.count
       if level <= 2
         from_hosts.each_with_rel do |host, connection|
-          if host != self
-            new_classification = host.classify(level+1, connection.probability)
+          new_probability = connection.probability/from_hosts_count
+          if host != self && new_probability > 0.001
+            new_classification = host.classify(level+1, new_probability)
             classes = new_classification.merge(classes) { |_k, a_value, b_value| a_value + b_value }
           end
         end
       end
+
+      to_hosts_count = to_hosts.count
+      if level <= 2
+        to_hosts.each_with_rel do |host, connection|
+          new_probability = connection.probability/to_hosts_count
+          if host != self && new_probability > 0.001
+            new_classification = host.classify(level+1, new_probability)
+            classes = new_classification.merge(classes) { |_k, a_value, b_value| a_value + b_value }
+          end
+        end
+      end
+
+
+      from_switch_count = from_switch.count
+      if level <= 2
+        from_switch.each_with_rel do |host, connection|
+          new_probability = connection.probability/from_switch_count*0.2
+          if host != self && new_probability > 0.0002
+            new_classification = host.classify(level+1, new_probability)
+            classes = new_classification.merge(classes) { |_k, a_value, b_value| a_value + b_value }
+          end
+        end
+      end
+
+      to_switch_count = to_switch.count
+      if level <= 2
+        to_switch.each_with_rel do |host, connection|
+          new_probability = connection.probability/to_switch_count*0.2
+          if host != self && new_probability > 0.0002
+            new_classification = host.classify(level+1, new_probability)
+            classes = new_classification.merge(classes) { |_k, a_value, b_value| a_value + b_value }
+          end
+        end
+      end
+
 
       classes
     end

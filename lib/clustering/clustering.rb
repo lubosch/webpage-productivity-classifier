@@ -4,10 +4,10 @@ module Clustering
     def self.cluster(method, w1=nil, w2=nil)
       file_path = ''
       if w1 && w2
-        file_path = Clustering::NeoPreprocess.send(method, w1, w2)
+        file_path = NeoPreprocess.send(method, w1, w2)
         system "#{ENV['OSLOM2_PATH']} -f #{file_path} -w"
       else
-        file_path = Clustering::NeoPreprocess.send(method)
+        file_path = NeoPreprocess.send(method)
         system "#{ENV['OSLOM2_PATH']} -f #{file_path} -uw"
       end
 

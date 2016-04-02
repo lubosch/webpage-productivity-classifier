@@ -35,13 +35,13 @@ class Application < ActiveRecord::Base
     activity_type_probabilities.sort_by { |_c, v| v.nan? ? -999999999 : v }.reverse
   end
 
-  def classify_k_nearest
+  def classify_knn
     category_probabilities = neo_host.classify(0, 1)
     category_probabilities.blank? ? classify : category_probabilities.sort_by { |_c, v| v }.reverse
   end
 
   def neo_host
-    Neo::AppPage.find_by(:eval_id => eval_id)
+    Neo::App.find_by(:application_id => self.id)
   end
 
   def activity_type_probability(category)
