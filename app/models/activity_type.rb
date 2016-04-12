@@ -19,6 +19,10 @@ class ActivityType < ActiveRecord::Base
   has_many :application_activity_types, :dependent => :delete_all
   ACTIVITY_TYPES = [:adult, :communication_scheduling, :social_networks, :graphic_tools, :multimedia, :news_blogs, :leisure_fun, :educational_research, :shopping, :software_development, :others, :multicategory]
 
+  def default_probability
+    1.0 / ACTIVITY_TYPES.size
+  end
+
   # def update_prior_probabilities(sum)
   #   self.count = Label.no_test.where(self.name.to_sym => 1).count
   #   self.probability = self.count / sum.to_f

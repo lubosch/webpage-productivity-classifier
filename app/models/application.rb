@@ -20,6 +20,7 @@ class Application < ActiveRecord::Base
   has_many :application_pages
   has_one :application_cluster, as: :application
   has_many :application_activity_types
+  has_many :application_type_probabilities
 
   scope :no_test, -> { where(:eval_type => nil) }
   scope :test, -> { where(:eval_type => 'test') }
@@ -32,7 +33,22 @@ class Application < ActiveRecord::Base
   def classify
     activity_type_probabilities = {}
     ActivityType.all.each { |activity_type| activity_type_probabilities[activity_type.name.to_sym] = activity_type_probability(activity_type) }
-    activity_type_probabilities.sort_by { |_c, v| v.nan? ? -999999999 : v }.reverse
+    activity_type_probabilities = normalize(activity_type_probabilities)
+    activity_type_probabilities.sort_by { |_c, v| v }.reverse
+  end
+
+  def normalize(activity_type_probabilities)
+    values = activity_type_probabilities.map { |_c, v| v }
+    min = values.min
+    max = values.max
+    normalized = activity_type_probabilities.map { |c, v| [c, (v-min)/(max-min)] }
+    sum = normalized.sum { |_c, v| v }
+    normalized.map { |c, v| [c, v/sum] }
+  end
+
+  def classify_precomputed(method)
+    # application_type_probabilities.where(method: method, application_page: nil).order(value: :desc).joins(:activity_type).pluck(:name, :value)
+    application_type_probabilities.where(method: method, application_page: nil).order(value: :desc).joins(:activity_type).pluck(:name).map(&:to_sym)
   end
 
   def classify_knn
@@ -48,9 +64,8 @@ class Application < ActiveRecord::Base
     likelihood = 0
     application_terms.includes(:term => :activity_type_terms).each do |dt|
       likelihood += dt.generating_multinomial_likelihood(category)
-      # likelihood += dt.generating_bernouolli_likelihood(category)
     end
-    likelihood + Math.log2(category.probability + 1)
+    category.probability == 0 ? likelihood + Math.log2(category.default_probability) : likelihood + Math.log2(category.probability)
   end
 
   def evaluated_classes

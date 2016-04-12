@@ -16,4 +16,7 @@ class ApplicationTypeProbability < ActiveRecord::Base
   belongs_to :application
   belongs_to :activity_type
   belongs_to :application_page
+
+  METHODS = {knn: :KNN, mnb: :MNB, mnb2: :MNB2, mnb3: :MNB3}
+
 end

@@ -44,4 +44,5 @@ module Clustering
   end
 end
 
-# Clustering::Clustering.cluster(:simple_weights, 5, 1)
+# Clustering::Clustering.cluster_applications
+# Clustering::Clustering.cluster_application_pages

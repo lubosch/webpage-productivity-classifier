@@ -28,4 +28,9 @@ class Term < ActiveRecord::Base
     terms
   end
 
+  def default_pk
+    count = Rails.cache.fetch('terms.count'){Term.count}
+    self.ttf / count.to_f
+  end
+
 end

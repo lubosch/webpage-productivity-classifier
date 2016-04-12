@@ -40,9 +40,10 @@ class ApplicationTerm < ActiveRecord::Base
   def generating_multinomial_likelihood(activity_type)
     pk = term.activity_type_terms.find { |att| att.activity_type_id == activity_type.id } if term
     if pk.present?
-      pk = pk.multinomial_probability + 1
+      pk = term.default_pk + pk.multinomial_probability# + 1
     else
-      pk = 1 #/ (activity_type.terms_count + activity_type.vocabulary_size.to_f)
+      pk = term.default_pk
+      # pk = 0 #/ (activity_type.terms_count + activity_type.vocabulary_size.to_f)
     end
     self.tf * Math.log2(pk)
   end
