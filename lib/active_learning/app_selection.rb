@@ -53,7 +53,7 @@ module ActiveLearning
     def apps_probabilities
       groups = {}
       probabilities = {}
-      apptype_probabilities = ApplicationTypeProbability.where(application: unclassified_apps_id, application_page_id: nil, method: ApplicationTypeProbability::METHODS[:mnb3])
+      apptype_probabilities = ApplicationTypeProbability.where(application: unclassified_apps_id, application_page_id: nil, method: ApplicationTypeProbability::METHODS[:mnb])
       apptype_probabilities.each do |probability|
         groups[probability.application_id] ||= []
         groups[probability.application_id] << probability

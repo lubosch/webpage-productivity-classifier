@@ -100,7 +100,7 @@ class User < ActiveRecord::Base
 
   def best_unclassified_apps
     best_apps = ActiveLearning::AppSelection.new(self).best_apps
-    best_apps_id = best_apps.map{|app_id, _value| app_id}.first(30)
+    best_apps_id = best_apps.map{|app_id, _value| app_id}.first(10)
 
     ApplicationPage
         .where(:id => application_pages

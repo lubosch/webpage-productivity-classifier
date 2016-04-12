@@ -11,9 +11,9 @@ module Classification
 
     def self.all_app_classification_mnb
       Application.find_each do |application|
-        Resque.enqueue(Classification, application.id)
-        # result = application.classify
-        # store_result_mnb(application, result)
+        # Resque.enqueue(Classification, application.id)
+        result = application.classify
+        store_result_mnb(application, result)
       end
     end
 
@@ -26,20 +26,20 @@ module Classification
 
 
     def self.store_result_mnb(application, results)
-      ApplicationTypeProbability.where(application: application, method: ApplicationTypeProbability::METHODS[:mnb3]).delete_all
+      ApplicationTypeProbability.where(application: application, method: ApplicationTypeProbability::METHODS[:mnb]).delete_all
 
       results.each do |name, probability|
         act_type = ActivityType.find_by_name(name)
-        ApplicationTypeProbability.create(application: application, value: probability, activity_type: act_type, method: ApplicationTypeProbability::METHODS[:mnb3])
+        ApplicationTypeProbability.create(application: application, value: probability, activity_type: act_type, method: ApplicationTypeProbability::METHODS[:mnb])
       end
     end
 
     def self.store_page_result_mnb(application_page, results)
-      ApplicationTypeProbability.where(application_id: application_page.application_id, application_page: application_page, method: ApplicationTypeProbability::METHODS[:mnb3]).delete_all
+      ApplicationTypeProbability.where(application_id: application_page.application_id, application_page: application_page, method: ApplicationTypeProbability::METHODS[:mnb]).delete_all
 
       results.each do |name, probability|
         act_type = ActivityType.find_by_name(name)
-        ApplicationTypeProbability.create(application_id: application_page.application_id, application_page: application_page, value: probability, activity_type: act_type, method: ApplicationTypeProbability::METHODS[:mnb3])
+        ApplicationTypeProbability.create(application_id: application_page.application_id, application_page: application_page, value: probability, activity_type: act_type, method: ApplicationTypeProbability::METHODS[:mnb])
       end
     end
 
@@ -80,6 +80,5 @@ module Classification
   end
 end
 
-# Classification::Classification.experiment
 # Classification::Classification.all_app_classification_mnb
-# Classification::Classification.all_app_page_classification
+# Classification::Classification.all_app_page_classification_mnb

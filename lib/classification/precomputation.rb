@@ -22,11 +22,12 @@ module Classification
     end
 
 
-    def self.refresh_activity_type_terms
-      ApplicationActivityType.find_each do |app_act_type|
-        app_act_type.create_activity_type_terms if ApplicationActivityType.find_by(application_page_id: app_act_type.application_page_id) == app_act_type
-      end
-    end
+    # not needed anymore, doing automatic
+    # def self.refresh_activity_type_terms
+    #   ApplicationActivityType.where('created_at < ?', "2016-04-02 15:58:00".to_datetime).each do |app_act_type|
+    #     app_act_type.create_activity_type_terms if ApplicationActivityType.find_by(application_page_id: app_act_type.application_page_id) == app_act_type
+    #   end
+    # end
 
     def self.update_multinomial_probability
       all_labels_count = ApplicationActivityType.count

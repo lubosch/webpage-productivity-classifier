@@ -7,7 +7,7 @@ module Classification
       all = 0
       ApplicationActivityType.find_each do |app_act_type|
         application = app_act_type.application
-        result = application.classify_precomputed(ApplicationTypeProbability::METHODS[:mnb3])
+        result = application.classify_precomputed(ApplicationTypeProbability::METHODS[:mnb])
 
         r1 += 1 if (application.evaluated_classes & result[0...1]).present?
         r2 += 1 if (application.evaluated_classes & result[0..1]).present?
