@@ -1,34 +1,25 @@
 module Classification
   class Classification
 
+    @queue = :classification_mnb
+
+    def self.perform(app_id)
+      application = Application.find(app_id)
+      result = application.classify
+      store_result_mnb(application, result)
+    end
+
     def self.all_app_classification_mnb
-      r1 = 0
-      r2 = 0
       Application.find_each do |application|
-        result = application.classify
-
-        if application.evaluated_classes.present?
-          r1 += 1 if (application.evaluated_classes & result[0].flatten).present?
-          r2 += 1 if (application.evaluated_classes & result[0..1].flatten).present?
-        end
-
-        store_result_mnb(application, result)
+        Resque.enqueue(Classification, application.id)
+        # result = application.classify
+        # store_result_mnb(application, result)
       end
     end
 
     def self.all_app_page_classification_mnb
-      r1 = 0
-      r2 = 0
       ApplicationPage.find_each do |application_page|
         result = application_page.classify
-
-        evaluated_classes = ApplicationActivityType.where(application_page: application_page).joins(:activity_type).pluck('name').map(&:to_sym).uniq
-
-        if evaluated_classes.present?
-          r1 += 1 if (evaluated_classes & result[0].flatten).present?
-          r2 += 1 if (evaluated_classes & result[0..1].flatten).present?
-        end
-
         store_page_result_mnb(application_page, result)
       end
     end
@@ -53,34 +44,15 @@ module Classification
     end
 
     def self.all_app_classification_knn
-      r1 = 0
-      r2 = 0
-
       Application.each do |application|
         result = application.classify_knn
-
-        if application.evaluated_classes.present?
-          r1 += 1 if (application.evaluated_classes & result[0].flatten).present?
-          r2 += 1 if (application.evaluated_classes & result[0..1].flatten).present?
-        end
-
         store_result_knn(application, result)
       end
     end
 
     def self.all_app_page_classification_knn
-      r1 = 0
-      r2 = 0
       ApplicationPage.each do |application_page|
         result = application_page.classify_knn
-
-        evaluated_classes = application_page.evaluated_classes
-
-        if evaluated_classes.present?
-          r1 += 1 if (evaluated_classes & result[0].flatten).present? if result[0].present?
-          r2 += 1 if (evaluated_classes & result[0..1].flatten).present? if result[1].present?
-        end
-
         store_page_result_knn(application_page, result)
       end
     end

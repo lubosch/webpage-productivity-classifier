@@ -99,12 +99,13 @@ class User < ActiveRecord::Base
   end
 
   def best_unclassified_apps
+    best_apps = ActiveLearning::AppSelection.new(self).best_apps
+    best_apps_id = best_apps.map{|app_id, _value| app_id}.first(30)
+
     ApplicationPage
         .where(:id => application_pages
                           .group(:application_id)
-                          .order('count("application_pages"."application_id") DESC')
-                          .where.not(application_id: application_activity_types.pluck(:application_id))
-                          .limit(10)
+                          .where(application_id: best_apps_id)
                           .pluck('min("application_pages"."id")'))
   end
 

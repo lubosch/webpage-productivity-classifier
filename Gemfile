@@ -29,6 +29,8 @@ gem 'omniauth-facebook'
 gem 'omniauth-linkedin'
 gem 'cancan'
 
+gem 'resque'
+
 gem 'doorkeeper'
 
 gem 'rename'
