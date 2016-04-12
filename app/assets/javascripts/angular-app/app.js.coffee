@@ -28,4 +28,14 @@
   Auth.currentUser().then((user) ->
     $rootScope.logged_in = true
   )
-])
+]).run(($rootScope, $location, Auth)  ->
+  $rootScope.$on("$stateChangeStart", (event, toState, toParams, fromState, fromParams, options)->
+    if ( !$rootScope.logged_in)
+      Auth.currentUser().then((user) ->
+        $rootScope.logged_in = true
+      , (error) ->
+        if ( toState != "index" )
+          $location.path("/")
+      )
+  )
+)

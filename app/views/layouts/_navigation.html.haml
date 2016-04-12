@@ -39,5 +39,7 @@
           %li
             %a.page-scroll{:href => "#contact"} Contact
           %li
-            %a{:href => "#sign_up", 'data-toggle':  'modal', 'ng-hide': 'logged_in' } Sign up
+            %a{:href => "#login", 'data-toggle':  'modal', 'ng-hide': 'logged_in' } Sign in
             %a{'ui-sref': "dashboards", 'ng-show': 'logged_in'} Dashboard
+          %li
+            %a{'ui-sref': "experiments", 'ng-show': 'logged_in'} Experiment

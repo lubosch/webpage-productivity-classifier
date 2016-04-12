@@ -16,11 +16,3 @@ angular.module('wpc').config ($locationProvider, $stateProvider, $urlRouterProvi
     templateUrl: "<%= asset_path('angular-app/dashboard/index.html') %>"
   }
 
-
-angular.module('wpc').run(($rootScope, $location)  ->
-  $rootScope.$on("$stateChangeStart", (event, toState, toParams, fromState, fromParams, options)->
-    if ( !$rootScope.logged_in)
-      if ( toState != "index" )
-        $location.path("/")
-  )
-)
