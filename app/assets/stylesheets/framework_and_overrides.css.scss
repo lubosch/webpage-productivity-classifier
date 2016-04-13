@@ -53,3 +53,7 @@ main {
   display: flex;
   flex:1 1 auto;
 }
+
+body > [uib-modal-window]:not([modal-render]) {
+  display: none;
+}

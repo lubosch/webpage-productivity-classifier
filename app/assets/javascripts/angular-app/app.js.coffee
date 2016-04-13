@@ -3,6 +3,7 @@
   'templates',
   'rails',
   'ui.router',
+  'ui.bootstrap'
   'templates',
   'ngVis',
   'angular-intro',

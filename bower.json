@@ -11,6 +11,7 @@
       "angular-daterangepicker": "v0.2.2",
       "angular-devise": "v1.1.0",
       "angular-tooltips": "v1.0.7",
+      "angular-bootstrap": "v1.1.0",
       "angular-sanitize": "v1.5.1-build.4646+sha.32feb2b",
       "angular-capitalize-filter": "v3.0.0",
       "moment-duration-format": "v1.1.0"

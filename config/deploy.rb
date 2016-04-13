@@ -38,7 +38,7 @@ set :use_sudo, false
 set :deploy_via, :copy
 set :copy_exclude, [".git/*", ".gitignore", ".DS_Store"]
 
-set :linked_dirs, %w{bin log tmp/backup tmp/pids tmp/cache tmp/sockets vendor/bundle config/unicorn vendor/assets/bower_components}
+set :linked_dirs, %w{bin log tmp/backup tmp/pids tmp/cache tmp/sockets vendor/bundle config/unicorn vendor/assets/bower_components lib/experiment_files}
 set :linked_files, %w{.env config/unicorn.rb config/unicorn_init.sh}
 
 set :format, :pretty

@@ -1,11 +1,19 @@
 angular.module('wpc').controller("ExperimentCtrl", [
-  '$scope', '$rootScope', 'ApplicationList', 'ApplicationType', 'ApplicationTypes', '$http',
-  ($scope, $rootScope, ApplicationList, ApplicationType, ApplicationTypes, $http)->
+  '$scope', '$rootScope', 'ApplicationList', 'ApplicationType', 'ApplicationTypes', '$http', '$uibModal',
+  ($scope, $rootScope, ApplicationList, ApplicationType, ApplicationTypes, $http, $uibModal)->
     $rootScope.hiddenLeftMenu = true
 
     $scope.submit = ->
-      $http.post('/api/experiments/app_categorization.json', {result: $scope.application_types}).then ->
-        $scope.exp_success = true
+      filled_at_least_once = _.some($scope.application_types, (app_type) ->
+        _.some(app_type.application_pages, (app_page) ->
+          app_page.is_work == true || app_page.is_work == false
+        )
+      )
+      if(filled_at_least_once)
+        $http.post('/api/experiments/app_categorization.json', {result: $scope.application_types}).then ->
+          $scope.exp_success = true
+      else
+        $scope.open_warning('sm')
 
     $scope.set_working_app = (id) ->
       app = _.findWhere($scope.application_list, {id: id})
@@ -65,5 +73,12 @@ angular.module('wpc').controller("ExperimentCtrl", [
 
     load_everything()
 
+    $scope.open_warning = (size) ->
+      modalInstance = $uibModal.open({
+        animation: true,
+        templateUrl: "<%= asset_path('angular-app/experiments/warning_modal.html') %>",
+        controller: 'WarningModalCtrl',
+        size: size,
+      })
 ])
 
