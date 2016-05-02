@@ -73,8 +73,8 @@ class Application < ActiveRecord::Base
   end
 
   def self.extract_domain(url)
-    url = "http://#{url}" if URI.parse(url).scheme.nil?
-    URI.parse(url).host.downcase
+    url = "http://#{url}" if Addressable::URI.parse(url).scheme.nil?
+    Addressable::URI.parse(url).host.downcase
   end
 
   def self.app_lang(url)

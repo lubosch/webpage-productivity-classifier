@@ -103,6 +103,9 @@ gem 'airbrake', '~> 5.1'
 
 gem 'stopwords-filter', require: 'stopwords'
 
+# Addressable::URI.parse(url).host
+gem 'addressable'
+
 group :development do
   gem 'guard', :require => false
   gem 'guard-livereload', :require => false
