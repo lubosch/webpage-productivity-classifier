@@ -1,0 +1,428 @@
+angular.module('wpc').directive 'timelineSpiralDetail', ->
+  return {
+  restrict: 'A'
+  scope: {
+  },
+  require: '^spiralGraph'
+  templateUrl: "<%= asset_path('angular-app/dashboard/timeline_spiral.html') %>"
+  link: link
+  }
+
+
+link = (scope, element, attrs, controller) ->
+  container = undefined
+  WIDTH = 600
+  HEIGHT = 600
+  scene = undefined
+  camera = undefined
+  renderer = undefined
+  controls = undefined
+  #  stats = undefined
+  planes = undefined
+  positive_planes = undefined
+  negative_planes = undefined
+  arrow = undefined
+  sprite1 = undefined
+  raycaster = undefined
+  context1 = undefined
+  canvas1 = undefined
+  texture1 = undefined
+  projector = undefined
+  INTERSECTED = undefined
+  mouse = undefined
+  gui = undefined
+  changing = undefined
+  group_rot = 0
+  group = undefined
+  legends_group = undefined
+  legend_axis = undefined
+  #  TOTAL = 100
+  ITERATIONS = 14
+  ITERATIONS_MAX = 14
+  RAD_CONST = Math.PI / 180
+
+  SETTINGS = {
+    RADIUS: 300
+    D_Y: 25
+    PLANES_PER_ROTATION: 12
+    PLANE_OPACITY: 0.9
+    TRANSPARENT: false
+    WIREFRAME: false
+    ROT_SPEED: 20
+  }
+
+  organizePlanes = ->
+    max_total = ITERATIONS_MAX * SETTINGS['PLANES_PER_ROTATION']
+    total = ITERATIONS * SETTINGS['PLANES_PER_ROTATION']
+    yPos = -(total * SETTINGS['D_Y']) / 2
+    scaleX = 1
+    anglePer = 360 / SETTINGS['PLANES_PER_ROTATION'] * RAD_CONST
+    yRot = 270 * RAD_CONST
+    plane = undefined
+    i = 0
+    r = i * anglePer * SETTINGS['D_Y'] + SETTINGS['RADIUS']
+    direction = new THREE.Vector3(Math.cos(i * anglePer) * (r) - 50, 0, Math.sin(i * anglePer) * (r))
+    arrow.setDirection(direction.normalize())
+    arrow.rotation.y = anglePer / 2
+    arrow.setLength((total * SETTINGS['D_Y'] + SETTINGS['RADIUS']) * 2)
+
+    legends_group.children = [legends_group.children[0]]
+
+    geometry = new THREE.Geometry();
+    while i < SETTINGS['PLANES_PER_ROTATION']
+      geometry.vertices.push(new THREE.Vector3(0, 0, 0))
+      geometry.vertices.push(new THREE.Vector3(Math.cos((i * anglePer + anglePer / 2)) * (SETTINGS['RADIUS'] + anglePer * SETTINGS['D_Y'] * total + 250), 0, Math.sin(i * anglePer + anglePer / 2) * (SETTINGS['RADIUS'] + anglePer * SETTINGS['D_Y'] * total + 250)))
+      geometry.vertices.push(new THREE.Vector3(0, 0, 0))
+
+
+      canvas = document.createElement('canvas')
+      context = canvas.getContext('2d')
+      context.font = 'Bold 40px Arial'
+      context.fillStyle = 'rgba(255,0,0,0.95)'
+      context.fillText '1' + i + '. 12.', 0, 50
+      # canvas contents will be used for a texture
+      texture = new (THREE.Texture)(canvas)
+      texture.needsUpdate = true
+
+      material = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide})
+      material.transparent = true
+      texture.minFilter = THREE.LinearFilter
+
+      spriteMaterial = new (THREE.SpriteMaterial)(
+        map: texture
+#    useScreenCoordinates: true
+#    alignment: THREE.SpriteAlignment.topLeft
+      )
+
+      sprite = new (THREE.Sprite)(spriteMaterial)
+      sprite.scale.set 800, 400, 1.0
+      sprite.position.set(Math.cos((i * anglePer)) * (SETTINGS['RADIUS'] + anglePer * SETTINGS['D_Y'] * total + 250), 0, Math.sin(i * anglePer) * (SETTINGS['RADIUS'] + anglePer * SETTINGS['D_Y'] * total + 250))
+      legends_group.add(sprite)
+
+      i += 1
+
+    legend_axis.geometry = geometry
+    legend_axis.geometry.verticesNeedUpdate = true
+
+    i = 0
+    while i < max_total
+      if i > total
+        positive_planes[i].visible = false
+        negative_planes[i].visible = false
+
+      else
+        yPos += SETTINGS['D_Y']
+        r = i * anglePer * SETTINGS['D_Y'] + SETTINGS['RADIUS']
+        scaleX = 2 * Math.PI * r / (SETTINGS['PLANES_PER_ROTATION']) / 100
+        positive_plane = positive_planes[i]
+        positive_plane.position.x = Math.cos(i * anglePer) * (r + 25)
+        positive_plane.position.z = Math.sin(i * anglePer) * (r + 25)
+        positive_plane.position.y = 0
+        positive_plane.rotation.y = yRot
+        positive_plane.scale.x = scaleX
+        positive_plane.name = i
+        positive_plane.visible = true
+        negative_plane = negative_planes[i]
+        negative_plane.position.x = Math.cos(i * anglePer) * (r - 25)
+        negative_plane.position.z = Math.sin(i * anglePer) * (r - 25)
+        negative_plane.position.y = 0
+        negative_plane.rotation.y = yRot
+        negative_plane.scale.x = scaleX
+        negative_plane.visible = true
+        negative_plane.name = i
+
+      yRot -= anglePer
+      i++
+    return
+
+  resizeHandler = ->
+    camera.aspect = WIDTH / HEIGHT
+    camera.updateProjectionMatrix()
+    renderer.setSize WIDTH, HEIGHT
+    #  controls.handleResize();
+    render()
+    return
+
+  animate = ->
+    requestAnimationFrame animate
+    #  stats.update()
+    # rotate group
+    group.rotation.y = group_rot += 0.0001 * SETTINGS['ROT_SPEED']
+    render()
+    update()
+    return
+
+  render = ->
+    renderer.render scene, camera
+    return
+
+  update = ->
+# create a Ray with origin at the mouse position
+#   and direction into the scene (camera direction)
+    vector = new (THREE.Vector2)(mouse.x, mouse.y)
+    #  projector.unprojectVector vector, camera
+    #  ray = new (THREE.Raycaster)(camera.position, vector.sub(camera.position).normalize())
+    #  ray = new THREE.Ray(camera.position, vector.subSelf(camera.position).normalize());
+    #  raycaster = projector.pickingRay( vector.clone(), camera );
+    #  raycaster = new THREE.Raycaster( camera.position, vector)
+    raycaster.setFromCamera(mouse, camera);
+
+
+    # create an array containing all objects in the scene with which the ray intersects
+    #  intersects = ray.intersectObjects(scene.children)
+    intersects = raycaster.intersectObjects(group.children)
+
+    # INTERSECTED = the object in the scene currently closest to the camera
+    #   and intersected by the Ray projected from the mouse position
+    # if there is one (or more) intersections
+    if intersects.length > 0
+# if the closest object intersected is not the currently stored intersection object
+      sprite1.position.set(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z)
+      sprite1.scale.set intersects[0].distance / 5, intersects[0].distance / 10, 1.0
+      if intersects[0].object != INTERSECTED
+# restore previous intersection object (if it exists) to its original color
+        if INTERSECTED
+          INTERSECTED.material.color.setHex INTERSECTED.currentHex
+        # store reference to closest object as current intersection object
+        INTERSECTED = intersects[0].object
+        # store color of closest object (for later restoration)
+        INTERSECTED.currentHex = INTERSECTED.material.color.getHex()
+        # set a new color for closest object
+        INTERSECTED.material.color.setHex 0xffff00
+        # update text, if it has a "name" field.
+        if intersects[0].object.name
+          context1.clearRect 0, 0, 640, 480
+          message = intersects[0].object.name
+          metrics = context1.measureText(message)
+          width = metrics.width
+          context1.fillStyle = 'rgba(0,0,0,0.95)'
+          # black border
+          context1.fillRect 0, 0, width + 8, 20 + 8
+          context1.fillStyle = 'rgba(255,255,255,0.95)'
+          # white filler
+          context1.fillRect 2, 2, width + 4, 20 + 4
+          context1.fillStyle = 'rgba(0,0,0,1)'
+          # text color
+          context1.fillText message, 4, 20
+          texture1.needsUpdate = true
+#        sprite1.rotation.set(INTERSECTED.rotation.x, INTERSECTED.rotation.y, INTERSECTED.rotation.z)
+        else
+          context1.clearRect 0, 0, 300, 300
+          texture1.needsUpdate = true
+    else
+# restore previous intersection object (if it exists) to its original color
+      if INTERSECTED
+        INTERSECTED.material.color.setHex INTERSECTED.currentHex
+      # remove previous intersection object reference
+      #     by setting current intersection object to "nothing"
+      INTERSECTED = null
+      context1.clearRect 0, 0, 300, 300
+      texture1.needsUpdate = true
+    controls.update()
+    return
+
+  onDocumentMouseMove = (event) ->
+    mouse.x = ( ( event.clientX - $(renderer.domElement).offset().left ) / renderer.domElement.width ) * 2 - 1;
+    mouse.y = -( ( event.clientY - $(renderer.domElement).offset().top + $(window).scrollTop() ) / renderer.domElement.height ) * 2 + 1;
+
+    return
+
+
+  # COLORS
+  RGB2Color = (r, g, b) ->
+    '#' + byte2Hex(r) + byte2Hex(g) + byte2Hex(b)
+
+  byte2Hex = (n) ->
+    nybHexString = '0123456789ABCDEF'
+    String(nybHexString.substr(n >> 4 & 0x0F, 1)) + nybHexString.substr(n & 0x0F, 1)
+
+  if !Detector.webgl
+    Detector.addGetWebGLMessage()
+  # SCENE
+  scene = new (THREE.Scene)
+  # CAMERA
+  camera = new (THREE.PerspectiveCamera)(45, WIDTH / HEIGHT, 1, 20000)
+  camera.position.set 0, 500, 1000
+  scene.add camera
+  # RENDERER
+  if Detector.webgl
+    renderer = new (THREE.WebGLRenderer)(antialias: true)
+  else
+    renderer = new (THREE.CanvasRenderer)
+  # CONTAINER
+  #  container = document.createElement('div')
+  container = $(element).find('.timeline-spiral')
+  #  document.body.appendChild container
+  container.append(renderer.domElement)
+  # POINT LIGHT
+  light = new (THREE.PointLight)(0xff0000)
+  light.position.set 500, 500, 0
+  scene.add light
+  raycaster = new THREE.Raycaster()
+  mouse = new THREE.Vector2()
+
+  # AMBIEND LIGHT
+  ambientLight = new (THREE.AmbientLight)(0xffffff)
+  scene.add ambientLight
+
+  #  projector = new (THREE.Projector)
+  # GROUP
+  group = new (THREE.Object3D)
+  legends_group = new (THREE.Object3D)
+  scene.add group
+  group.add legends_group
+  # PLANES
+  positive_planes = []
+  negative_planes = []
+  arrow = undefined
+  planes = []
+  frequency = .06
+  red = undefined
+  green = undefined
+  blue = undefined
+  currentColor = undefined
+  i = 0
+
+  dir = new THREE.Vector3(1, 0, 0)
+  origin = new THREE.Vector3(0, 0, 0)
+  length = 100
+  hex = 0xffff00
+
+  arrow = new THREE.ArrowHelper(dir, origin, length, hex)
+  group.add(arrow)
+
+  legend_axis_material = new THREE.LineBasicMaterial({color: 0x0000ff, linewidth: 3})
+  geometry = new THREE.Geometry()
+  geometry.vertices.push(new THREE.Vector3(-10, 0, 0));
+  geometry.vertices.push(new THREE.Vector3(0, 10, 0));
+  geometry.vertices.push(new THREE.Vector3(10, 0, 0));
+  legend_axis = new THREE.Line(geometry, legend_axis_material)
+  legend_axis.geometry.dynamic = true;
+  legends_group.add(legend_axis)
+
+  #///// draw text on canvas /////////               `
+  # create a canvas element
+  canvas1 = document.createElement('canvas')
+  context1 = canvas1.getContext('2d')
+  context1.font = 'Bold 20px Arial'
+  context1.fillStyle = 'rgba(0,0,0,0.95)'
+  context1.fillText 'Hello, world!', 0, 20
+  # canvas contents will be used for a texture
+  texture1 = new (THREE.Texture)(canvas1)
+  texture1.needsUpdate = true
+  texture1.minFilter = THREE.LinearFilter
+  #//////////////////////////////////////
+  spriteMaterial = new (THREE.SpriteMaterial)(
+    map: texture1
+#    useScreenCoordinates: true
+#    alignment: THREE.SpriteAlignment.topLeft
+  )
+  sprite1 = new (THREE.Sprite)(spriteMaterial)
+  sprite1.scale.set 800, 400, 1.0
+  sprite1.position.set 50, 50, 0
+  scene.add sprite1
+
+  while i < ITERATIONS_MAX * SETTINGS['PLANES_PER_ROTATION']
+    red = Math.sin(frequency * i + 0) * 127 + 128
+    green = Math.sin(frequency * i + 2) * 127 + 128
+    blue = Math.sin(frequency * i + 4) * 127 + 128
+    currentColor = RGB2Color(red, green, blue)
+    box_positive = new (THREE.Mesh)(new (THREE.BoxGeometry)(100, 100, 50), new (THREE.MeshBasicMaterial)(
+      color: currentColor
+      wireframe: SETTINGS['WIREFRAME']
+      opacity: SETTINGS['PLANE_OPACITY']
+      transparent: SETTINGS['TRANSPARENT']
+      blending: THREE.AdditiveBlending
+      depthWrite: false
+      depthTest: false))
+    box_positive.overdraw = true
+    box_positive.material.side = THREE.DoubleSide
+    group.add box_positive
+    positive_planes.push box_positive
+    planes.push box_positive
+
+    currentColor = RGB2Color(255 - red, 255 - green, 255 - blue)
+    box_negative = new (THREE.Mesh)(new (THREE.BoxGeometry)(100, 100, 50), new (THREE.MeshBasicMaterial)(
+      color: currentColor
+      wireframe: SETTINGS['WIREFRAME']
+      opacity: SETTINGS['PLANE_OPACITY']
+      transparent: SETTINGS['TRANSPARENT']
+      blending: THREE.AdditiveBlending
+      depthWrite: false
+      depthTest: false))
+    box_positive.overdraw = true
+    box_positive.material.side = THREE.DoubleSide
+    group.add box_negative
+    negative_planes.push box_negative
+    planes.push box_negative
+
+    i++
+  organizePlanes()
+  # STATS
+  #  stats = new Stats
+  #  stats.domElement.style.position = 'absolute'
+  #  stats.domElement.style.top = '0px'
+  #stats.domElement.style.bottom = '0px';
+  #  stats.domElement.style.zIndex = 100
+  #  container.appendChild stats.domElement
+  # MOUSE CONTROLS
+  controls = new (THREE.TrackballControls)(camera, renderer.domElement)
+  controls.addEventListener('change', render);
+  document.addEventListener 'mousemove', onDocumentMouseMove, false
+  # GUI
+  gui = new (dat.GUI)({autoPlace: false})
+  element.children().prepend(gui.domElement)
+  radiusControl = gui.add(SETTINGS, 'RADIUS', 50, 500).step(10).name('radius')
+  dyControl = gui.add(SETTINGS, 'D_Y', 5, 100).step(1).name('delta Y')
+  perRotControl = gui.add(SETTINGS, 'PLANES_PER_ROTATION', 4, 25).step(1).name('planes / 360')
+  alphaControl = gui.add(SETTINGS, 'PLANE_OPACITY', 0, 1).step(0.05).name('plane opacity')
+  transparentControl = gui.add(SETTINGS, 'TRANSPARENT').name('transparent')
+  wireframeControl = gui.add(SETTINGS, 'WIREFRAME').name('wireframe')
+  rotSpeedControl = gui.add(SETTINGS, 'ROT_SPEED', 0, 100).step(1).name('rotation speed')
+  gui.close()
+  radiusControl.onChange (value) ->
+    organizePlanes()
+    return
+  dyControl.onChange (value) ->
+    organizePlanes()
+    return
+  perRotControl.onChange (value) ->
+    organizePlanes()
+    return
+  alphaControl.onChange (value) ->
+    i = 0
+    while i < ITERATIONS * SETTINGS['PLANES_PER_ROTATION'] * 2
+      planes[i].material.opacity = SETTINGS['PLANE_OPACITY']
+      i++
+    return
+  transparentControl.onChange (value) ->
+    plane = undefined
+    i = 0
+    while i < ITERATIONS * SETTINGS['PLANES_PER_ROTATION'] * 2
+      plane = planes[i]
+      plane.material.transparent = SETTINGS['TRANSPARENT']
+      plane.material.depthWrite = plane.material.depthTest = !SETTINGS['TRANSPARENT']
+      i++
+    return
+    wireframeControl.onChange (value) ->
+      i = 0
+      while i < ITERATIONS * SETTINGS['PLANES_PER_ROTATION'] * 2
+        planes[i].material.wireframe = SETTINGS['WIREFRAME']
+        i++
+      return
+  # RESIZE
+  window.addEventListener 'resize', resizeHandler, false
+  resizeHandler()
+  # ANIMATE
+  animate()
+
+
+  controller.onDateSliderChangedDetail = (value)->
+    ITERATIONS = Math.ceil((value.values.max - value.values.min) / (1000 * 3600 * 24))
+    console.log(ITERATIONS)
+    organizePlanes()
+  #    TOTAL = SETTINGS['PLANES_PER_ROTATION']*;
+
+
+  return
+

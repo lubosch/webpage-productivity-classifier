@@ -1,0 +1,34 @@
+angular.module('wpc').directive 'jqRangeSlider', ->
+  return {
+  restrict: 'A'
+  scope: {
+    data: '='
+  },
+  require: '^spiralGraph'
+  replace: true,
+  link: (scope, element, attrs, controller) ->
+#    debugger
+    jQuery(element).dateRangeSlider(
+        {
+          bounds: {
+            min: scope.data.min_date
+            max: scope.data.max_date
+          },
+          defaultValues: {
+            min: ((scope.data.max_date - scope.data.min_date) / 2 + (scope.data.min_date - 0))
+#            max: scope.data.max_date
+          },
+          symmetricPositionning: true,
+          range: {min: {days: 2}, max: {days: 14}}
+        })
+    jQuery(element).on('valuesChanged', (e, data) ->
+      controller.onDateSliderChanged(data)
+      controller.onDateSliderChangedDetail(data)
+
+#      scope.$apply ->
+#        scope.$emit('rangeSlider.changed', {
+#              obj: data
+#            }
+#        )
+    )
+  }

@@ -102,6 +102,10 @@ angular.module('wpc').controller("DashboardCtrl", [
 
       )
 
+    $scope.spiral = {
+      min_date: new Date('5/25/2016'),
+      max_date: new Date('6/30/2016')
+    }
 ])
 
 term_weight = (term_type, $scope) ->

@@ -1,0 +1,13 @@
+angular.module('wpc').directive 'spiralGraph', ->
+  SpiralGraphController = (scope) ->
+
+  return {
+    restrict: 'A'
+    templateUrl: "<%= asset_path('angular-app/dashboard/spiral_graph.html') %>"
+    controller: ['$scope', SpiralGraphController]
+    scope: {
+      data: '='
+    }
+
+}
+
