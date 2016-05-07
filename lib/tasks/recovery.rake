@@ -27,12 +27,12 @@ namespace :recovery do
   desc 'switches'
   task :switches, [:path] => :environment do
     # path = '/media/fred/Data/Skola/Diplomka/datasets/unicorn-stay_productive.cypher.log'
-    path = '/media/fred/Data/Skola/Diplomka/datasets/unicorn-stay_productive.count3.log'
+    path = '/media/fred/Data/Skola/Diplomka/datasets/unicorn-stay_productive.cypher2.log'
 
 
-    last_rel_id = -1
+    # last_rel_id = -1
     penalty = true
-    penalty_c = 0
+    # penalty_c = 0
     a = 0
     File.open(path).each_line do |line|
       last_i = line.reverse.index("\e")
@@ -44,26 +44,26 @@ namespace :recovery do
         params = eval(clear_line[/\|.*/][2..-1])
         query = clear_line[0..clear_line.index('|')-2]
         # binding.pry
-        if query.index('SET')
-          params[:neo_id] = last_rel_id
-          # binding.pry
-          if penalty
-            penalty_c += 1
-          else
-            Neo4j::Session.current.query(query, params)
-          end
-        else
-          if Neo4j::Session.current.query(query, params).count > 0
-            last_rel_id = Neo4j::Session.current.query(query, params).first.values[0].neo_id
-            penalty = false
-          else
-            penalty = true
-          end
-        end
+        # if query.index('SET')
+        # params[:neo_id] = last_rel_id
+        # binding.pry
+        # if penalty
+        #   penalty_c += 1
+        # else
+        Neo4j::Session.current.query(query, params)
+        # end
+        # else
+        #   if Neo4j::Session.current.query(query, params).count > 0
+        #     last_rel_id = Neo4j::Session.current.query(query, params).first.values[0].neo_id
+        #     penalty = false
+        #   else
+        #     penalty = true
+        #   end
+        # end
         # Neo4j::Session.current.query(query, params)
-        if a%100 == 0
+        if a%1000 == 0
           puts a
-          puts penalty_c
+          # puts penalty_c
         end
 
         a+=1
@@ -71,7 +71,7 @@ namespace :recovery do
     end
 
     puts a
-    puts penalty_c
+    # puts penalty_c
 
   end
 

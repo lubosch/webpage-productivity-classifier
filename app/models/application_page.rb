@@ -17,6 +17,7 @@ class ApplicationPage < ActiveRecord::Base
   has_many :terms, through: :application_terms
   has_many :application_activity_types
   has_many :user_application_pages
+  has_many :application_type_probabilities
   has_one :application_cluster, as: :application
 
   delegate :name, to: :application, prefix: true
@@ -145,13 +146,25 @@ class ApplicationPage < ActiveRecord::Base
   def classify
     activity_type_probabilities = {}
     ActivityType.all.each { |activity_type| activity_type_probabilities[activity_type.name.to_sym] = activity_type_probability(activity_type) }
-    activity_type_probabilities.sort_by { |_c, v| v.nan? ? -999999999 : v }.reverse
+    activity_type_probabilities = normalize(activity_type_probabilities)
+    # activity_type_probabilities.sort_by { |_c, v| v.nan? ? -999999999 : v }.reverse
+  end
+
+  def normalize(activity_type_probabilities)
+    values = activity_type_probabilities.map { |_c, v| v }
+    min = values.min
+    max = values.max
+    normalized = activity_type_probabilities.map { |c, v| [c, (v-min)/(max-min)] }
+    sum = normalized.sum { |_c, v| v }
+    normalized.map { |c, v| [c, v/sum] }
   end
 
   def classify_knn
     return [] if neo_app_page.blank?
-    category_probabilities = neo_app_page.classify(0, 1)
-    category_probabilities .sort_by { |_c, v| v }.reverse
+    category_probabilities = neo_app_page.classify(5)
+    category_probabilities = normalize(category_probabilities)
+    # category_probabilities.sort_by { |_c, v| v }.reverse
+    # category_probabilities
   end
 
   def activity_type_probability(category)
@@ -165,7 +178,23 @@ class ApplicationPage < ActiveRecord::Base
 
   def evaluated_classes
     classes = application_activity_types.joins(:activity_type).pluck('name').map(&:to_sym).uniq
-    application.evaluated_classes if classes.blank?
+    classes.blank? ? application.evaluated_classes : classes
   end
+
+  def classify_precomputed(method)
+    # application_type_probabilities.where(method: method, application_page: nil).order(value: :desc).joins(:activity_type).pluck(:name, :value)
+    application_type_probabilities.where(method: method).order(value: :desc).joins(:activity_type).pluck(:name).map(&:to_sym)
+  end
+
+  def classify_precomputed_cumm
+    # application_type_probabilities.where(method: method, application_page: nil).order(value: :desc).joins(:activity_type).pluck(:name, :value)
+    cumm = {}
+    prob_knn = Hash[application_type_probabilities.where(method: ApplicationTypeProbability::METHODS[:knn]).order(value: :desc).joins(:activity_type).pluck(:name, :value)]
+    prob_mnb = Hash[application_type_probabilities.where(method: ApplicationTypeProbability::METHODS[:mnb]).order(value: :desc).joins(:activity_type).pluck(:name, :value)]
+    prob_mnb.each { |klass, prob| cumm[klass] = prob + (prob_knn[klass] || 0)*0.2 }
+    cumm
+
+  end
+
 
 end

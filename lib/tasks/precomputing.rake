@@ -1,7 +1,7 @@
 require 'csv'
 
 namespace :classification do
-  desc 'Migrate hostname'
+  desc 'Precompute mnb classifier'
   task :precomputation => :environment do
 
     puts 'Classification::Precomputation.update_terms_probability'
@@ -13,6 +13,18 @@ namespace :classification do
 
     puts 'Clustering::Clustering.cluster_applications'
     Clustering::Clustering.cluster_applications
-
   end
+
+
+
+  desc 'KNN classification'
+  task :precomputing_knn => :environment do
+    Clustering::NeoPrecomputation.link_probabilities
+  end
+
+  desc 'KNN classification'
+  task :knn => :environment do
+    Classification::Classification.all_app_page_classification_knn
+  end
+
 end

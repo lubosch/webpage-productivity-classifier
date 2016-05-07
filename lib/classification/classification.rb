@@ -18,7 +18,9 @@ module Classification
     end
 
     def self.all_app_page_classification_mnb
-      ApplicationPage.find_each do |application_page|
+      ApplicationActivityType.find_each do |app_act_type|
+        application_page = app_act_type.application_page
+        # ApplicationPage.find_each do |application_page|
         result = application_page.classify
         store_page_result_mnb(application_page, result)
       end
@@ -51,9 +53,12 @@ module Classification
     end
 
     def self.all_app_page_classification_knn
-      ApplicationPage.each do |application_page|
-        result = application_page.classify_knn
-        store_page_result_knn(application_page, result)
+      ApplicationActivityType.find_each do |app_act_type|
+        application_page = app_act_type.application_page
+        # ApplicationPage.where('id').find_each do |application_page|
+          result = application_page.classify_knn
+          store_page_result_knn(application_page, result)
+        # end
       end
     end
 
@@ -82,3 +87,4 @@ end
 
 # Classification::Classification.all_app_classification_mnb
 # Classification::Classification.all_app_page_classification_mnb
+# Classification::Classification.all_app_page_classification_knn

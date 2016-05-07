@@ -15,62 +15,114 @@ module Neo
       app.application_id if app
     end
 
-    def classify(level, probability)
-      if level == 0
-        classes = {}
-      else
-        factor = (4-level)/6.to_f*probability
-        classes = application_page && application_page.evaluated_classes || []
-        classes = Hash[*classes.map { |klass| [klass, factor] }.flatten]
-      end
+    def classify(levels)
+      ranked_nodes = {self.neo_id => 0}
+      new_nodes = [self]
+      (1..levels).each do |lvl|
 
+        new_nodes = new_nodes.map { |node| node.new_knn_network(lvl, 1, ranked_nodes) }.flatten
+        new_nodes = new_nodes.select { |hash| hash.values.first > 0.001 }
+        new_nodes.sort_by { |hash| 0-hash.values.first } if new_nodes.size > 100
+        new_nodes = new_nodes[0..100].map { |hash| hash.keys.first }
+        # binding.pry
+        # puts "******** #{lvl} ******"
+      end
+      ranked_nodes[self.neo_id] = 0
+      classify_ranked_network(ranked_nodes)
+    end
+
+    def classify_ranked_network(ranked_nodes)
+      classes = {}
+
+      # binding.pry
+      ranked_nodes = ranked_nodes.select { |_key, prob| prob > 0.001 }
+
+      app_pages = Neo::AppPage.where(neo_id: ranked_nodes.keys)
+      app_pages_ids = app_pages.map(&:application_page_id)
+      application_pages = ApplicationPage.where(id: app_pages_ids)
+      app_pages.each do |app_page|
+
+        # app_page = Neo::AppPage.find_by(neo_id: neo_id)
+        # eval_classes = app_page.application_page && app_page.application_page.evaluated_classes || []
+        application_page = application_pages.find { |ap| ap.id == app_page.application_page_id }
+        eval_classes = application_page && application_page.evaluated_classes || []
+        eval_classes.each do |klass|
+          classes[klass] ||= 0
+          classes[klass] += ranked_nodes[app_page.neo_id]
+        end
+      end
+      classes
+    end
+
+    def new_knn_network(level, probability, old_nodes={})
+      new_nodes = []
+      # if level == 0
+      # else
+      link_factor = (6-level)/10.to_f*probability
+      # classes = application_page && application_page.evaluated_classes || []
+      # classes = Hash[*classes.map { |klass| [klass, factor] }.flatten]
+      # end
+      #
       from_hosts_count = from_hosts.count
-      if level <= 2
+      if level <= 5
         from_hosts.each_with_rel do |host, connection|
-          new_probability = connection.probability/from_hosts_count
-          if host != self && new_probability > 0.001
-            new_classification = host.classify(level+1, new_probability)
-            classes = new_classification.merge(classes) { |_k, a_value, b_value| a_value + b_value }
+          new_probability = connection.probability*link_factor/from_hosts_count
+          if old_nodes.keys.include?(host.neo_id)
+            old_nodes[host.neo_id] += new_probability
+          else
+            old_nodes[host.neo_id] = new_probability
+            new_nodes << {host => new_probability}
           end
         end
       end
 
+
       to_hosts_count = to_hosts.count
-      if level <= 2
+      if level <= 5
         to_hosts.each_with_rel do |host, connection|
-          new_probability = connection.probability/to_hosts_count
-          if host != self && new_probability > 0.001
-            new_classification = host.classify(level+1, new_probability)
-            classes = new_classification.merge(classes) { |_k, a_value, b_value| a_value + b_value }
+          new_probability = connection.probability*link_factor/to_hosts_count
+          if old_nodes.keys.include?(host.neo_id)
+            old_nodes[host.neo_id] += new_probability
+          else
+            old_nodes[host.neo_id] = new_probability
+            new_nodes << {host => new_probability}
           end
         end
       end
 
 
       from_switch_count = from_switch.count
-      if level <= 2
+      if level <= 5
         from_switch.each_with_rel do |host, connection|
-          new_probability = connection.probability/from_switch_count*0.2
-          if host != self && new_probability > 0.0002
-            new_classification = host.classify(level+1, new_probability)
-            classes = new_classification.merge(classes) { |_k, a_value, b_value| a_value + b_value }
+          new_probability = connection.probability*link_factor/from_switch_count*0.2
+          if old_nodes.keys.include?(host.neo_id)
+            old_nodes[host.neo_id] += new_probability
+          else
+            old_nodes[host.neo_id] = new_probability
+            new_nodes << {host => new_probability}
           end
         end
       end
 
       to_switch_count = to_switch.count
-      if level <= 2
+      if level <= 5
         to_switch.each_with_rel do |host, connection|
-          new_probability = connection.probability/to_switch_count*0.2
-          if host != self && new_probability > 0.0002
-            new_classification = host.classify(level+1, new_probability)
-            classes = new_classification.merge(classes) { |_k, a_value, b_value| a_value + b_value }
+          new_probability = connection.probability*link_factor/to_switch_count*0.2
+          if old_nodes.keys.include?(host.neo_id)
+            old_nodes[host.neo_id] += new_probability
+          else
+            old_nodes[host.neo_id] = new_probability
+            new_nodes << {host => new_probability}
           end
         end
       end
 
 
-      classes
+      # new_nodes.each { |nn| nn.classify(level+1, 1, old_nodes) }
+      return new_nodes
+      # old_nodes
+
+      # classes
     end
 
     def application_page
