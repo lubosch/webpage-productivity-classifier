@@ -106,6 +106,14 @@ gem 'stopwords-filter', require: 'stopwords'
 # Addressable::URI.parse(url).host
 gem 'addressable'
 
+gem 'rdf'
+gem 'linkeddata'
+gem 'equivalent-xml'
+gem 'nokogiri'
+
+gem 'yajl-ruby', require: 'yajl'
+
+
 group :development do
   gem 'guard', :require => false
   gem 'guard-livereload', :require => false

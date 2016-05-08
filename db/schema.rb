@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160328001159) do
+ActiveRecord::Schema.define(version: 20160507155335) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,7 +48,7 @@ ActiveRecord::Schema.define(version: 20160328001159) do
     t.datetime "updated_at",          null: false
     t.string   "based_on"
     t.integer  "application_page_id"
-    t.integer  "is_work"
+    t.integer  "work_id"
     t.integer  "user_id"
   end
 
@@ -249,6 +249,44 @@ ActiveRecord::Schema.define(version: 20160328001159) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
+  create_table "work_probabilities", force: :cascade do |t|
+    t.integer  "application_id"
+    t.integer  "work_id"
+    t.string   "method"
+    t.float    "value"
+    t.integer  "application_page_id"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+  end
+
+  add_index "work_probabilities", ["application_id"], name: "index_work_probabilities_on_application_id", using: :btree
+  add_index "work_probabilities", ["application_page_id"], name: "index_work_probabilities_on_application_page_id", using: :btree
+  add_index "work_probabilities", ["work_id"], name: "index_work_probabilities_on_work_id", using: :btree
+
+  create_table "work_terms", force: :cascade do |t|
+    t.integer  "term_id"
+    t.integer  "work_id"
+    t.integer  "tf"
+    t.float    "probability"
+    t.float    "multinomial_probability"
+    t.string   "term_type"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  add_index "work_terms", ["term_id"], name: "index_work_terms_on_term_id", using: :btree
+
+  create_table "works", force: :cascade do |t|
+    t.string   "name"
+    t.integer  "count"
+    t.float    "probability"
+    t.integer  "vocabulary_size"
+    t.integer  "terms_count"
+    t.float    "default_multinomial"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+  end
+
   add_foreign_key "activity_type_terms", "activity_types"
   add_foreign_key "activity_type_terms", "terms"
   add_foreign_key "application_activity_types", "activity_types"
@@ -258,4 +296,7 @@ ActiveRecord::Schema.define(version: 20160328001159) do
   add_foreign_key "application_type_probabilities", "application_pages"
   add_foreign_key "application_type_probabilities", "applications"
   add_foreign_key "identities", "users"
+  add_foreign_key "work_probabilities", "application_pages"
+  add_foreign_key "work_probabilities", "applications"
+  add_foreign_key "work_probabilities", "works"
 end

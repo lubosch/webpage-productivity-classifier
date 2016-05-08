@@ -23,16 +23,31 @@ module Classification
 
 
     # not needed anymore, doing automatic
-    # def self.refresh_activity_type_terms
-    #   ApplicationActivityType.where('created_at < ?', "2016-04-02 15:58:00".to_datetime).each do |app_act_type|
-    #     app_act_type.create_activity_type_terms if ApplicationActivityType.find_by(application_page_id: app_act_type.application_page_id) == app_act_type
-    #   end
-    # end
+    def self.refresh_activity_type_terms
+      ActivityTypeTerm.delete_all
+      WorkTerm.delete_all
+      ApplicationActivityType.train.each do |app_act_type|
+        if ApplicationActivityType.find_by(application_page_id: app_act_type.application_page_id) == app_act_type
+          app_act_type.create_activity_type_terms
+        end
+      end
+    end
+
+    # not needed anymore, doing automatic
+    def self.refresh_work_terms
+      ActivityTypeTerm.delete_all
+      WorkTerm.delete_all
+      ApplicationActivityType.where.not(work_id: nil).train.each do |app_act_type|
+        if ApplicationActivityType.find_by(application_page_id: app_act_type.application_page_id) == app_act_type
+          app_act_type.create_work_terms
+        end
+      end
+    end
 
     def self.update_multinomial_probability
-      all_labels_count = ApplicationActivityType.count
+      all_labels_count = ApplicationActivityType.train.count
       ActivityType.find_each do |act_type|
-        label_count = act_type.application_activity_types.count
+        label_count = act_type.application_activity_types.train.count
         terms_count = act_type.activity_type_terms.sum(:tf)
         vocabulary_size = act_type.activity_type_terms.count
         if label_count == 0 || vocabulary_size == 0
@@ -44,6 +59,18 @@ module Classification
 
       end
     end
+
+    def self.update_work_multinomial_probability
+      all_labels_count = ApplicationActivityType.train.where.not(work_id: nil).count
+      Work.find_each do |work|
+        label_count = work.application_activity_types.train.count
+        terms_count = work.work_terms.sum(:tf)
+        vocabulary_size = work.work_terms.count
+          work.work_terms.update_all("probability = tf / #{terms_count.to_f}, multinomial_probability = (tf+1) / #{terms_count + vocabulary_size.to_f}")
+          work.update(count: label_count, probability: label_count / all_labels_count.to_f, :terms_count => terms_count, :vocabulary_size => vocabulary_size, :default_multinomial => 1/(vocabulary_size + terms_count))
+      end
+    end
+
 
   end
 end

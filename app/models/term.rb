@@ -15,6 +15,7 @@
 class Term < ActiveRecord::Base
 
   has_many :activity_type_terms, dependent: :delete_all
+  has_many :work_terms, dependent: :delete_all
   has_many :application_terms, dependent: :delete_all
 
   def self.create_terms_from_array(words)

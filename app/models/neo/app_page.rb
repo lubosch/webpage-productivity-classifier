@@ -45,7 +45,7 @@ module Neo
         # app_page = Neo::AppPage.find_by(neo_id: neo_id)
         # eval_classes = app_page.application_page && app_page.application_page.evaluated_classes || []
         application_page = application_pages.find { |ap| ap.id == app_page.application_page_id }
-        eval_classes = application_page && application_page.evaluated_classes || []
+        eval_classes = application_page && application_page.evaluated_classes_w || []
         eval_classes.each do |klass|
           classes[klass] ||= 0
           classes[klass] += ranked_nodes[app_page.neo_id]
@@ -58,62 +58,54 @@ module Neo
       new_nodes = []
       # if level == 0
       # else
-      link_factor = (6-level)/10.to_f*probability
+      link_factor = (8-level)/20.to_f*probability
       # classes = application_page && application_page.evaluated_classes || []
       # classes = Hash[*classes.map { |klass| [klass, factor] }.flatten]
       # end
       #
       from_hosts_count = from_hosts.count
-      if level <= 5
-        from_hosts.each_with_rel do |host, connection|
-          new_probability = connection.probability*link_factor/from_hosts_count
-          if old_nodes.keys.include?(host.neo_id)
-            old_nodes[host.neo_id] += new_probability
-          else
-            old_nodes[host.neo_id] = new_probability
-            new_nodes << {host => new_probability}
-          end
+      from_hosts.each_with_rel do |host, connection|
+        new_probability = connection.probability*link_factor/from_hosts_count
+        if old_nodes.keys.include?(host.neo_id)
+          old_nodes[host.neo_id] += new_probability
+        else
+          old_nodes[host.neo_id] = new_probability
+          new_nodes << {host => new_probability}
         end
       end
 
 
       to_hosts_count = to_hosts.count
-      if level <= 5
-        to_hosts.each_with_rel do |host, connection|
-          new_probability = connection.probability*link_factor/to_hosts_count
-          if old_nodes.keys.include?(host.neo_id)
-            old_nodes[host.neo_id] += new_probability
-          else
-            old_nodes[host.neo_id] = new_probability
-            new_nodes << {host => new_probability}
-          end
+      to_hosts.each_with_rel do |host, connection|
+        new_probability = connection.probability*link_factor/to_hosts_count
+        if old_nodes.keys.include?(host.neo_id)
+          old_nodes[host.neo_id] += new_probability
+        else
+          old_nodes[host.neo_id] = new_probability
+          new_nodes << {host => new_probability}
         end
       end
 
 
       from_switch_count = from_switch.count
-      if level <= 5
-        from_switch.each_with_rel do |host, connection|
-          new_probability = connection.probability*link_factor/from_switch_count*0.2
-          if old_nodes.keys.include?(host.neo_id)
-            old_nodes[host.neo_id] += new_probability
-          else
-            old_nodes[host.neo_id] = new_probability
-            new_nodes << {host => new_probability}
-          end
+      from_switch.each_with_rel do |host, connection|
+        new_probability = connection.probability*link_factor/from_switch_count*0.2
+        if old_nodes.keys.include?(host.neo_id)
+          old_nodes[host.neo_id] += new_probability
+        else
+          old_nodes[host.neo_id] = new_probability
+          new_nodes << {host => new_probability}
         end
       end
 
       to_switch_count = to_switch.count
-      if level <= 5
-        to_switch.each_with_rel do |host, connection|
-          new_probability = connection.probability*link_factor/to_switch_count*0.2
-          if old_nodes.keys.include?(host.neo_id)
-            old_nodes[host.neo_id] += new_probability
-          else
-            old_nodes[host.neo_id] = new_probability
-            new_nodes << {host => new_probability}
-          end
+      to_switch.each_with_rel do |host, connection|
+        new_probability = connection.probability*link_factor/to_switch_count*0.2
+        if old_nodes.keys.include?(host.neo_id)
+          old_nodes[host.neo_id] += new_probability
+        else
+          old_nodes[host.neo_id] = new_probability
+          new_nodes << {host => new_probability}
         end
       end
 
