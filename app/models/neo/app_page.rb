@@ -64,10 +64,11 @@ module Neo
       # classes = Hash[*classes.map { |klass| [klass, factor] }.flatten]
       # end
       #
-      from_hosts_count = from_hosts.count
+      from_hosts_count = rels(dir: :incoming, type: :HAS_LINK).sum(&:count).to_f
       from_hosts.each_with_rel do |host, connection|
-        # new_probability = connection.probability*link_factor/from_hosts_count
-        new_probability = 1*link_factor/from_hosts_count
+        # new_probability = (connection.probability || 1)*link_factor*(connection.dest_probability || 1)
+        new_probability = connection.count/from_hosts_count
+        # new_probability = 1
         if old_nodes.keys.include?(host.neo_id)
           old_nodes[host.neo_id] += new_probability
         else
@@ -77,9 +78,11 @@ module Neo
       end
 
 
-      to_hosts_count = to_hosts.count
+      to_hosts_count = rels(dir: :outgoing, type: :HAS_LINK).sum(&:count).to_f
       to_hosts.each_with_rel do |host, connection|
-        new_probability = connection.probability*link_factor/to_hosts_count
+        # new_probability = (connection.probability || 1)*link_factor*(connection.dest_probability || 1)
+        new_probability = connection.count/to_hosts_count
+        # new_probability = 1
         if old_nodes.keys.include?(host.neo_id)
           old_nodes[host.neo_id] += new_probability
         else
@@ -89,27 +92,31 @@ module Neo
       end
 
 
-      # from_switch_count = from_switch.count
-      # from_switch.each_with_rel do |host, connection|
-      #   new_probability = connection.probability*link_factor/from_switch_count
-      #   if old_nodes.keys.include?(host.neo_id)
-      #     old_nodes[host.neo_id] += new_probability
-      #   else
-      #     old_nodes[host.neo_id] = new_probability
-      #     new_nodes << {host => new_probability}
-      #   end
-      # end
-      #
-      # to_switch_count = to_switch.count
-      # to_switch.each_with_rel do |host, connection|
-      #   new_probability = connection.probability*link_factor/to_switch_count
-      #   if old_nodes.keys.include?(host.neo_id)
-      #     old_nodes[host.neo_id] += new_probability
-      #   else
-      #     old_nodes[host.neo_id] = new_probability
-      #     new_nodes << {host => new_probability}
-      #   end
-      # end
+      from_switch_count = rels(dir: :incoming, type: :HAS_SWITCH).sum(&:count).to_f
+      from_switch.each_with_rel do |host, connection|
+        # new_probability = (connection.probability || 1)*link_factor*(connection.dest_probability || 1)
+        new_probability = connection.count/from_switch_count
+        # new_probability = 1
+        if old_nodes.keys.include?(host.neo_id)
+          old_nodes[host.neo_id] += new_probability
+        else
+          old_nodes[host.neo_id] = new_probability
+          new_nodes << {host => new_probability}
+        end
+      end
+
+      to_switch_count = rels(dir: :outgoing, type: :HAS_SWITCH).sum(&:count).to_f
+      to_switch.each_with_rel do |host, connection|
+        # new_probability = (connection.dest_probability || 1)*link_factor*(connection.dest_probability || 1)
+        new_probability = connection.count/to_switch_count
+        # new_probability = 1
+        if old_nodes.keys.include?(host.neo_id)
+          old_nodes[host.neo_id] += new_probability
+        else
+          old_nodes[host.neo_id] = new_probability
+          new_nodes << {host => new_probability}
+        end
+      end
 
 
       # new_nodes.each { |nn| nn.classify(level+1, 1, old_nodes) }

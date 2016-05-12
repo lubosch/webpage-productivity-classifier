@@ -179,7 +179,7 @@ class ApplicationPage < ActiveRecord::Base
 
   def classify_knn
     return [] if neo_app_page.blank?
-    category_probabilities = neo_app_page.classify(4)
+    category_probabilities = neo_app_page.classify(3)
     category_probabilities = normalize(category_probabilities)
     # category_probabilities.sort_by { |_c, v| v }.reverse
     # category_probabilities

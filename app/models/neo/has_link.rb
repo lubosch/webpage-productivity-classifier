@@ -8,6 +8,8 @@ module Neo
 
     property :count, type: Integer
     property :probability, type: Float
+    property :dest_probability, type: Float
+
 
   end
 end
