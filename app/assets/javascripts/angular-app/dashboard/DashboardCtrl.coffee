@@ -1,6 +1,6 @@
 angular.module('wpc').controller("DashboardCtrl", [
-  '$scope', 'Overview', 'WordsCloud', 'VisDataSet', '$compile', '$filter', 'wwwCutFilter', '$sce',
-  ($scope, Overview, WordsCloud, VisDataSet, compile, $filter, wwwCutFilter, $sce)->
+  '$scope', 'Overview', 'Spiral', 'WordsCloud', 'VisDataSet', '$compile', '$filter', 'wwwCutFilter', '$sce',
+  ($scope, Overview, Spiral, WordsCloud, VisDataSet, compile, $filter, wwwCutFilter, $sce)->
     morning_date = new Date()
     if morning_date.getHours() >= 5
       morning_date.setHours(5)
@@ -102,9 +102,19 @@ angular.module('wpc').controller("DashboardCtrl", [
 
       )
 
+    $scope.spiraldata = {}
+
+    Spiral.query(start_date: (new Date()).setDate((new Date()).getDate() - 30), end_date: new Date()).then (data) ->
+      $scope.spiraldata = _.reduce(data, (memo, value, key) ->
+        memo[new Date(key)] = value
+        memo
+      )
+
     $scope.spiral = {
-      min_date: new Date('5/25/2016'),
-      max_date: new Date('6/30/2016')
+      min_date: (new Date()).setDate((new Date()).getDate() - 30),
+      max_date: new Date(),
+      start_selected_date: (new Date()).setDate((new Date()).getDate() - 12)
+      end_selected_date: new Date(),
     }
 ])
 

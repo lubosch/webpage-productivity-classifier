@@ -31,7 +31,7 @@ class Term < ActiveRecord::Base
 
   def default_pk
     count = Rails.cache.fetch('terms.count'){Term.count}
-    self.ttf / count.to_f
+    0.4 * self.ttf / count.to_f
   end
 
 end

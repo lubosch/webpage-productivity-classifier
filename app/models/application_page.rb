@@ -9,6 +9,7 @@
 #  url            :string
 #  static         :integer
 #  user_static    :integer
+#  app_type       :string
 #
 
 class ApplicationPage < ActiveRecord::Base
@@ -162,11 +163,18 @@ class ApplicationPage < ActiveRecord::Base
 
   def normalize(activity_type_probabilities)
     values = activity_type_probabilities.map { |_c, v| v }
+    # return activity_type_probabilities.map { |c, v| [c, 1/13.0] } if values.size == 1
     min = values.min
     max = values.max
-    normalized = activity_type_probabilities.map { |c, v| [c, (v-min)/(max-min)] }
-    sum = normalized.sum { |_c, v| v }
-    normalized.map { |c, v| [c, v/sum] }
+    if values.present? && (max-min == 0)
+      activity_type_probabilities.map { |c, v| [c, 1/activity_type_probabilities.size] }
+    elsif values.present?
+      normalized = activity_type_probabilities.map { |c, v| [c, (v-min)/(max-min)] }
+      sum = normalized.sum { |_c, v| v }
+      normalized.map { |c, v| [c, v/sum] }
+    else
+      []
+    end
   end
 
   def classify_knn
@@ -188,17 +196,17 @@ class ApplicationPage < ActiveRecord::Base
   def activity_type_probability(category)
     likelihood = 0
     application_terms.includes(:term => :activity_type_terms).each do |dt|
-      likelihood += dt.generating_multinomial_likelihood(category)
-      # likelihood += dt.generating_bernouolli_likelihood(category)
+      # likelihood += dt.generating_multinomial_likelihood(category)
+      likelihood += dt.generating_bernouolli_likelihood(category)
     end
-    likelihood + Math.log2(category.probability + 1)
+    likelihood + Math.log2(category.probability)
   end
 
   def work_probability(category)
     likelihood = 0
     application_terms.includes(:term => :work_terms).each do |dt|
-      likelihood += dt.generating_w_multinomial_likelihood(category)
-      # likelihood += dt.generating_bernouolli_likelihood(category)
+      # likelihood += dt.generating_w_multinomial_likelihood(category)
+      likelihood += dt.generating_bernouolli_likelihood(category)
     end
     likelihood + Math.log2(category.probability + 1)
   end
@@ -219,6 +227,25 @@ class ApplicationPage < ActiveRecord::Base
     application_type_probabilities.where(method: method).order(value: :desc).joins(:activity_type).pluck(:name).map(&:to_sym)
   end
 
+  def classify_precomputed_intelligent(method)
+    # application_type_probabilities.where(method: method, application_page: nil).order(value: :desc).joins(:activity_type).pluck(:name, :value)
+    klasses = application_type_probabilities.where(method: method).order(value: :desc).joins(:activity_type).pluck(:name).map(&:to_sym)
+    app_probability(method) > 0.01 ? klasses : []
+  end
+
+
+  def app_probability(method)
+    apptype_probabilities = ApplicationTypeProbability.where(application_page: self, method: method).pluck(:value)
+    # apptype_probabilities.sum { |prob| (prob == 0 || prob.nan?) ? 0 : prob*Math.log10(prob) }
+    # apptype_probabilities.sum { |prob| (prob == 0 || prob.nan?) ? 0 : prob*Math.log10(prob) }
+    return 0 if apptype_probabilities.blank? || apptype_probabilities.size == 1 && apptype_probabilities[0].nan?
+    return apptype_probabilities[0] if apptype_probabilities.size == 1
+    apptype_probabilities = apptype_probabilities.sort_by { |at| at.nan? ? 0 : at }
+    res = apptype_probabilities[-1] - apptype_probabilities[-2]
+    res.nan? ? 0 : res
+  end
+
+
   def classify_w_precomputed(method)
     # application_type_probabilities.where(method: method, application_page: nil).order(value: :desc).joins(:activity_type).pluck(:name, :value)
     work_probabilities.where(method: method).order(value: :desc).joins(:work).pluck(:name).map(&:to_sym)
@@ -229,8 +256,13 @@ class ApplicationPage < ActiveRecord::Base
     cumm = {}
     prob_knn = Hash[application_type_probabilities.where(method: ApplicationTypeProbability::METHODS[:knn]).order(value: :desc).joins(:activity_type).pluck(:name, :value)]
     prob_mnb = Hash[application_type_probabilities.where(method: ApplicationTypeProbability::METHODS[:mnb]).order(value: :desc).joins(:activity_type).pluck(:name, :value)]
-    prob_mnb.each { |klass, prob| cumm[klass] = prob + (prob_knn[klass] || 0) }
-    cumm
+    prob_mnb.each { |klass, prob| cumm[klass] = prob + ((prob_knn[klass] && !prob_knn[klass].nan?) ? prob_knn[klass] : 0) }
+
+    sorted = cumm.sort_by(&:last).reverse
+    diff = sorted[0][-1] - sorted[1][-1]
+    diff > 0.04 ? cumm : []
+
+    # cumm
 
   end
 
@@ -240,7 +272,7 @@ class ApplicationPage < ActiveRecord::Base
     prob_knn = Hash[work_probabilities.where(method: ApplicationTypeProbability::METHODS[:knn]).order(value: :desc).joins(:work).pluck(:name, :value)]
     prob_mnb = Hash[work_probabilities.where(method: ApplicationTypeProbability::METHODS[:mnb]).order(value: :desc).joins(:work).pluck(:name, :value)]
     prob_mnb.each { |klass, prob| cumm[klass] = 1 if prob == 1 && (prob_mnb[klass].nan? || prob_mnb[klass] != 0) }
-    cumm
+
 
   end
 

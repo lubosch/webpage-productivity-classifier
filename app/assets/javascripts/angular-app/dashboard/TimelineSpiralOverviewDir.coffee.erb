@@ -1,16 +1,22 @@
 angular.module('wpc').directive 'timelineSpiralOverview', ->
   return {
-  restrict: 'A'
-  scope: {
-  },
-  require: '^spiralGraph'
-  templateUrl: "<%= asset_path('angular-app/dashboard/timeline_spiral.html') %>"
-  link: link
+    restrict: 'A'
+    scope: {
+      data: '='
+      spiraldata: '='
+    },
+    require: '^spiralGraph'
+    templateUrl: "<%= asset_path('angular-app/dashboard/timeline_spiral.html') %>"
+    link: link
   }
 
 
 link = (scope, element, attrs, controller) ->
   container = undefined
+  min_date = new Date(scope.data.min_date)
+  max_date = new Date(scope.data.max_date )
+  spiral_data = {}
+  spiraldata = scope.spiraldata
   WIDTH = 600
   HEIGHT = 600
   scene = undefined
@@ -36,15 +42,15 @@ link = (scope, element, attrs, controller) ->
   legends_group = undefined
   legend_axis = undefined
   #  TOTAL = 100
-  ITERATIONS = 14
-  ITERATIONS_MAX = 14
+  ITERATIONS = 7
+  ITERATIONS_MAX = 12
   RAD_CONST = Math.PI / 180
 
   SETTINGS = {
     RADIUS: 300
-    D_Y: 25
-    PLANES_PER_ROTATION: 12
-    PLANE_OPACITY: 0.9
+    D_Y: 10
+    PLANES_PER_ROTATION: 24
+    PLANE_OPACITY: 1
     TRANSPARENT: false
     WIREFRAME: false
     ROT_SPEED: 20
@@ -81,13 +87,15 @@ link = (scope, element, attrs, controller) ->
       context = canvas.getContext('2d')
       context.font = 'Bold 40px Arial'
       context.fillStyle = 'rgba(255,0,0,0.95)'
-      context.fillText '1' + i + '. 12.', 0, 50
+      act_date = new Date()
+      act_date.setDate(min_date.getDate() + i)
+      context.fillText ( act_date.getDate()) + '. ' + (act_date.getMonth()) + '.', 0, 50
       # canvas contents will be used for a texture
       texture = new (THREE.Texture)(canvas)
       texture.needsUpdate = true
 
       material = new THREE.MeshBasicMaterial({map: texture, side: THREE.DoubleSide})
-      material.transparent = true
+      material.transparent = false
       texture.minFilter = THREE.LinearFilter
 
       spriteMaterial = new (THREE.SpriteMaterial)(
@@ -108,6 +116,9 @@ link = (scope, element, attrs, controller) ->
 
     i = 0
     while i < max_total
+      act_date = new Date(min_date)
+      act_date = new Date(new Date(act_date.setDate(min_date.getDate() + Math.floor(i / SETTINGS['PLANES_PER_ROTATION']))).setHours((i+2)%24, 0, 0, 0))
+
       if i > total
         positive_planes[i].visible = false
       else
@@ -119,11 +130,17 @@ link = (scope, element, attrs, controller) ->
         positive_plane.rotation.y = yRot
         positive_plane.scale.x = 1
         positive_plane.visible = true
+        positive_plane.name = spiral_data[act_date]['positive']
+
+        positive_plane.material.color.setHex(color_from_productivity(spiral_data[act_date]['positive']))
 
 
       yRot -= anglePer
       i++
     return
+
+  color_from_productivity = (productivity) ->
+    RGBhex2Color(5*productivity/100, productivity*256/100, 74*productivity/100)
 
   resizeHandler = ->
     camera.aspect = WIDTH / HEIGHT
@@ -221,183 +238,191 @@ link = (scope, element, attrs, controller) ->
   RGB2Color = (r, g, b) ->
     '#' + byte2Hex(r) + byte2Hex(g) + byte2Hex(b)
 
+  RGBhex2Color = (r, g, b) ->
+    parseInt('0x' + byte2Hex(r) + byte2Hex(g) + byte2Hex(b))
+
   byte2Hex = (n) ->
     nybHexString = '0123456789ABCDEF'
     String(nybHexString.substr(n >> 4 & 0x0F, 1)) + nybHexString.substr(n & 0x0F, 1)
 
-  if !Detector.webgl
-    Detector.addGetWebGLMessage()
-  # SCENE
-  scene = new (THREE.Scene)
-  # CAMERA
-  camera = new (THREE.PerspectiveCamera)(45, WIDTH / HEIGHT, 1, 20000)
-  camera.position.set 0, 500, 1000
-  scene.add camera
-  # RENDERER
-  if Detector.webgl
-    renderer = new (THREE.WebGLRenderer)(antialias: true)
-  else
-    renderer = new (THREE.CanvasRenderer)
-  # CONTAINER
-  #  container = document.createElement('div')
-  container = $(element).find('.timeline-spiral')
-  #  document.body.appendChild container
-  container.append(renderer.domElement)
-  # POINT LIGHT
-  light = new (THREE.PointLight)(0xff0000)
-  light.position.set 500, 500, 0
-  scene.add light
-  raycaster = new THREE.Raycaster()
-  mouse = new THREE.Vector2()
+  load_everything = ->
+    if !Detector.webgl
+      Detector.addGetWebGLMessage()
+    # SCENE
+    scene = new (THREE.Scene)
+    # CAMERA
+    camera = new (THREE.PerspectiveCamera)(45, WIDTH / HEIGHT, 1, 20000)
+    camera.position.set 0, 500, 1000
+    scene.add camera
+    # RENDERER
+    if Detector.webgl
+      renderer = new (THREE.WebGLRenderer)(antialias: true, alpha: true)
+    else
+      renderer = new (THREE.CanvasRenderer)
+    # CONTAINER
+    #  container = document.createElement('div')
+    container = $(element).find('.timeline-spiral')
+    #  document.body.appendChild container
+    container.append(renderer.domElement)
+    # POINT LIGHT
+    light = new (THREE.PointLight)(0xff0000)
+    light.position.set 500, 500, 0
+    scene.add light
+    raycaster = new THREE.Raycaster()
+    mouse = new THREE.Vector2()
 
-  # AMBIEND LIGHT
-  ambientLight = new (THREE.AmbientLight)(0xffffff)
-  scene.add ambientLight
+    # AMBIEND LIGHT
+    ambientLight = new (THREE.AmbientLight)(0xffffff)
+    scene.add ambientLight
 
-  #  projector = new (THREE.Projector)
-  # GROUP
-  group = new (THREE.Object3D)
-  legends_group = new (THREE.Object3D)
-  scene.add group
-  group.add legends_group
-  # PLANES
-  positive_planes = []
-  arrow = undefined
-  planes = []
-  frequency = .06
-  red = undefined
-  green = undefined
-  blue = undefined
-  currentColor = undefined
-  i = 0
-
-  dir = new THREE.Vector3(1, 0, 0)
-  origin = new THREE.Vector3(0, 0, 0)
-  length = 100
-  hex = 0xffff00
-
-  arrow = new THREE.ArrowHelper(dir, origin, length, hex)
-  group.add(arrow)
-
-  legend_axis_material = new THREE.LineBasicMaterial({color: 0x0000ff, linewidth: 3})
-  geometry = new THREE.Geometry()
-  geometry.vertices.push(new THREE.Vector3(-10, 0, 0));
-  geometry.vertices.push(new THREE.Vector3(0, 10, 0));
-  geometry.vertices.push(new THREE.Vector3(10, 0, 0));
-  legend_axis = new THREE.Line(geometry, legend_axis_material)
-  legend_axis.geometry.dynamic = true;
-  legends_group.add(legend_axis)
-
-  #///// draw text on canvas /////////               `
-  # create a canvas element
-  canvas1 = document.createElement('canvas')
-  context1 = canvas1.getContext('2d')
-  context1.font = 'Bold 20px Arial'
-  context1.fillStyle = 'rgba(0,0,0,0.95)'
-  context1.fillText 'Hello, world!', 0, 20
-  # canvas contents will be used for a texture
-  texture1 = new (THREE.Texture)(canvas1)
-  texture1.needsUpdate = true
-  texture1.minFilter = THREE.LinearFilter
-  #//////////////////////////////////////
-  spriteMaterial = new (THREE.SpriteMaterial)(
-    map: texture1
-#    useScreenCoordinates: true
-#    alignment: THREE.SpriteAlignment.topLeft
-  )
-  sprite1 = new (THREE.Sprite)(spriteMaterial)
-  sprite1.scale.set 800, 400, 1.0
-  sprite1.position.set 50, 50, 0
-  scene.add sprite1
-
-  while i < ITERATIONS_MAX*SETTINGS['PLANES_PER_ROTATION']
-    red = Math.sin(frequency * i + 0) * 127 + 128
-    green = Math.sin(frequency * i + 2) * 127 + 128
-    blue = Math.sin(frequency * i + 4) * 127 + 128
-    currentColor = RGB2Color(red, green, blue)
-    box_positive = new (THREE.Mesh)(new (THREE.BoxGeometry)(100, 100, 100), new (THREE.MeshBasicMaterial)(
-      color: currentColor
-      wireframe: SETTINGS['WIREFRAME']
-      opacity: SETTINGS['PLANE_OPACITY']
-      transparent: SETTINGS['TRANSPARENT']
-      blending: THREE.AdditiveBlending
-      depthWrite: false
-      depthTest: false))
-    box_positive.overdraw = true
-    box_positive.material.side = THREE.DoubleSide
-    group.add box_positive
-    positive_planes.push box_positive
-    planes.push box_positive
-
-    currentColor = RGB2Color(255 - red, 255 - green, 255 - blue)
-
-    i++
-  organizePlanes()
-  # STATS
-  #  stats = new Stats
-  #  stats.domElement.style.position = 'absolute'
-  #  stats.domElement.style.top = '0px'
-  #stats.domElement.style.bottom = '0px';
-  #  stats.domElement.style.zIndex = 100
-  #  container.appendChild stats.domElement
-  # MOUSE CONTROLS
-  controls = new (THREE.TrackballControls)(camera, renderer.domElement)
-  controls.addEventListener('change', render);
-  document.addEventListener 'mousemove', onDocumentMouseMove, false
-  # GUI
-  gui = new (dat.GUI)({autoPlace: false})
-  element.children().prepend(gui.domElement)
-  radiusControl = gui.add(SETTINGS, 'RADIUS', 50, 500).step(10).name('radius')
-  dyControl = gui.add(SETTINGS, 'D_Y', 5, 100).step(1).name('delta Y')
-  perRotControl = gui.add(SETTINGS, 'PLANES_PER_ROTATION', 4, 25).step(1).name('planes / 360')
-  alphaControl = gui.add(SETTINGS, 'PLANE_OPACITY', 0, 1).step(0.05).name('plane opacity')
-  transparentControl = gui.add(SETTINGS, 'TRANSPARENT').name('transparent')
-  wireframeControl = gui.add(SETTINGS, 'WIREFRAME').name('wireframe')
-  rotSpeedControl = gui.add(SETTINGS, 'ROT_SPEED', 0, 100).step(1).name('rotation speed')
-  gui.close()
-  radiusControl.onChange (value) ->
-    organizePlanes()
-    return
-  dyControl.onChange (value) ->
-    organizePlanes()
-    return
-  perRotControl.onChange (value) ->
-    organizePlanes()
-    return
-  alphaControl.onChange (value) ->
+    #  projector = new (THREE.Projector)
+    # GROUP
+    group = new (THREE.Object3D)
+    legends_group = new (THREE.Object3D)
+    scene.add group
+    group.add legends_group
+    # PLANES
+    positive_planes = []
+    arrow = undefined
+    planes = []
+    frequency = .06
+    red = undefined
+    green = undefined
+    blue = undefined
+    currentColor = undefined
     i = 0
-    while i < ITERATIONS * SETTINGS['PLANES_PER_ROTATION'] * 2
-      planes[i].material.opacity = SETTINGS['PLANE_OPACITY']
+
+    dir = new THREE.Vector3(1, 0, 0)
+    origin = new THREE.Vector3(0, 0, 0)
+    length = 100
+    hex = 0xffff00
+
+    arrow = new THREE.ArrowHelper(dir, origin, length, hex)
+    group.add(arrow)
+
+    legend_axis_material = new THREE.LineBasicMaterial({color: 0x0000ff, linewidth: 3})
+    geometry = new THREE.Geometry()
+    geometry.vertices.push(new THREE.Vector3(-10, 0, 0));
+    geometry.vertices.push(new THREE.Vector3(0, 10, 0));
+    geometry.vertices.push(new THREE.Vector3(10, 0, 0));
+    legend_axis = new THREE.Line(geometry, legend_axis_material)
+    legend_axis.geometry.dynamic = true;
+    legends_group.add(legend_axis)
+
+    #///// draw text on canvas /////////               `
+    # create a canvas element
+    canvas1 = document.createElement('canvas')
+    context1 = canvas1.getContext('2d')
+    context1.font = 'Bold 20px Arial'
+    context1.fillStyle = 'rgba(0,0,0,0.95)'
+    context1.fillText 'Hello, world!', 0, 20
+    # canvas contents will be used for a texture
+    texture1 = new (THREE.Texture)(canvas1)
+    texture1.needsUpdate = true
+    texture1.minFilter = THREE.LinearFilter
+    #//////////////////////////////////////
+    spriteMaterial = new (THREE.SpriteMaterial)(
+      map: texture1
+  #    useScreenCoordinates: true
+  #    alignment: THREE.SpriteAlignment.topLeft
+    )
+    sprite1 = new (THREE.Sprite)(spriteMaterial)
+    sprite1.scale.set 800, 400, 1.0
+    sprite1.position.set 50, 50, 0
+    scene.add sprite1
+
+    while i < ITERATIONS_MAX * SETTINGS['PLANES_PER_ROTATION']
+      red = Math.sin(frequency * i + 0) * 127 + 128
+      green = Math.sin(frequency * i + 2) * 127 + 128
+      blue = Math.sin(frequency * i + 4) * 127 + 128
+      currentColor = RGB2Color(red, green, blue)
+      box_positive = new (THREE.Mesh)(new (THREE.BoxGeometry)(100, 100, 100), new (THREE.MeshBasicMaterial)(
+        color: currentColor
+        wireframe: SETTINGS['WIREFRAME']
+        opacity: SETTINGS['PLANE_OPACITY']
+        transparent: SETTINGS['TRANSPARENT']
+        blending: THREE.AdditiveBlending
+        depthWrite: true
+        depthTest: true))
+      box_positive.overdraw = true
+      box_positive.material.side = THREE.DoubleSide
+      group.add box_positive
+      positive_planes.push box_positive
+      planes.push box_positive
+
+      currentColor = RGB2Color(255 - red, 255 - green, 255 - blue)
+
       i++
-    return
-  transparentControl.onChange (value) ->
-    plane = undefined
-    i = 0
-    while i < ITERATIONS * SETTINGS['PLANES_PER_ROTATION'] * 2
-      plane = planes[i]
-      plane.material.transparent = SETTINGS['TRANSPARENT']
-      plane.material.depthWrite = plane.material.depthTest = !SETTINGS['TRANSPARENT']
-      i++
-    return
-    wireframeControl.onChange (value) ->
+    organizePlanes()
+    # STATS
+    #  stats = new Stats
+    #  stats.domElement.style.position = 'absolute'
+    #  stats.domElement.style.top = '0px'
+    #stats.domElement.style.bottom = '0px';
+    #  stats.domElement.style.zIndex = 100
+    #  container.appendChild stats.domElement
+    # MOUSE CONTROLS
+    controls = new (THREE.TrackballControls)(camera, renderer.domElement)
+    controls.addEventListener('change', render);
+    document.addEventListener 'mousemove', onDocumentMouseMove, false
+    # GUI
+    gui = new (dat.GUI)({autoPlace: false})
+    element.children().prepend(gui.domElement)
+    radiusControl = gui.add(SETTINGS, 'RADIUS', 50, 500).step(10).name('radius')
+    dyControl = gui.add(SETTINGS, 'D_Y', 5, 100).step(1).name('delta Y')
+    perRotControl = gui.add(SETTINGS, 'PLANES_PER_ROTATION', 4, 25).step(1).name('planes / 360')
+    alphaControl = gui.add(SETTINGS, 'PLANE_OPACITY', 0, 1).step(0.05).name('plane opacity')
+    transparentControl = gui.add(SETTINGS, 'TRANSPARENT').name('transparent')
+    wireframeControl = gui.add(SETTINGS, 'WIREFRAME').name('wireframe')
+    rotSpeedControl = gui.add(SETTINGS, 'ROT_SPEED', 0, 100).step(1).name('rotation speed')
+    gui.close()
+    radiusControl.onChange (value) ->
+      organizePlanes()
+      return
+    dyControl.onChange (value) ->
+      organizePlanes()
+      return
+    perRotControl.onChange (value) ->
+      organizePlanes()
+      return
+    alphaControl.onChange (value) ->
       i = 0
       while i < ITERATIONS * SETTINGS['PLANES_PER_ROTATION'] * 2
-        planes[i].material.wireframe = SETTINGS['WIREFRAME']
+        planes[i].material.opacity = SETTINGS['PLANE_OPACITY']
         i++
       return
-  # RESIZE
-  window.addEventListener 'resize', resizeHandler, false
-  resizeHandler()
-  # ANIMATE
-  animate()
+    transparentControl.onChange (value) ->
+      plane = undefined
+      i = 0
+      while i < ITERATIONS * SETTINGS['PLANES_PER_ROTATION'] * 2
+        plane = planes[i]
+        plane.material.transparent = SETTINGS['TRANSPARENT']
+        plane.material.depthWrite = plane.material.depthTest = !SETTINGS['TRANSPARENT']
+        i++
+      return
+      wireframeControl.onChange (value) ->
+        i = 0
+        while i < ITERATIONS * SETTINGS['PLANES_PER_ROTATION'] * 2
+          planes[i].material.wireframe = SETTINGS['WIREFRAME']
+          i++
+        return
+    # RESIZE
+    window.addEventListener 'resize', resizeHandler, false
+    resizeHandler()
+    # ANIMATE
+    animate()
 
 
   controller.onDateSliderChanged = (value)->
+    min_date = value.values.min
+    max_date = value.values.max
     ITERATIONS = Math.ceil((value.values.max - value.values.min) / (1000 * 3600 * 24))
-    console.log(ITERATIONS)
     organizePlanes()
   #    TOTAL = SETTINGS['PLANES_PER_ROTATION']*;
 
+  scope.$watch 'spiraldata', (new_data, old_val) ->
+    spiral_data = new_data
+    load_everything()
 
   return
 

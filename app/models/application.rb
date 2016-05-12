@@ -12,6 +12,7 @@
 #  url         :string
 #  static      :integer
 #  user_static :integer
+#  app_type    :string
 #
 
 class Application < ActiveRecord::Base

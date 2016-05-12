@@ -5,9 +5,19 @@ angular.module('wpc').directive 'spiralGraph', ->
     restrict: 'A'
     templateUrl: "<%= asset_path('angular-app/dashboard/spiral_graph.html') %>"
     controller: ['$scope', SpiralGraphController]
+    link: link
     scope: {
       data: '='
+      spiraldata: '='
     }
 
 }
+
+link = (scope, element, attrs, controller) ->
+#  debugger
+#  spiral_data = scope.data
+  scope.$watch attrs.spiraldata, (value, old_value) ->
+#    controller.onSpiralDataChanged(value)
+#    debugger
+
 

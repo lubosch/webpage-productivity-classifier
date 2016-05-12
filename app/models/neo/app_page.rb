@@ -17,13 +17,13 @@ module Neo
 
     def classify(levels)
       ranked_nodes = {self.neo_id => 0}
-      new_nodes = [self]
+      new_nodes = [[self, 1]]
       (1..levels).each do |lvl|
 
-        new_nodes = new_nodes.map { |node| node.new_knn_network(lvl, 1, ranked_nodes) }.flatten
+        new_nodes = new_nodes.map { |node| node[0].new_knn_network(lvl, node[1], ranked_nodes) }.flatten
         new_nodes = new_nodes.select { |hash| hash.values.first > 0.001 }
         new_nodes.sort_by { |hash| 0-hash.values.first } if new_nodes.size > 100
-        new_nodes = new_nodes[0..100].map { |hash| hash.keys.first }
+        new_nodes = new_nodes[0..100].map { |hash| [hash.keys.first, hash.values.first] }
         # binding.pry
         # puts "******** #{lvl} ******"
       end
@@ -43,9 +43,9 @@ module Neo
       app_pages.each do |app_page|
 
         # app_page = Neo::AppPage.find_by(neo_id: neo_id)
-        # eval_classes = app_page.application_page && app_page.application_page.evaluated_classes || []
         application_page = application_pages.find { |ap| ap.id == app_page.application_page_id }
-        eval_classes = application_page && application_page.evaluated_classes_w || []
+        eval_classes = application_page && application_page.evaluated_classes || []
+        # eval_classes = application_page && application_page.evaluated_classes_w || []
         eval_classes.each do |klass|
           classes[klass] ||= 0
           classes[klass] += ranked_nodes[app_page.neo_id]
@@ -58,14 +58,16 @@ module Neo
       new_nodes = []
       # if level == 0
       # else
-      link_factor = (8-level)/20.to_f*probability
+      # link_factor = 1 #(6-level)/15.to_f*probability
+      link_factor = probability
       # classes = application_page && application_page.evaluated_classes || []
       # classes = Hash[*classes.map { |klass| [klass, factor] }.flatten]
       # end
       #
       from_hosts_count = from_hosts.count
       from_hosts.each_with_rel do |host, connection|
-        new_probability = connection.probability*link_factor/from_hosts_count
+        # new_probability = connection.probability*link_factor/from_hosts_count
+        new_probability = 1*link_factor/from_hosts_count
         if old_nodes.keys.include?(host.neo_id)
           old_nodes[host.neo_id] += new_probability
         else
@@ -87,27 +89,27 @@ module Neo
       end
 
 
-      from_switch_count = from_switch.count
-      from_switch.each_with_rel do |host, connection|
-        new_probability = connection.probability*link_factor/from_switch_count*0.2
-        if old_nodes.keys.include?(host.neo_id)
-          old_nodes[host.neo_id] += new_probability
-        else
-          old_nodes[host.neo_id] = new_probability
-          new_nodes << {host => new_probability}
-        end
-      end
-
-      to_switch_count = to_switch.count
-      to_switch.each_with_rel do |host, connection|
-        new_probability = connection.probability*link_factor/to_switch_count*0.2
-        if old_nodes.keys.include?(host.neo_id)
-          old_nodes[host.neo_id] += new_probability
-        else
-          old_nodes[host.neo_id] = new_probability
-          new_nodes << {host => new_probability}
-        end
-      end
+      # from_switch_count = from_switch.count
+      # from_switch.each_with_rel do |host, connection|
+      #   new_probability = connection.probability*link_factor/from_switch_count
+      #   if old_nodes.keys.include?(host.neo_id)
+      #     old_nodes[host.neo_id] += new_probability
+      #   else
+      #     old_nodes[host.neo_id] = new_probability
+      #     new_nodes << {host => new_probability}
+      #   end
+      # end
+      #
+      # to_switch_count = to_switch.count
+      # to_switch.each_with_rel do |host, connection|
+      #   new_probability = connection.probability*link_factor/to_switch_count
+      #   if old_nodes.keys.include?(host.neo_id)
+      #     old_nodes[host.neo_id] += new_probability
+      #   else
+      #     old_nodes[host.neo_id] = new_probability
+      #     new_nodes << {host => new_probability}
+      #   end
+      # end
 
 
       # new_nodes.each { |nn| nn.classify(level+1, 1, old_nodes) }

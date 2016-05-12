@@ -34,31 +34,32 @@ class ApplicationTerm < ActiveRecord::Base
       xi = 1
     end
     #self.tf *
-    (xi*Math.log2(pk) + (1-xi)*Math.log2((1-pk)))
+    weight*(xi*Math.log2(pk) + (1-xi)*Math.log2((1-pk)))
   end
 
   def generating_multinomial_likelihood(activity_type)
     pk = term.activity_type_terms.find { |att| att.activity_type_id == activity_type.id } if term
     if pk.present?
+      # pk = term.default_pk + pk.multinomial_probability# + 1
       pk = term.default_pk + pk.multinomial_probability# + 1
     else
       pk = term.default_pk
       # pk = 0 #/ (activity_type.terms_count + activity_type.vocabulary_size.to_f)
+      # pk = 1 / activity_type.vocabulary_size.to_f
     end
-    self.tf * Math.log2(pk)
+    self.tf*weight * Math.log2(pk)
   end
 
   def generating_w_multinomial_likelihood(work)
     pk = term.work_terms.find { |att| att.work_id == work.id } if term
     if pk.present?
-      pk = term.default_pk + pk.multinomial_probability# + 1
+      pk = pk.multinomial_probability # + 1
     else
       pk = term.default_pk
       # pk = 0 #/ (activity_type.terms_count + activity_type.vocabulary_size.to_f)
     end
     self.tf * Math.log2(pk)
   end
-
 
 
   def weight
@@ -70,7 +71,7 @@ class ApplicationTerm < ActiveRecord::Base
       when TERM_TYPES[:text]
         0.1
       when TERM_TYPES[:description]
-        0.8
+        0.6
       else
         0.0
     end
